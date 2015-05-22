@@ -81,11 +81,15 @@ the FileGDB API in your system)
 
 3) Install the gdal (http://www.gdal.org/) libraries
 
-> brew install gdal --enable-unsupported
+```bash
+ brew install gdal --enable-unsupported
+```
 
 4) Install the python bindings for gdal
 
-> sudo pip install GDAL
+```bash
+sudo pip install GDAL
+```
 
 5) Install ogr2osm (https://github.com/pnorman/ogr2osm)
 
@@ -93,12 +97,15 @@ the FileGDB API in your system)
 
 7) Run ogr2osm
 
-> python ogr2osm.py --help
-> python ogr2osm.py /path/to/data.gdb/my_trails -o output.osm -t trails
+```bash
+python ogr2osm.py --help
+python ogr2osm.py /path/to/data.gdb/my_trails -o output.osm -t trails
+```
 
 TODO
 ~~~~
-[] fork osm2ogr and add option to create OsmChange file
+
+- [ ] fork osm2ogr and add option to create OsmChange file
 
 
 Upload to Places

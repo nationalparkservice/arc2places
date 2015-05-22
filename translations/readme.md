@@ -10,7 +10,7 @@ however unrecognized field names will be ignore, so the resulting feature
 in Places may not get any of your attributes.
 
 If you use the appropriate translation file you should get a reasonable
-default places feature provided you have a field called NAME (or the equivalent
+default places feature provided you have a field called `NAME` (or the equivalent
 data standard field name) in your GIS dataset.
 
 The translation files can declare one or more of the five well known translation functions.
