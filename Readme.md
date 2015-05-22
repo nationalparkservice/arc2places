@@ -113,6 +113,7 @@ python ogr2osm.py /path/to/data.gdb/my_trails -o output.osm -t trails
 ###TODO
 
 - [ ] fork osm2ogr and add option to create OsmChange file
+- [ ] fork osm2ogr and make the attribute names all upper case
 
 
 Upload to Places
