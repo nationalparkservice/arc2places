@@ -102,8 +102,7 @@ python ogr2osm.py --help
 python ogr2osm.py /path/to/data.gdb/my_trails -o output.osm -t trails
 ```
 
-TODO
-~~~~
+###TODO
 
 - [ ] fork osm2ogr and add option to create OsmChange file
 
