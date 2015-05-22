@@ -1,12 +1,22 @@
-This folder contains python translation files that work with ogr2osm and arc2osm
-They translation files provided are appropriate for translating from the
-National Park Service GIS data standards to the OSM format used by NP Places.
-The translation files can easily be edited to translate non standard NPS GIS
-datasets to the Places format.
+Ogr2osm Translation Files
+=========================
 
-There are five well known translation function names that will be used if
-defined.  If they are defined, they must take the appropriate arguments, and
-return the expected data type.
+This folder contains python translation files that work with ogr2osm and arc2osm.
+The translation files provided are appropriate for translating from the
+National Park Service GIS data standards to the OSM format used by NP Places.
+The translation files can easily be copied and edited to translate non-standard
+NPS GIS datasets to the Places format.  They will also work as-is with any dataset,
+however unrecognized field names will be ignore, so the resulting feature
+in Places may not get any of your attributes.
+
+If you use the appropriate translation file you should get a reasonable
+default places feature provided you have a field called NAME (or the equivalent
+data standard field name) in your GIS dataset.
+
+The translation files can declare one or more of the five well known translation functions.
+If a well known function is defined it will be used as decribed below.
+The functions must take the appropriate arguments, and return the expected data type.
+
 
 Translation Functions
 =====================
@@ -36,73 +46,25 @@ In Python dictionary keys are case sensitive (i.e. myColumn != MYCOLUMN).
 filterFeature
 -------------
 
-Takes an ogr feature, a list of field names, and a boolean reproject flag. It returns
-the feature to use or `None` if the feature is to be ignored.  For `arc2ogr`, this
-is an arcgis feature.  This filter is done before any processing of the feature
+Takes an ogr feature, a list of field names, and a boolean reproject flag.
+It returns the feature to use or `None` if the feature is to be ignored.
+For `arc2ogr`, the feature is an arcGIS cursor row (a tuple - the order of values
+in the tuple matches the order of fields in field names with the geometry as
+the first value).  This filter is done before any processing of the feature
 is done.
 
 filterFeaturePost
 -----------------
 
-Takes an internal feature, a list of field names, and a boolean reproject flag.
+Takes a feature, a list of field names, and a boolean reproject flag.
 It returns a (modified) feature to use or `None` if the feature is to be ignored.
-This filter is called after the geometry and tags have been parsed.  The feature
-data type is defined in the `geom.py` file.  It has a geometry and a dictionary of tags.
+This filter is called once for each feature after the geometry and tags have
+been parsed.  The feature data type is defined in the `geom.py` file.
+It has a geometry and a dictionary of tags.
 
 preOutputTransform
 ------------------
 
 This is called right before the list of features is written.  It takes a list
-of features, and a list of geometries as defined in `geom.py`.  Nothing is returned,
+of features and a list of geometries as defined in `geom.py`.  Nothing is returned,
 but the input lists can be mutated as desired.
-
-
-Using ogr2osm on the Mac
-========================
-
-1) Install FGDB API (optional)
-
-This will allow GDAL to read esri file geodatabases (the common Park
-Service GIS data format).  Browse to http://www.esri.com/apps/products/download/#File_Geodatabase_API_1.4
-Select the version for os X 10.9 or greater use the clang version.  Use
-the gcc version for older versions of Mac OSX.  You will need to log in to
-esri's website with a esri global id (creating one is free) to finish the download.
-After you unpack/unzip the fgdb download, copy (or link) the contents of the include folder
-to /usr/local/include and the lib folder to /usr/local/lib (this is basically "installing"
-the FileGDB API in your system)
-
-2) Install homebrew (http://brew.sh/)
-
-3) Install the gdal (http://www.gdal.org/) libraries
-
->>> brew install gdal --enable-unsupported
-
-4) Install the python bindings for gdal
-
->>> sudo pip install GDAL
-
-5) Install ogr2osm (https://github.com/pnorman/ogr2osm)
-
-6) copy the translation files in this folder to the ogr2osm transations folder
-
-7) Run ogr2osm
-
->>> python ogr2osm.py --help
->>> python ogr2osm.py /path/to/data.gdb/my_trails -o output.osm -t trails
-
-Using ogr2osm on Windows
-========================
-
-
-Using arc2osm on the Mac
-========================
-
-Esri does not support ArcGIS on the Mac
-
-Using arc2osm on Windows
-========================
-
-This requires ArcGIS to be installed on the windows computer.  It was tested
-with ArcGIS 10.3 and python 2.7.5, however it should work with ArcGIS 10.1 sp1
-and greater.  The python is suitable for 3.x and 2.7 so the scripts may work
-with ArcGIS Pro, but this has not been tested.
