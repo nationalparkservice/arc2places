@@ -8,6 +8,14 @@ which is based on the OSM data model.
 This work was derived from Paul Norman's [ogr2osm](https://github.com/pnorman/ogr2osm) tool which was derived from
 the UVM tool of the same name.
 
+This tool is for initial loading (or seeding) data into Places.  It will create
+new features in places for the features in your GIS dataset.  This may create
+duplicate features in Places if there are already similar features in your area.
+There are other tools planned to help manage data if it is already in places.
+
+This tool can be slow for large dataset (based on the total number or vertices,
+not features).  Consider breaking your data into smaller chunks if you have
+problems.
 
 Create OSM upload file
 ======================
