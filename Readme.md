@@ -18,7 +18,7 @@ There are two upload file format available: [JOSM](http://wiki.openstreetmap.org
 and [OsmChange](http://wiki.openstreetmap.org/wiki/OsmChange).
 
 Currently, ogr2osm only creates the JOSM format, while arc2osm can create either.
-See the [Upload to Places](https://github.com/regan-sarwas/arc2osm/tree/master/#upload-to-places)
+See the [Upload to Places](https://github.com/regan-sarwas/arc2osm#upload-to-places)
 for details on which format you should use.
 
 All features in the JOSM and OsmChange files are considered new features to
@@ -131,13 +131,21 @@ osm2places
 
 This is a python script which takes an OsmChange file (and users credentials)
 and uploads the changes to Places.  It uses the response from Places to create
-a CSV file with the Places ID and GIS ID of each feature added to Places. The
-GIS ID comes from the `nps:source_id` tag in the OsmChange file.  Any field in
+a CSV file with the Places ID and GIS ID of each feature added to Places.
+
+The GIS ID comes from the `nps:source_id` tag in the OsmChange file.  Any field in
 the GIS data can be used as the source of the `nps:source_id` tag by using the
 translation files.  The GIS ID field should be a unique key to the GIS data.
 The translation files provided use the field `GEOMETRYID` (per the generic
 GIS data standard)
 
+Once a changeset is opened, this script will transform the OsmChange file to
+use a valid changeset id. The input file is not changed, and the changeset id
+is not saved.
+
+```bash
+python ogr2places.py /path/to/input.osm /path/to/output.csv
+```
 
 Update ArcGIS data with Places Ids
 ==================================
