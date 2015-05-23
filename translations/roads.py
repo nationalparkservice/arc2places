@@ -91,7 +91,7 @@ def filterTags(attrs):
     # multi tags
     for name in multimaps:
         tagz, valuesmap = multimaps[name]
-        generic.fancymap(name, altnames, attrs, tagz, valuesmap)
+        tags.update(generic.fancymap(name, altnames, attrs, tagz, valuesmap))
 
     # special case when status is proposed/planned, then put class in proposed
     if tags['highway'] == 'proposed':

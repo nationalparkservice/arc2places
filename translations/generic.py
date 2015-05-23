@@ -14,22 +14,26 @@ def valueof(name, altnames, attributes, no_values=('null', 'none', 'unknown')):
     return value
 
 
-def simplemap(gisnames, altnames, attributes):
+def simplemap(namemap, altnames, attributes):
     tags = {}
-    for gisname in gisnames:
+    for gisname in namemap:
         value = valueof(gisname, altnames, attributes)
         if value:
-            tags[attributes[gisname]] = value
+            tagname = namemap[gisname]
+            tags[tagname] = value
     return tags
 
 
-def fancymap(name, altnames, attrs, tags, valuemaps):
+def fancymap(name, altnames, attrs, tagz, valuemaps):
+    tags = {}
     value = valueof(name, altnames, attrs)
     if value and value in valuemaps:
         values = valuemaps[value]
         for i in range(len(values)):
             if values[i]:
-                tags[tags[i]] = values[i]
+                tagname = tagz[i]
+                tags[tagname] = values[i]
+    return tags
 
 
 # noinspection PyPep8Naming
