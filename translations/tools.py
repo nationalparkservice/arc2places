@@ -64,4 +64,6 @@ def feature_value(name, altnames, feature, fieldnames,
                 value = str(value).strip()
             if value.lower() in no_values:
                 value = None
+        else:
+            value = None
     return value
