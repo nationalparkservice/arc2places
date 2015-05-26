@@ -587,8 +587,8 @@ if __name__ == '__main__':
     Options.translationmethod = arcpy.GetParameterAsText(2)
     Options.source = \
         r"C:\tmp\places\GOSP\GOSP_TRANS_TRAILS_LN.gdb\GOSP_TRANS_TRAILS_LN"
-    Options.outputFile = r"C:\tmp\places\GOSP\GOSP_TRANS_TRAILS_LN.osm"
-    Options.translationmethod = "trails"
+    Options.outputFile = r"C:\tmp\places\GOSP\GOSP_TRANS_TRAILS_xx.osm"
+    Options.translationmethod = "roads"
     Geometry.elementIdCounter = Options.id
     utils.info(
         u"Preparing to convert '{0:s}' to '{1:s}'.".format(Options.source,
