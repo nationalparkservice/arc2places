@@ -4,6 +4,11 @@ from config_roads import *
 
 
 # noinspection PyPep8Naming
+def filterFeature(feature, fieldnames, reproject):
+    return generic.filterFeature(feature, fieldnames, reproject)
+
+
+# noinspection PyPep8Naming
 def filterTags(attrs):
     if not attrs:
         return

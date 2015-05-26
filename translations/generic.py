@@ -2,6 +2,19 @@ import tools
 from config_generic import *
 
 
+# noinspection PyPep8Naming,PyUnusedLocal
+def filterFeature(feature, fieldnames, reproject):
+    restriction = tools.feature_value('RESTRICTION', altnames,
+                                      feature, fieldnames)
+    distribute = tools.feature_value('DISTRIBUTE', altnames,
+                                     feature, fieldnames)
+    if (distribute is None or distribute == 'Public') and \
+       (restriction is None or restriction == 'Unresticted'):
+        return feature
+    else:
+        return None
+
+
 # noinspection PyPep8Naming
 def filterTags(attrs):
     if not attrs:
