@@ -6,7 +6,7 @@
 
 # All config files must have defaults, fieldmap, altnames and valuemap
 
-# default tags for trails in Places
+# default tags for trail *lines* in Places
 defaults = {
     'highway': 'path',
     'horse': 'no',

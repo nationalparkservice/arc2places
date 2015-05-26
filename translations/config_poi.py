@@ -6,7 +6,7 @@
 
 # All config files must have defaults, fieldmap, altnames and valuemap
 
-# default tags for Points of Interest in Places
+# default tags for *Points* of Interest in Places
 defaults = {
 }
 

@@ -6,7 +6,7 @@
 
 # All config files must have defaults, fieldmap, altnames and valuemap
 
-# default tags for roads in Places
+# default tags for road *lines* in Places
 defaults = {
     'highway': 'road',
     'oneway': 'no',

@@ -6,7 +6,7 @@
 
 # All config files must have defaults, fieldmap, altnames and valuemap
 
-# default tags for buildings in Places
+# default tags for buildings *polygons* in Places
 defaults = {
     'building': 'yes'
 }
