@@ -27,12 +27,43 @@ Multipoints are treated as separate nodes (with the same tags).
 No relationship is created because there is no [OSM multipoint relation](http://wiki.openstreetmap.org/wiki/Types_of_relation)
 This causes a problem with syncing Places to GIS because there is not longer
 a one-to-one map between the places id and nps:source_id, so **do not use multipoints**.
+This shouldn't be a hardship as there probably aren't any multipoint feature classes in the NPS.
+furthermore, even if we did create a new 'multipoint' type relation, neither
+OSM nor ID would know how to deal with this.
 
 Polylines with multiple paths are treated as separate ways (with the same tags).  No relationship is created.
 This causes a problem with syncing Places to GIS because there is not longer
 a one-to-one map between the places id and nps:source_id, so **do not use multipart polylines**.
 
-Polygons with multiple rings are
+Polygons are[ trouble](http://wiki.openstreetmap.org/wiki/The_Future_of_Areas#Way-based_Polygons)
+The simple/common case of a single part polygon with one outer ring is modeled
+as a closed way.  The building=* and the area=yes tags identify a closed way
+as an area (polygon) feature.
+If a single part polygon has multiple rings (i.e holes) it is created as
+multipolygon relation with inner and outer members.  The element attributes
+are on the relation.  A Multi-polygon is  treated as separate polygons, either
+closed ways or relations.  Each polygon has the same tags. This causes a problem
+with syncing Places to GIS because there is not longer a one-to-one map between
+the places id and nps:source_id, so **do not use multipart poygons**.
+
+**TODO**
+- [ ] merge multiple outer or outer/inner parts into one relationship for multi-polygons
+- [ ] merge multi-part polylines into a single route type relation
+- [ ] merge multi-part points into a single 'multipoint' type relation.
+
+**CHECK LIMITS**
+OSM limits the number of nodes in a way to 2000, and the number of elements
+in a changeset to 50000.  Places currently defaults to 50000 for both.
+It is highly likely that there will be datasets with more than 50,000 vertices.
+These will need to be split into multiple upload files.
+It is also possible that there are ways with more than 50000 nodes. (ways this
+big are also very hard for ID to deal with, so it may be that Places lowers
+this limit closer to the OSM limit).  How should we deal with big ways?
+1) Break the GIS features up into pieces (with unique ids) before exporting.
+2) Create several ways from one GIS feature. This will break the one-to-one
+referential integrity with th GIS.
+3) Create several ways and join them in a route relation.  Put the tags on the
+route.  Need to 'merge' the ways when syncing with GIS.
 
 Create OSM upload file
 ======================
@@ -131,6 +162,7 @@ python ogr2osm.py /path/to/data.gdb/my_trails -o output.osm -t trails
 
 - [ ] fork osm2ogr and add option to create OsmChange file
 - [ ] fork osm2ogr and make the attribute names all upper case
+- [ ] fork osm2ogr and fix multipoint creation
 
 
 Upload to Places
