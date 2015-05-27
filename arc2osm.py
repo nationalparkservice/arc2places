@@ -256,22 +256,16 @@ def parsepolygonpart(arcpointarray):
     # the first ring is the outer, and the rest are inner.
     # TODO: Test
     start = 0
-    outer = []
-    inners = []  # a list of lists
-    for i in range(len(arcpointarray)):
-        if arcpointarray[i] is None:
-            if start == 0:
-                outer = arcpointarray[0:i]
-            else:
-                # ignore deviant case of sequential null points
-                inners.append = arcpointarray[start:i]
-            start = i + 1
-    # finish the open ring
-    if start == 0:
-        outer = arcpointarray
-    else:
-        inners.append = arcpointarray[start:]
-
+    outer = []  # a list of points
+    inners = []  # a list of lists of points
+    current = outer
+    for pnt in arcpointarray:
+        if pnt:
+            current.append(pnt)
+        else:
+            # start a new list and add it to the end of the inners
+            current = []
+            inners.append(current)
     geometry = Relation()
     exterior = parselinestring(outer)
     exterior.addparent(geometry)
@@ -595,9 +589,12 @@ if __name__ == '__main__':
     # Options.source = r"C:\tmp\places\test.gdb\POI_pt"
     # Options.outputFile = r"C:\tmp\places\test_POI.osm"
     # Options.translationmethod = "poi"
-    Options.source = r"C:\tmp\places\test.gdb\multipoints"
-    Options.outputFile = r"C:\tmp\places\test_generic_mp.osm"
-    Options.translationmethod = "generic"
+    # Options.source = r"C:\tmp\places\test.gdb\multipoints"
+    # Options.outputFile = r"C:\tmp\places\test_generic_mp.osm"
+    # Options.translationmethod = "generic"
+    Options.source = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
+    Options.outputFile = r"C:\tmp\places\test_parking.osm"
+    Options.translationmethod = "parkinglots"
     Geometry.elementIdCounter = Options.id
     utils.info(
         u"Preparing to convert '{0:s}' to '{1:s}'.".format(Options.source,
