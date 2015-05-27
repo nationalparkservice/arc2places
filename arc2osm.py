@@ -266,14 +266,16 @@ def parsepolygonpart(arcpointarray):
             # start a new list and add it to the end of the inners
             current = []
             inners.append(current)
-    geometry = Relation()
-    exterior = parselinestring(outer)
-    exterior.addparent(geometry)
-    geometry.members.append((exterior, "outer"))
-    for inner_ring in inners:
-        interior = parselinestring(inner_ring)
-        interior.addparent(geometry)
-        geometry.members.append((interior, "inner"))
+    geometry = parselinestring(outer)
+    if inners:
+        exterior = geometry
+        geometry = Relation()
+        exterior.addparent(geometry)
+        geometry.members.append((exterior, "outer"))
+        for inner_ring in inners:
+            interior = parselinestring(inner_ring)
+            interior.addparent(geometry)
+            geometry.members.append((interior, "inner"))
     return geometry
 
 
@@ -286,8 +288,6 @@ def parsecollection(arcgeometry):
     geometrytype = arcgeometry.type
     if geometrytype == 'polygon':
         # multipolygon (I already got the single part polygon in parsegeometry)
-        for i in range(arcgeometry.partCount):
-            parsepolygonpart(arcgeometry.getPart(i))
         geometries = []
         for polygon in range(arcgeometry.partCount):
             geometries.append(parsepolygonpart(arcgeometry.getPart(polygon)))
