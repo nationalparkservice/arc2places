@@ -8,7 +8,8 @@
 
 # default tags for Parking *polygons* in Places
 defaults = {
-    'amenity': 'parking'
+    'amenity': 'parking',
+    'area': 'yes'
 }
 
 # values map one to one from GIS field name to Places tag
