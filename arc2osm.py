@@ -306,12 +306,13 @@ def parsecollection(arcgeometry):
         return geometries  # list of Ways
     else:
         # multipoint
-        geometry = Relation()
+        # OSM does not have a multipoint relation
+        # http://wiki.openstreetmap.org/wiki/Types_of_relation
+        # treat as individual nodes with the same tags
+        geometries = []
         for pnt in arcgeometry:
-            member = parsepoint(pnt)
-            member.addparent(geometry)
-            geometry.members.append((member, "member"))
-        return [geometry]  # list of Points
+            geometries.append(parsepoint(pnt))
+        return geometries  # list of Points
 
 
 # mergepoints seems unecessary.
@@ -585,15 +586,18 @@ if __name__ == '__main__':
     Options.source = arcpy.GetParameterAsText(0)
     Options.outputFile = arcpy.GetParameterAsText(1)
     Options.translationmethod = arcpy.GetParameterAsText(2)
-    #Options.source = r"C:\tmp\places\test.gdb\TRAILS_ln"
-    #Options.outputFile = r"C:\tmp\places\test_TRAILS.osm"
-    #Options.translationmethod = "trails"
-    #Options.source = r"C:\tmp\places\test.gdb\ROADS_ln"
-    #Options.outputFile = r"C:\tmp\places\test_ROADS.osm"
-    #Options.translationmethod = "roads"
-    Options.source = r"C:\tmp\places\test.gdb\POI_pt"
-    Options.outputFile = r"C:\tmp\places\test_POI.osm"
-    Options.translationmethod = "poi"
+    # Options.source = r"C:\tmp\places\test.gdb\TRAILS_ln"
+    # Options.outputFile = r"C:\tmp\places\test_TRAILS.osm"
+    # Options.translationmethod = "trails"
+    # Options.source = r"C:\tmp\places\test.gdb\ROADS_ln"
+    # Options.outputFile = r"C:\tmp\places\test_ROADS.osm"
+    # Options.translationmethod = "roads"
+    # Options.source = r"C:\tmp\places\test.gdb\POI_pt"
+    # Options.outputFile = r"C:\tmp\places\test_POI.osm"
+    # Options.translationmethod = "poi"
+    Options.source = r"C:\tmp\places\test.gdb\multipoints"
+    Options.outputFile = r"C:\tmp\places\test_generic_mp.osm"
+    Options.translationmethod = "generic"
     Geometry.elementIdCounter = Options.id
     utils.info(
         u"Preparing to convert '{0:s}' to '{1:s}'.".format(Options.source,

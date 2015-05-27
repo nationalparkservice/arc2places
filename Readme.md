@@ -17,6 +17,23 @@ This tool can be slow for large dataset (based on the total number or vertices,
 not features).  Consider breaking your data into smaller chunks if you have
 problems.
 
+Supported ArcGIS geometries:
+* Points
+* Polylines
+* Polygons
+* Multipoints
+
+Multipoints are treated as separate nodes (with the same tags).
+No relationship is created because there is no [OSM multipoint relation](http://wiki.openstreetmap.org/wiki/Types_of_relation)
+This causes a problem with syncing Places to GIS because there is not longer
+a one-to-one map between the places id and nps:source_id, so **do not use multipoints**.
+
+Polylines with multiple paths are treated as separate ways (with the same tags).  No relationship is created.
+This causes a problem with syncing Places to GIS because there is not longer
+a one-to-one map between the places id and nps:source_id, so **do not use multipart polylines**.
+
+Polygons with multiple rings are
+
 Create OSM upload file
 ======================
 
