@@ -198,7 +198,7 @@ def parsegeometry(arcgeometries):
         # geometrytype in polygon, polyline, point, multipoint, multipatch,
         # dimension, or annotation
         if geometrytype == 'point':
-            returngeometries.append(parsepoint(arcgeometry))
+            returngeometries.append(parsepoint(arcgeometry.getPart(0)))
         elif geometrytype == 'polyline' and not arcgeometry.isMultipart:
             returngeometries.append(parselinestring(arcgeometry.getPart(0)))
         elif geometrytype == 'polygon' and not arcgeometry.isMultipart:
@@ -585,10 +585,15 @@ if __name__ == '__main__':
     Options.source = arcpy.GetParameterAsText(0)
     Options.outputFile = arcpy.GetParameterAsText(1)
     Options.translationmethod = arcpy.GetParameterAsText(2)
-    Options.source = \
-        r"C:\tmp\places\GOSP\GOSP_TRANS_TRAILS_LN.gdb\GOSP_TRANS_TRAILS_LN"
-    Options.outputFile = r"C:\tmp\places\GOSP\GOSP_TRANS_TRAILS.osm"
-    Options.translationmethod = "trails"
+    #Options.source = r"C:\tmp\places\test.gdb\TRAILS_ln"
+    #Options.outputFile = r"C:\tmp\places\test_TRAILS.osm"
+    #Options.translationmethod = "trails"
+    #Options.source = r"C:\tmp\places\test.gdb\ROADS_ln"
+    #Options.outputFile = r"C:\tmp\places\test_ROADS.osm"
+    #Options.translationmethod = "roads"
+    Options.source = r"C:\tmp\places\test.gdb\POI_pt"
+    Options.outputFile = r"C:\tmp\places\test_POI.osm"
+    Options.translationmethod = "poi"
     Geometry.elementIdCounter = Options.id
     utils.info(
         u"Preparing to convert '{0:s}' to '{1:s}'.".format(Options.source,
