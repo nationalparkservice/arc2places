@@ -25,7 +25,7 @@ fieldmap = {
     'TRLSTATUS': 'nps:trail_status',
     'TRLTYPE': 'nps:trail_type',
     'TRLCLASS': 'tracktype',
-    'TRLUSES': 'nps:trail_uses'
+    'TRLUSE': 'nps:trail_uses'
 }
 
 # alternate GIS field names.
@@ -43,7 +43,7 @@ altnames = {
     'TRLTYPE': ['TYPE', 'TRAILTYPE', 'TRL_TYPE', 'TRAIL_TYPE'],
     'TRLCLASS': ['CLASS', 'TRAILCLASS', 'TRL_CLASS', 'TRAIL_CLASS'],
     'TRLUSE': ['USE', 'TRAILUSE', 'TRL_USE', 'TRAIL_USE', 'USES', 'TRAILUSES',
-               'TRL_USES', 'TRAIL_USES']
+               'TRLUSES', 'TRL_USES', 'TRAIL_USES']
 }
 
 # GIS field names where different values map to a specific set of Places tags

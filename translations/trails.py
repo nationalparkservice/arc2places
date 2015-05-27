@@ -32,7 +32,7 @@ def filterTags(attrs):
     # trail use (draft standard)
     # trail use is a '|' separated list of values (this requires a slightly
     # modified version of generic.maptags
-    usefieldname = 'TRLUSES'
+    usefieldname = 'TRLUSE'
     trailusemap = valuemap[usefieldname]
     value = tools.valueof(usefieldname, altnames, attrs)
     if value:
