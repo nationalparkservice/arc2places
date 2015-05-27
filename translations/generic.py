@@ -4,12 +4,12 @@ from config_generic import *
 
 # noinspection PyPep8Naming,PyUnusedLocal
 def filterFeature(feature, fieldnames, reproject):
-    restriction = tools.feature_value('RESTRICTION', altnames,
+    restriction = tools.feature_value('RESTRICT', altnames,
                                       feature, fieldnames)
     distribute = tools.feature_value('DISTRIBUTE', altnames,
                                      feature, fieldnames)
     if (distribute is None or distribute == 'Public') and \
-       (restriction is None or restriction == 'Unresticted'):
+       (restriction is None or restriction == 'Unrestricted'):
         return feature
     else:
         return None
