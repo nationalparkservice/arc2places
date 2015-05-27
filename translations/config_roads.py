@@ -17,11 +17,11 @@ defaults = {
 fieldmap = {
     # GIS_FieldName : Places Tag
     'RDNAME': 'name',
-    'RDALTNAMES': 'nps:road_alt_names',
+    'RDALTNAME': 'nps:road_alt_names',
     'RDLABEL': 'nps:road_label',
     'RDSTATUS': 'nps:road_status',
     'RDCLASS': 'nps:road_class',
-    'RDMAINTAINER': 'nps:road_maintainer',
+    'MAINTAINER': 'nps:road_maintainer',
     'LANES': 'lanes',
     'ROUTEID': 'nps:route_id',
     'RTENUMBER': 'nps:route_number'
@@ -31,14 +31,24 @@ fieldmap = {
 altnames = {
     # GIS Standard FieldName: List of alternate spellings of field name
     'RDNAME': ['NAME', 'ROADNAME', 'RD_NAME', 'ROAD_NAME'],
-    'RDALTNAMES': ['ALTNAMES', 'ROADALTNAMES', 'RD_ALTNAMES',
-                   'ROAD_ALTNAMES'],
+    'RDALTNAME': ['ALTNAME', 'ROADALTNAME', 'RD_ALTNAME', 'ROAD_ALTNAME',
+                  'ALTERNAME_NAME', 'ALTERNATENAME', 'ALTNAMES',
+                  'ROADALTNAMES', 'RD_ALTNAMES', 'ROAD_ALTNAMES',
+                  'ALTERNAME_NAMES', 'ALTERNATENAMES'],
     'RDLABEL': ['LABEL', 'ROADLABEL', 'RD_LABEL', 'ROAD_LABEL'],
     'RDSTATUS': ['STATUS', 'ROADSTATUS', 'RD_STATUS', 'ROAD_STATUS'],
-    'RDCLASS': ['CLASS', 'ROADCLASS', 'RD_CLASS', 'ROAD_CLASS'],
-    'RDMAINTAINER': ['MAINTAINER', 'ROADMAINTAINER', 'RD_MAINTAINER',
-                     'ROAD_MAINTAINER'],
-    'ROUTEID': ['ROUTE', 'ROUTE_ID'],
+    'RDCLASS': ['CLASS', 'ROADCLASS', 'RD_CLASS', 'ROAD_CLASS',
+                'ADMINISTRATIVE_ROAD_CLASS'],
+    'RDSURFACE': ['SURFACE', 'ROADSURFACE', 'RD_SURFACE', 'ROAD_SURFACE'],
+    'MAINTAINER': ['RDMAINTAINER', 'ROADMAINTAINER', 'RD_MAINTAINER',
+                   'ROAD_MAINTAINER', 'PRIMARYROADMAINTAINER',
+                   'PRIMARY_ROAD_MAINTAINER'],
+    'RDONEWAY': ['ONEWAY', 'ONE_WAY', 'ROADONEWAY', 'ROAD_ONE_WAY',
+                 'RD_ONE_WAY'],
+    'RDLANES': ['LANES', 'ROADLANES', 'RD_LANES', 'ROAD_LANES',
+                'NUMBEROFLANES', 'NUMBER_OF_LANES'],
+
+    'ROUTEID': ['ROUTE', 'ROUTE_ID', 'FHWA_NPS_ROUTE_ID'],
     'RTENUMBER': ['RTE_NUMBER', 'ROUTENUMBER', 'ROUTE_NUMBER']
 }
 
@@ -80,10 +90,12 @@ valuemap = {
         'Gravel': {'surface': 'gravel'},
         'Sand': {'surface': 'sand'},
         'Native or Dirt': {'surface': 'ground'},
+        'Other, Unpaved': {'surface': 'unpaved'},
+        'Other, Paved': {'surface': 'paved'},
         'Unpaved Other': {'surface': 'unpaved'},
         'Paved Other': {'surface': 'paved'}
     },
-    'ONEWAY': {
+    'RDONEWAY': {
         'With Digitized': {'oneway': 'yes'},
         'Against Digitized': {'oneway': '-1'}
     }

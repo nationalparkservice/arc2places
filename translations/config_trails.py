@@ -32,14 +32,18 @@ fieldmap = {
 altnames = {
     # GIS Standard FieldName: List of alternate spellings of field name
     'TRLNAME': ['NAME', 'TRAILNAME', 'TRL_NAME', 'TRAIL_NAME'],
-    'TRLALTNAMES': ['ALTNAMES', 'TRAILALTNAMES', 'TRL_ALTNAMES',
-                    'TRAIL_ALTNAMES'],
-    'TRLFEATTYPE': ['FEATTYPE', 'TRAILFEATTYPE', 'TRL_FEATTYPE',
-                    'TRAIL_FEATTYPE'],
+    'TRLALTNAME': ['ALTNAME', 'TRAILALTNAME', 'TRL_ALTNAME', 'TRAIL_ALTNAME',
+                   'TRLALTNAMES', 'ALTNAMES', 'TRAILALTNAMES', 'TRL_ALTNAMES',
+                   'TRAIL_ALTNAMES'],
+    'TRLLABEL': ['LABEL', 'TRAILLABEL', 'TRL_LABEL', 'TRAIL_LABEL'],
+    'TRLFEATTYPE': ['FEATTYPE', 'FEATURETYPE', 'FEATURE_TYPE', 'TRL_FEAT_TYPE',
+                    'TRAILFEATURETYPE', 'TRAIL_FEATURE_TYPE'],
     'TRLSTATUS': ['STATUS', 'TRAILSTATUS', 'TRL_STATUS', 'TRAIL_STATUS'],
+    'TRLSURFACE': ['SURFACE', 'TRAILSURFACE', 'TRL_SURFACE', 'TRAIL_SURFACE'],
     'TRLTYPE': ['TYPE', 'TRAILTYPE', 'TRL_TYPE', 'TRAIL_TYPE'],
     'TRLCLASS': ['CLASS', 'TRAILCLASS', 'TRL_CLASS', 'TRAIL_CLASS'],
-    'TRLUSES': ['USES', 'TRAILUSES', 'TRL_USES', 'TRAIL_USES']
+    'TRLUSE': ['USE', 'TRAILUSE', 'TRL_USE', 'TRAIL_USE', 'USES', 'TRAILUSES',
+               'TRL_USES', 'TRAIL_USES']
 }
 
 # GIS field names where different values map to a specific set of Places tags
@@ -61,7 +65,7 @@ valuemap = {
         'Trail Class 4: Highly Developed': {'tracktype': 'grade2'},
         'Trail Class 5: Fully Developed': {'tracktype': 'grade1'}
     },
-    'TRLUSES': {
+    'TRLUSE': {
         'Hiker/Pedestrian': {
             'highway': 'path',
             'foot': 'yes'
