@@ -59,35 +59,8 @@ except ImportError:
     utils.info("running with ElementTree")
 
 
-class Options:
-    id = 0  # ID to start counting from for the output file
-    roundingDigits = 7  # Number of decimal places for rounding
-    significantDigits = 9  # Number of decimal places for coordinates
-    addVersion = False  # Add version attributes. This can cause big problems.
-    addTimestamp = False  # Add timestamp attributes. This can cause problems.
-    # Omit upload=false from the completed file to surpress JOSM warnings.
-    noUploadFalse = True
-    translations = {
-        'filterTags': lambda tags: tags,
-        'filterFeature': lambda arcfeature, fieldnames, reproject: arcfeature,
-        'filterFeaturePost': lambda feature, arcfeature, arcgeometry: feature,
-        'preOutputTransform': lambda geometries, features: None
-    }
-    # Input and output file
-    # if no output file given, use the basename of the source but with .osm
-    source = None
-    outputFile = None
-    translationmethod = None
-    # If there are multiple point features within rounding distance of each
-    # other, then arbitrarily ignore all but one
-    mergePoints = False
-    # if adjacent vertices in a feature are within rounding distance of each
-    # other then generalize the line by omitting the 'redundant' vertices
-    mergeWayPoints = False
-
-
-def settranslation(translator):
-    translations = None
+def loadtranslations(translator, defautltranslations):
+    newtranslations = None
     if translator:
         # add dirs to path if necessary
         (root, ext) = os.path.splitext(translator)
@@ -107,7 +80,7 @@ def settranslation(translator):
             translator = os.path.basename(root)
 
         try:
-            translations = __import__(translator, fromlist=[''])
+            newtranslations = __import__(translator, fromlist=[''])
         except ImportError:
             utils.die(
                 u"Could not load translation method '{0:s}'. Translation "
@@ -123,19 +96,20 @@ def settranslation(translator):
                 .format(translator, e))
         utils.info(
             u"Successfully loaded '{0:s}' translation method ('{1:s}')."
-            .format(translator, os.path.realpath(translations.__file__)))
+            .format(translator, os.path.realpath(newtranslations.__file__)))
     else:
         utils.info("Using default translations")
 
-    for k in Options.translations:
-        if hasattr(translations, k) and getattr(translations, k):
-            Options.translations[k] = getattr(translations, k)
+    for k in defautltranslations:
+        if hasattr(newtranslations, k) and getattr(newtranslations, k):
+            newtranslations[k] = getattr(newtranslations, k)
             utils.info("Using user " + k)
         else:
             utils.info("Using default " + k)
+    return newtranslations
 
 
-def parsedata(src):
+def parsedata(src, options):
     if not src:
         return
     shapefield = arcpy.Describe(src).shapeFieldName
@@ -143,40 +117,42 @@ def parsedata(src):
                  [f.name for f in arcpy.ListFields(src) if
                   f.name != shapefield]
     sr = arcpy.SpatialReference(4326)  # WGS84
+    featurefilter = options.translations['filterFeature']
     with arcpy.da.SearchCursor(src, fieldnames, None, sr) as cursor:
         for arcfeature in cursor:
-            parsefeature(Options.translations['filterFeature'](
-                arcfeature, fieldnames, None), fieldnames)
+            feature = featurefilter(arcfeature, fieldnames, None)
+            parsefeature(feature, fieldnames, options)
 
 
-def parsefeature(arcfeature, fieldnames):
+def parsefeature(arcfeature, fieldnames, options):
     if not arcfeature:
         return
     # rely on parsedata() to put the shape at the beginning of the list
     arcgeometry = arcfeature[0]
     if not arcgeometry:
         return
-    geometries = parsegeometry([arcgeometry])
+    geometries = parsegeometry([arcgeometry], options)
 
+    featurefilter = options.translations['filterFeaturePost']
     for geometry in geometries:
         if geometry is None:
             return
 
         feature = Feature()
-        feature.tags = getfeaturetags(arcfeature, fieldnames)
+        feature.tags = getfeaturetags(arcfeature, fieldnames, options)
         feature.geometry = geometry
         geometry.addparent(feature)
 
-        Options.translations['filterFeaturePost'](feature, arcfeature,
-                                                  arcgeometry)
+        featurefilter(feature, arcfeature, arcgeometry)
 
 
-def getfeaturetags(arcfeature, fieldnames):
+def getfeaturetags(arcfeature, fieldnames, options):
     """
     This function builds up a dictionary with the source data attributes and
     passes them to the filterTags function, returning the result.
     """
     tags = {}
+    tagfilter = options.translations['filterTags']
     # skip the first field, as parsedata() put the shape there
     for i in range(len(fieldnames))[1:]:
         # arcpy returns unicode field names and field values (when text)
@@ -188,24 +164,27 @@ def getfeaturetags(arcfeature, fieldnames):
             else:
                 tags[fieldnames[i].upper()] = str(arcfeature[i])
 
-    return Options.translations['filterTags'](tags)
+    return tagfilter(tags)
 
 
-def parsegeometry(arcgeometries):
+def parsegeometry(arcgeometries, options):
     returngeometries = []
     for arcgeometry in arcgeometries:
         geometrytype = arcgeometry.type
         # geometrytype in polygon, polyline, point, multipoint, multipatch,
         # dimension, or annotation
         if geometrytype == 'point':
-            returngeometries.append(parsepoint(arcgeometry.getPart(0)))
+            returngeometries.append(parsepoint(arcgeometry.getPart(0),
+                                    options))
         elif geometrytype == 'polyline' and not arcgeometry.isMultipart:
-            returngeometries.append(parselinestring(arcgeometry.getPart(0)))
+            returngeometries.append(parselinestring(arcgeometry.getPart(0),
+                                    options))
         elif geometrytype == 'polygon' and not arcgeometry.isMultipart:
-            returngeometries.append(parsepolygonpart(arcgeometry.getPart(0)))
+            returngeometries.append(parsepolygonpart(arcgeometry.getPart(0),
+                                                     options))
         elif geometrytype == 'multipoint' or geometrytype == 'polyline' \
                 or geometrytype == 'polygon':
-            returngeometries.extend(parsecollection(arcgeometry))
+            returngeometries.extend(parsecollection(arcgeometry, options))
         else:
             utils.warn("unhandled geometry, type: " + geometrytype)
             returngeometries.append(None)
@@ -213,9 +192,9 @@ def parsegeometry(arcgeometries):
     return returngeometries
 
 
-def parsepoint(arcpoint):
-    x = int(round(arcpoint.X * 10 ** Options.significantDigits))
-    y = int(round(arcpoint.Y * 10 ** Options.significantDigits))
+def parsepoint(arcpoint, options):
+    x = int(round(arcpoint.X * 10 ** options.significantDigits))
+    y = int(round(arcpoint.Y * 10 ** options.significantDigits))
     geometry = Point(x, y)
     return geometry
 
@@ -231,18 +210,18 @@ def parsepoint(arcpoint):
 vertices = {}
 
 
-def parselinestring(arcpointarray):
+def parselinestring(arcpointarray, options):
     geometry = Way()
     global vertices
     for arcPoint in arcpointarray:
         (x, y) = (arcPoint.X, arcPoint.Y)
-        (rx, ry) = (int(round(x * 10 ** Options.roundingDigits)),
-                    int(round(y * 10 ** Options.roundingDigits)))
+        (rx, ry) = (int(round(x * 10 ** options.roundingDigits)),
+                    int(round(y * 10 ** options.roundingDigits)))
         if (rx, ry) in vertices:
             mypoint = vertices[(rx, ry)]
         else:
-            (x, y) = (int(round(x * 10 ** Options.significantDigits)),
-                      int(round(y * 10 ** Options.significantDigits)))
+            (x, y) = (int(round(x * 10 ** options.significantDigits)),
+                      int(round(y * 10 ** options.significantDigits)))
             mypoint = Point(x, y)
             vertices[(rx, ry)] = mypoint
         geometry.points.append(mypoint)
@@ -250,12 +229,9 @@ def parselinestring(arcpointarray):
     return geometry
 
 
-# Special case for polygons with only one part
-def parsepolygonpart(arcpointarray):
+def parsepolygonpart(arcpointarray, options):
     # Outer and inner rings are separated by null points in array
     # the first ring is the outer, and the rest are inner.
-    # TODO: Test
-    start = 0
     outer = []  # a list of points
     inners = []  # a list of lists of points
     current = outer
@@ -266,20 +242,20 @@ def parsepolygonpart(arcpointarray):
             # start a new list and add it to the end of the inners
             current = []
             inners.append(current)
-    geometry = parselinestring(outer)
+    geometry = parselinestring(outer, options)
     if inners:
         exterior = geometry
         geometry = Relation()
         exterior.addparent(geometry)
         geometry.members.append((exterior, "outer"))
         for inner_ring in inners:
-            interior = parselinestring(inner_ring)
+            interior = parselinestring(inner_ring, options)
             interior.addparent(geometry)
             geometry.members.append((interior, "inner"))
     return geometry
 
 
-def parsecollection(arcgeometry):
+def parsecollection(arcgeometry, options):
     """
     :param arcgeometry: is an arcpy.Geometry object (of various compound types)
     :return: a list of geom.Relations
@@ -290,13 +266,15 @@ def parsecollection(arcgeometry):
         # multipolygon (I already got the single part polygon in parsegeometry)
         geometries = []
         for polygon in range(arcgeometry.partCount):
-            geometries.append(parsepolygonpart(arcgeometry.getPart(polygon)))
+            geometries.append(parsepolygonpart(arcgeometry.getPart(polygon),
+                                               options))
         return geometries  # list of Relations
     elif geometrytype == 'polyline':
         # multipolyline (single part polyline handled in parsegeometry)
         geometries = []
         for linestring in range(arcgeometry.partCount):
-            geometries.append(parselinestring(arcgeometry.getPart(linestring)))
+            geometries.append(parselinestring(arcgeometry.getPart(linestring),
+                                              options))
         return geometries  # list of Ways
     else:
         # multipoint
@@ -305,7 +283,7 @@ def parsecollection(arcgeometry):
         # treat as individual nodes with the same tags
         geometries = []
         for pnt in arcgeometry:
-            geometries.append(parsepoint(pnt))
+            geometries.append(parsepoint(pnt, options))
         return geometries  # list of Points
 
 
@@ -322,7 +300,7 @@ def parsecollection(arcgeometry):
 # either the tags should be merged (values for duplicate keys should be
 # concatenated?) or all points should be output, even if the geometry
 # is the same.
-def mergepoints():
+def mergepoints(options):
     """
     From all the nodes we have created, remove those that are duplicate (by
     comparing location up to the rounding digits). Parents of the removed
@@ -338,8 +316,8 @@ def mergepoints():
     pointcoords = {}  # lists of points for each rounded location
     # TODO make faster by keeping separate dict of dup points (key by (rx,ry))
     for i in points:
-        rx = int(round(i.x * 10 ** Options.roundingDigits))
-        ry = int(round(i.y * 10 ** Options.roundingDigits))
+        rx = int(round(i.x * 10 ** options.roundingDigits))
+        ry = int(round(i.y * 10 ** options.roundingDigits))
         if (rx, ry) in pointcoords:
             pointcoords[(rx, ry)].append(i)
         else:
@@ -362,18 +340,18 @@ def mergepoints():
 # or at adjacent locations (i.e. high vertex density) this method finds and
 # collapses close adjacent locations into one vertex.
 # This method can be skipped if we are not interested in generalizing lines
-def mergewaypoints():
+def mergewaypoints(options):
     utils.info("Merging duplicate points in ways")
     ways = [geom for geom in Geometry.geometries if type(geom) == Way]
 
     # Remove duplicate points from ways,
     # a duplicate has the same id as its predecessor
     for way in ways:
-        previous = Options.id
+        previous = options.id
         merged_points = []
 
         for node in way.points:
-            if previous == Options.id or previous != node.id:
+            if previous == options.id or previous != node.id:
                 merged_points.append(node)
                 previous = node.id
 
@@ -381,13 +359,14 @@ def mergewaypoints():
             way.points = merged_points
 
 
-def output_import(path):
+def output_import(options):
     """
     Writes an JOSM file (http://wiki.openstreetmap.org/wiki/JOSM_file_format)
     suitable for use with the
-    :param path:
+    :param options:
     :return:
     """
+    path = options.outputFile
     if not path:
         return
     utils.info("Outputting XML")
@@ -401,7 +380,7 @@ def output_import(path):
     # Open up the output file with the system default buffering
     with open(path, 'w') as f:
 
-        if Options.noUploadFalse:
+        if options.noUploadFalse:
             f.write('<?xml version="1.0"?>\n'
                     '<osm version="0.6" generator="npsarc2osm">\n')
         else:
@@ -411,10 +390,10 @@ def output_import(path):
 
         # Build up a dict for optional settings
         attributes = {}
-        if Options.addVersion:
+        if options.addVersion:
             attributes.update({'version': '1'})
 
-        if Options.addTimestamp:
+        if options.addTimestamp:
             from datetime import datetime
 
             attributes.update({
@@ -422,8 +401,8 @@ def output_import(path):
 
         for node in nodes:
             xmlattrs = {'visible': 'true', 'id': str(node.id),
-                        'lat': str(node.y * 10 ** -Options.significantDigits),
-                        'lon': str(node.x * 10 ** -Options.significantDigits)}
+                        'lat': str(node.y * 10 ** -options.significantDigits),
+                        'lon': str(node.x * 10 ** -options.significantDigits)}
             xmlattrs.update(attributes)
 
             xmlobject = eTree.Element('node', xmlattrs)
@@ -478,13 +457,14 @@ def output_import(path):
         f.write('</osm>')
 
 
-def output_change(path, changeset=-1):
+def output_change(options, changeset=-1):
     """
     Writes an osmChange file (see http://wiki.openstreetmap.org/wiki/OsmChange)
     suitable for use with the  /api/0.6/changeset/#id/upload API
-    :param path:
+    :param options:
     :return:
     """
+    path = options.outputFile
     if not path:
         return
     utils.info("Outputting XML")
@@ -508,7 +488,7 @@ def output_change(path, changeset=-1):
     # changeset and version are required for API 0.6
     attributes.update({'changeset': str(changeset)})
     attributes.update({'version': '1'})
-    if Options.addTimestamp:
+    if options.addTimestamp:
         from datetime import datetime
 
         attributes.update({
@@ -516,8 +496,8 @@ def output_change(path, changeset=-1):
 
     for node in nodes:
         xmlattrs = {'visible': 'true', 'id': str(node.id),
-                    'lat': str(node.y * 10 ** -Options.significantDigits),
-                    'lon': str(node.x * 10 ** -Options.significantDigits)}
+                    'lat': str(node.y * 10 ** -options.significantDigits),
+                    'lon': str(node.x * 10 ** -options.significantDigits)}
         xmlattrs.update(attributes)
 
         xmlobject = eTree.Element('node', xmlattrs)
@@ -576,38 +556,73 @@ def output_change(path, changeset=-1):
     # f.write('</create>\n</osmChange>')
 
 
-if __name__ == '__main__':
-    Options.source = arcpy.GetParameterAsText(0)
-    Options.outputFile = arcpy.GetParameterAsText(1)
-    Options.translationmethod = arcpy.GetParameterAsText(2)
-    # Options.source = r"C:\tmp\places\test.gdb\TRAILS_ln"
-    # Options.outputFile = r"C:\tmp\places\test_TRAILS.osm"
-    # Options.translationmethod = "trails"
-    # Options.source = r"C:\tmp\places\test.gdb\ROADS_ln"
-    # Options.outputFile = r"C:\tmp\places\test_ROADS.osm"
-    # Options.translationmethod = "roads"
-    # Options.source = r"C:\tmp\places\test.gdb\POI_pt"
-    # Options.outputFile = r"C:\tmp\places\test_POI.osm"
-    # Options.translationmethod = "poi"
-    # Options.source = r"C:\tmp\places\test.gdb\multipoints"
-    # Options.outputFile = r"C:\tmp\places\test_generic_mp.osm"
-    # Options.translationmethod = "generic"
-    Options.source = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
-    Options.outputFile = r"C:\tmp\places\test_parking.osm"
-    Options.translationmethod = "parkinglots"
-    Geometry.elementIdCounter = Options.id
+def makeosmfile(options):
+    Geometry.elementIdCounter = options.id
     utils.info(
-        u"Preparing to convert '{0:s}' to '{1:s}'.".format(Options.source,
-                                                           Options.outputFile))
-    settranslation(Options.translationmethod)
-    parsedata(Options.source)
-    if Options.mergePoints:
-        mergepoints()
-    if Options.mergeWayPoints:
-        mergewaypoints()
-    Options.translations['preOutputTransform'](
+        u"Preparing to convert '{0:s}' to '{1:s}'.".format(options.source,
+                                                           options.outputFile))
+    options.translations = loadtranslations(options.translationmethod,
+                                            options.translations)
+    parsedata(options.source, options)
+    if options.mergePoints:
+        mergepoints(options)
+    if options.mergeWayPoints:
+        mergewaypoints(options)
+    options.translations['preOutputTransform'](
         Geometry.geometries, Feature.features)
-    # output_import(Options.outputFile)
-    output_change(Options.outputFile)
+    if options.outputjosm:
+        output_import(options)
+    if options.outputchange:
+        output_change(options)
     utils.info(u"Wrote {0:d} elements to file '{1:s}'"
-               .format(Geometry.elementIdCounter, Options.outputFile))
+               .format(Geometry.elementIdCounter, options.outputFile))
+
+    
+if __name__ == '__main__':
+    class XOptions:
+        id = 0  # ID to start counting from for the output file
+        roundingDigits = 7  # Number of decimal places for rounding
+        significantDigits = 9  # Number of decimal places for coordinates
+        # Omit upload=false from the completed file to surpress JOSM warnings.
+        noUploadFalse = True
+        translations = {
+            'filterTags': lambda tags: tags,
+            'filterFeature':
+                lambda arcfeature, fieldnames, reproject: arcfeature,
+            'filterFeaturePost':
+                lambda feature, arcfeature, arcgeometry: feature,
+            'preOutputTransform': lambda geometries, features: None
+        }
+        # Input and output file
+        # if no output file given, use the basename of the source but with .osm
+        source = None
+        outputFile = None
+        translationmethod = None
+        # If there are multiple point features within rounding distance of each
+        # other, then arbitrarily ignore all but one
+        mergePoints = False
+        # if adjacent vertices in a feature are within rounding distance of one
+        # another then generalize the line by omitting the 'redundant' vertices
+        mergeWayPoints = False
+        outputjosm = False
+        outputchange = True
+
+    XOptions.source = arcpy.GetParameterAsText(0)
+    XOptions.outputFile = arcpy.GetParameterAsText(1)
+    XOptions.translationmethod = arcpy.GetParameterAsText(2)
+    # options.source = r"C:\tmp\places\test.gdb\TRAILS_ln"
+    # options.outputFile = r"C:\tmp\places\test_TRAILS.osm"
+    # options.translationmethod = "trails"
+    # options.source = r"C:\tmp\places\test.gdb\ROADS_ln"
+    # options.outputFile = r"C:\tmp\places\test_ROADS.osm"
+    # options.translationmethod = "roads"
+    # options.source = r"C:\tmp\places\test.gdb\POI_pt"
+    # options.outputFile = r"C:\tmp\places\test_POI.osm"
+    # options.translationmethod = "poi"
+    # options.source = r"C:\tmp\places\test.gdb\multipoints"
+    # options.outputFile = r"C:\tmp\places\test_generic_mp.osm"
+    # options.translationmethod = "generic"
+    XOptions.source = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
+    XOptions.outputFile = r"C:\tmp\places\test_parking.osm"
+    XOptions.translationmethod = "parkinglots"
+    makeosmfile(XOptions)
