@@ -41,8 +41,9 @@ import os
 
 # Setup program usage
 usage = """%prog SRCDATA
+or:    %prog --help
 
-SRCFILE can be any feature class that ArcGIS understands."""
+SRCDATA can be any feature class that ArcGIS understands."""
 
 parser = optparse.OptionParser(usage=usage)
 
@@ -103,11 +104,10 @@ parser.set_defaults(translationMethod=None, outputFile=None,
 (options, args) = parser.parse_args()
 
 if len(args) < 1:
-    parser.print_help()
-    parser.error(u"ERROR: You must specify a source filename.")
+    parser.error(u"You must specify a source feature class.")
 elif len(args) > 1:
-    parser.error(u"ERROR: You have specified too many arguments. " +
-                 u"Only supply the source filename.")
+    parser.error(u"You have specified too many arguments. " +
+                 u"Only supply the source feature class.")
 
 # Input and output file
 options.sourceFile = args[0]
@@ -115,7 +115,7 @@ options.sourceFile = args[0]
 if options.outputFile is not None:
     options.outputFile = os.path.realpath(options.outputFile)
 elif not os.path.exists(options.sourceFile):
-    parser.error(u"ERROR: An output file must be explicitly specified " +
+    parser.error(u"An output file must be explicitly specified " +
                  u"when using a database source.")
 else:
     (base, ext) = os.path.splitext(os.path.basename(options.sourceFile))
@@ -123,7 +123,7 @@ else:
 
 if not options.forceOverwrite and os.path.exists(options.outputFile):
     parser.error(
-        u"ERROR: output file '{0:s}' exists".format(options.outputFile))
+        u"Output file '{0:s}' exists".format(options.outputFile))
 
 
 from arc2osmcore import makeosmfile

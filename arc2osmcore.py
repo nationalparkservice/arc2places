@@ -59,7 +59,7 @@ except ImportError:
 
 
 def loadtranslations(options):
-    translator = options.translationmethod
+    translator = options.translationMethod
     defautltranslations = {
         'filterTags': lambda tags: tags,
         'filterFeature':
@@ -125,9 +125,11 @@ def loadtranslations(options):
     return newtranslations
 
 
-def parsedata(src, options):
-    if not src:
-        return
+def parsedata(options):
+    src = options.sourceFile
+    if not arcpy.Exists(src):
+        utils.die(u"Data source '{0:s}' is not recognized by ArcGIS"
+                  .format(src))
     shapefield = arcpy.Describe(src).shapeFieldName
     fieldnames = ['Shape@'] + \
                  [f.name for f in arcpy.ListFields(src) if
@@ -574,9 +576,9 @@ def makeosmfile(options):
     Geometry.elementIdCounter = options.id
     if options.verbose:
         utils.info(u"Preparing to convert '{0:s}' to '{1:s}'."
-                   .format(options.source, options.outputFile))
+                   .format(options.sourceFile, options.outputFile))
     options.translations = loadtranslations(options)
-    parsedata(options.source, options)
+    parsedata(options)
     if options.mergeNodes:
         mergepoints(options)
     if options.mergeWayNodes:
@@ -594,9 +596,9 @@ def makeosmfile(options):
 
 if __name__ == '__main__':
     class Options:
-        source = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
+        sourceFile = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
         outputFile = r"C:\tmp\places\test_parking.osm"
-        translationmethod = "parkinglots"
+        translationMethod = "parkinglots"
         verbose = True
         debugTags = False
         forceOverwrite = True
