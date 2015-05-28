@@ -59,8 +59,17 @@ except ImportError:
     utils.info("running with ElementTree")
 
 
-def loadtranslations(translator, defautltranslations):
+def loadtranslations(translator):
+    defautltranslations = {
+        'filterTags': lambda tags: tags,
+        'filterFeature':
+            lambda arcfeature, fieldnames, reproject: arcfeature,
+        'filterFeaturePost':
+            lambda feature, arcfeature, arcgeometry: feature,
+        'preOutputTransform': lambda geometries, features: None
+    }
     newtranslations = None
+
     if translator:
         # add dirs to path if necessary
         (root, ext) = os.path.splitext(translator)
@@ -308,11 +317,13 @@ def mergepoints(options):
     version of the node)
     :return: Nothing, the list of nodes is in the global state
     """
-    utils.info("Merging points")
+    if options.verbose:
+        utils.info("Merging points")
     points = [geom for geom in Geometry.geometries if type(geom) == Point]
 
     # Make list of Points at each location
-    utils.info("Merging points - Making lists")
+    if options.verbose:
+        utils.info("Merging points - Making lists")
     pointcoords = {}  # lists of points for each rounded location
     # TODO make faster by keeping separate dict of dup points (key by (rx,ry))
     for i in points:
@@ -341,7 +352,8 @@ def mergepoints(options):
 # collapses close adjacent locations into one vertex.
 # This method can be skipped if we are not interested in generalizing lines
 def mergewaypoints(options):
-    utils.info("Merging duplicate points in ways")
+    if options.verbose:
+        utils.info("Merging duplicate points in ways")
     ways = [geom for geom in Geometry.geometries if type(geom) == Way]
 
     # Remove duplicate points from ways,
@@ -369,7 +381,8 @@ def output_import(options):
     path = options.outputFile
     if not path:
         return
-    utils.info("Outputting XML")
+    if options.verbose:
+        utils.info("Outputting XML")
     # First, set up a few data structures for optimization purposes
     nodes = [geom for geom in Geometry.geometries if type(geom) == Point]
     ways = [geom for geom in Geometry.geometries if type(geom) == Way]
@@ -380,25 +393,16 @@ def output_import(options):
     # Open up the output file with the system default buffering
     with open(path, 'w') as f:
 
-        if options.noUploadFalse:
-            f.write('<?xml version="1.0"?>\n'
-                    '<osm version="0.6" generator="npsarc2osm">\n')
-        else:
-            f.write('<?xml version="1.0"?>\n'
-                    '<osm version="0.6" upload="false"'
-                    'generator="npsarc2osm">\n')
+        f.write('<?xml version="1.0"?>\n'
+                '<osm version="0.6" generator="npsarc2osm">\n')
 
         # Build up a dict for optional settings
         attributes = {}
-        if options.addVersion:
-            attributes.update({'version': '1'})
-
         if options.addTimestamp:
             from datetime import datetime
 
             attributes.update({
                 'timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')})
-
         for node in nodes:
             xmlattrs = {'visible': 'true', 'id': str(node.id),
                         'lat': str(node.y * 10 ** -options.significantDigits),
@@ -467,7 +471,8 @@ def output_change(options, changeset=-1):
     path = options.outputFile
     if not path:
         return
-    utils.info("Outputting XML")
+    if options.verbose:
+        utils.info("Outputting XML")
     # First, set up a few data structures for optimization purposes
     nodes = [geom for geom in Geometry.geometries if type(geom) == Point]
     ways = [geom for geom in Geometry.geometries if type(geom) == Way]
@@ -558,71 +563,41 @@ def output_change(options, changeset=-1):
 
 def makeosmfile(options):
     Geometry.elementIdCounter = options.id
-    utils.info(
-        u"Preparing to convert '{0:s}' to '{1:s}'.".format(options.source,
-                                                           options.outputFile))
-    options.translations = loadtranslations(options.translationmethod,
-                                            options.translations)
+    if options.verbose:
+        utils.info(u"Preparing to convert '{0:s}' to '{1:s}'."
+                   .format(options.source, options.outputFile))
+    options.translations = loadtranslations(options.translationmethod)
     parsedata(options.source, options)
-    if options.mergePoints:
+    if options.mergeNodes:
         mergepoints(options)
-    if options.mergeWayPoints:
+    if options.mergeWayNodes:
         mergewaypoints(options)
     options.translations['preOutputTransform'](
         Geometry.geometries, Feature.features)
-    if options.outputjosm:
-        output_import(options)
-    if options.outputchange:
+    if options.outputChange:
         output_change(options)
-    utils.info(u"Wrote {0:d} elements to file '{1:s}'"
-               .format(Geometry.elementIdCounter, options.outputFile))
+    else:
+        output_import(options)
+    if options.verbose:
+        utils.info(u"Wrote {0:d} elements to file '{1:s}'"
+                   .format(Geometry.elementIdCounter, options.outputFile))
 
-    
+
 if __name__ == '__main__':
-    class XOptions:
-        id = 0  # ID to start counting from for the output file
-        roundingDigits = 7  # Number of decimal places for rounding
-        significantDigits = 9  # Number of decimal places for coordinates
-        # Omit upload=false from the completed file to surpress JOSM warnings.
-        noUploadFalse = True
-        translations = {
-            'filterTags': lambda tags: tags,
-            'filterFeature':
-                lambda arcfeature, fieldnames, reproject: arcfeature,
-            'filterFeaturePost':
-                lambda feature, arcfeature, arcgeometry: feature,
-            'preOutputTransform': lambda geometries, features: None
-        }
-        # Input and output file
-        # if no output file given, use the basename of the source but with .osm
-        source = None
-        outputFile = None
-        translationmethod = None
-        # If there are multiple point features within rounding distance of each
-        # other, then arbitrarily ignore all but one
-        mergePoints = False
-        # if adjacent vertices in a feature are within rounding distance of one
-        # another then generalize the line by omitting the 'redundant' vertices
-        mergeWayPoints = False
-        outputjosm = False
-        outputchange = True
+    class Options:
+        source = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
+        outputFile = r"C:\tmp\places\test_parking.osm"
+        translationmethod = "parkinglots"
+        verbose = True
+        debugTags = False
+        forceOverwrite = True
+        mergeNodes = False
+        mergeWayNodes = False
+        outputChange = True
+        addTimestamp = False
+        roundingDigits = 7
+        significantDigits = 9
+        id = 0
+        translations = None
 
-    XOptions.source = arcpy.GetParameterAsText(0)
-    XOptions.outputFile = arcpy.GetParameterAsText(1)
-    XOptions.translationmethod = arcpy.GetParameterAsText(2)
-    # options.source = r"C:\tmp\places\test.gdb\TRAILS_ln"
-    # options.outputFile = r"C:\tmp\places\test_TRAILS.osm"
-    # options.translationmethod = "trails"
-    # options.source = r"C:\tmp\places\test.gdb\ROADS_ln"
-    # options.outputFile = r"C:\tmp\places\test_ROADS.osm"
-    # options.translationmethod = "roads"
-    # options.source = r"C:\tmp\places\test.gdb\POI_pt"
-    # options.outputFile = r"C:\tmp\places\test_POI.osm"
-    # options.translationmethod = "poi"
-    # options.source = r"C:\tmp\places\test.gdb\multipoints"
-    # options.outputFile = r"C:\tmp\places\test_generic_mp.osm"
-    # options.translationmethod = "generic"
-    XOptions.source = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
-    XOptions.outputFile = r"C:\tmp\places\test_parking.osm"
-    XOptions.translationmethod = "parkinglots"
-    makeosmfile(XOptions)
+    makeosmfile(Options)
