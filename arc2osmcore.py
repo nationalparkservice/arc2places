@@ -55,11 +55,11 @@ try:
     utils.info("running with lxml.etree")
 except ImportError:
     import xml.etree.ElementTree as eTree
-
     utils.info("running with ElementTree")
 
 
-def loadtranslations(translator):
+def loadtranslations(options):
+    translator = options.translationmethod
     defautltranslations = {
         'filterTags': lambda tags: tags,
         'filterFeature':
@@ -68,7 +68,8 @@ def loadtranslations(translator):
             lambda feature, arcfeature, arcgeometry: feature,
         'preOutputTransform': lambda geometries, features: None
     }
-    newtranslations = None
+    newtranslations = {}
+    translationmodule = None
 
     if translator:
         # add dirs to path if necessary
@@ -89,7 +90,7 @@ def loadtranslations(translator):
             translator = os.path.basename(root)
 
         try:
-            newtranslations = __import__(translator, fromlist=[''])
+            translationmodule = __import__(translator, fromlist=[''])
         except ImportError:
             utils.die(
                 u"Could not load translation method '{0:s}'. Translation "
@@ -103,18 +104,24 @@ def loadtranslations(translator):
                 u"Syntax error in '{0:s}'."
                 "Translation script is malformed:\n{1:s}"
                 .format(translator, e))
-        utils.info(
-            u"Successfully loaded '{0:s}' translation method ('{1:s}')."
-            .format(translator, os.path.realpath(newtranslations.__file__)))
+        if options.verbose and translationmodule:
+            utils.info(
+                u"Successfully loaded '{0:s}' translation method ('{1:s}')."
+                .format(translator,
+                        os.path.realpath(translationmodule.__file__)))
     else:
-        utils.info("Using default translations")
+        if options.verbose:
+            utils.info("Using default translations")
 
     for k in defautltranslations:
-        if hasattr(newtranslations, k) and getattr(newtranslations, k):
-            newtranslations[k] = getattr(newtranslations, k)
-            utils.info("Using user " + k)
+        if hasattr(translationmodule, k) and getattr(translationmodule, k):
+            newtranslations[k] = getattr(translationmodule, k)
+            if options.verbose:
+                utils.info("Using user " + k)
         else:
-            utils.info("Using default " + k)
+            newtranslations[k] = defautltranslations[k]
+            if options.verbose and not translator:
+                utils.info("Using default " + k)
     return newtranslations
 
 
@@ -172,8 +179,10 @@ def getfeaturetags(arcfeature, fieldnames, options):
                 tags[fieldnames[i].upper()] = unicode(arcfeature[i])
             else:
                 tags[fieldnames[i].upper()] = str(arcfeature[i])
-
-    return tagfilter(tags)
+    newtags = tagfilter(tags)
+    if options.debugTags:
+        utils.info("Tags: " + str(newtags))
+    return newtags
 
 
 def parsegeometry(arcgeometries, options):
@@ -566,7 +575,7 @@ def makeosmfile(options):
     if options.verbose:
         utils.info(u"Preparing to convert '{0:s}' to '{1:s}'."
                    .format(options.source, options.outputFile))
-    options.translations = loadtranslations(options.translationmethod)
+    options.translations = loadtranslations(options)
     parsedata(options.source, options)
     if options.mergeNodes:
         mergepoints(options)
@@ -593,7 +602,7 @@ if __name__ == '__main__':
         forceOverwrite = True
         mergeNodes = False
         mergeWayNodes = False
-        outputChange = True
+        outputChange = False
         addTimestamp = False
         roundingDigits = 7
         significantDigits = 9
