@@ -382,102 +382,14 @@ def mergewaypoints(options):
             way.points = merged_points
 
 
-def output_import(options):
+def output_file(options):
     """
     Writes an JOSM file (http://wiki.openstreetmap.org/wiki/JOSM_file_format)
-    suitable for use with the
+    suitable for use uploading with JOSM or an osmChange file
+    (see http://wiki.openstreetmap.org/wiki/OsmChange)
+    suitable for use with the /api/0.6/changeset/#id/upload API
     :param options:
-    :return:
-    """
-    path = options.outputFile
-    if not path:
-        return
-    if options.verbose:
-        utils.info("Outputting XML")
-    # First, set up a few data structures for optimization purposes
-    nodes = [geom for geom in Geometry.geometries if type(geom) == Point]
-    ways = [geom for geom in Geometry.geometries if type(geom) == Way]
-    relations = [geom for geom in Geometry.geometries if
-                 type(geom) == Relation]
-    featuresmap = {feature.geometry: feature for feature in Feature.features}
-
-    # Open up the output file with the system default buffering
-    with open(path, 'w') as f:
-
-        f.write('<?xml version="1.0"?>\n'
-                '<osm version="0.6" generator="npsarc2osm">\n')
-
-        # Build up a dict for optional settings
-        attributes = {}
-        if options.addTimestamp:
-            from datetime import datetime
-
-            attributes.update({
-                'timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')})
-        for node in nodes:
-            xmlattrs = {'visible': 'true', 'id': str(node.id),
-                        'lat': str(node.y * 10 ** -options.significantDigits),
-                        'lon': str(node.x * 10 ** -options.significantDigits)}
-            xmlattrs.update(attributes)
-
-            xmlobject = eTree.Element('node', xmlattrs)
-
-            if node in featuresmap:
-                for (key, value) in featuresmap[node].tags.items():
-                    tag = eTree.Element('tag', {'k': key, 'v': value})
-                    xmlobject.append(tag)
-
-            f.write(eTree.tostring(xmlobject))
-            f.write('\n')
-
-        for way in ways:
-            xmlattrs = {'visible': 'true', 'id': str(way.id)}
-            xmlattrs.update(attributes)
-
-            xmlobject = eTree.Element('way', xmlattrs)
-
-            for node in way.points:
-                nd = eTree.Element('nd', {'ref': str(node.id)})
-                xmlobject.append(nd)
-            if way in featuresmap:
-                for (key, value) in featuresmap[way].tags.items():
-                    tag = eTree.Element('tag', {'k': key, 'v': value})
-                    xmlobject.append(tag)
-
-            f.write(eTree.tostring(xmlobject))
-            f.write('\n')
-
-        for relation in relations:
-            xmlattrs = {'visible': 'true', 'id': str(relation.id)}
-            xmlattrs.update(attributes)
-
-            xmlobject = eTree.Element('relation', xmlattrs)
-
-            for (member, role) in relation.members:
-                member = eTree.Element('member',
-                                       {'type': 'way', 'ref': str(member.id),
-                                        'role': role})
-                xmlobject.append(member)
-
-            tag = eTree.Element('tag', {'k': 'type', 'v': 'multipolygon'})
-            xmlobject.append(tag)
-            if relation in featuresmap:
-                for (key, value) in featuresmap[relation].tags.items():
-                    tag = eTree.Element('tag', {'k': key, 'v': value})
-                    xmlobject.append(tag)
-
-            f.write(eTree.tostring(xmlobject))
-            f.write('\n')
-
-        f.write('</osm>')
-
-
-def output_change(options, changeset=-1):
-    """
-    Writes an osmChange file (see http://wiki.openstreetmap.org/wiki/OsmChange)
-    suitable for use with the  /api/0.6/changeset/#id/upload API
-    :param options:
-    :return:
+    :return: none
     """
     path = options.outputFile
     if not path:
@@ -494,19 +406,24 @@ def output_change(options, changeset=-1):
     # Open up the output file with the system default buffering
     # with open(path, 'w') as f:
 
-    rootnode = eTree.Element('osmChange',
-                             {"version": "0.6", "generator": "npsarc2osm"})
-    createnode = eTree.Element('create')
-    rootnode.append(createnode)
+    if options.outputChange:
+        rootnode = eTree.Element('osmChange',
+                                 {"version": "0.6", "generator": "npsarc2osm"})
+        elementroot = eTree.Element('create')
+        rootnode.append(elementroot)
+    else:
+        rootnode = eTree.Element('osm',
+                                 {"version": "0.6", "generator": "npsarc2osm"})
+        elementroot = rootnode
 
     # Build up a dict for optional settings
     attributes = {}
     # changeset and version are required for API 0.6
-    attributes.update({'changeset': str(changeset)})
-    attributes.update({'version': '1'})
+    if options.outputChange:
+        attributes.update({'changeset': str(options.changesetId),
+                           'version': '1'})
     if options.addTimestamp:
         from datetime import datetime
-
         attributes.update({
             'timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')})
 
@@ -523,9 +440,7 @@ def output_change(options, changeset=-1):
                 tag = eTree.Element('tag', {'k': key, 'v': value})
                 xmlobject.append(tag)
 
-        createnode.append(xmlobject)
-        # f.write(eTree.tostring(xmlobject))
-        # f.write('\n')
+        elementroot.append(xmlobject)
 
     for way in ways:
         xmlattrs = {'visible': 'true', 'id': str(way.id)}
@@ -541,9 +456,7 @@ def output_change(options, changeset=-1):
                 tag = eTree.Element('tag', {'k': key, 'v': value})
                 xmlobject.append(tag)
 
-        createnode.append(xmlobject)
-        # f.write(eTree.tostring(xmlobject))
-        # f.write('\n')
+        elementroot.append(xmlobject)
 
     for relation in relations:
         xmlattrs = {'visible': 'true', 'id': str(relation.id)}
@@ -564,12 +477,9 @@ def output_change(options, changeset=-1):
                 tag = eTree.Element('tag', {'k': key, 'v': value})
                 xmlobject.append(tag)
 
-        createnode.append(xmlobject)
-        # f.write(eTree.tostring(xmlobject))
-        # f.write('\n')
+        elementroot.append(xmlobject)
     xml = eTree.ElementTree(rootnode)
     xml.write(path, encoding='utf-8', xml_declaration=True)
-    # f.write('</create>\n</osmChange>')
 
 
 def makeosmfile(options):
@@ -585,10 +495,7 @@ def makeosmfile(options):
         mergewaypoints(options)
     options.translations['preOutputTransform'](
         Geometry.geometries, Feature.features)
-    if options.outputChange:
-        output_change(options)
-    else:
-        output_import(options)
+    output_file(options)
     if options.verbose:
         utils.info(u"Wrote {0:d} elements to file '{1:s}'"
                    .format(Geometry.elementIdCounter, options.outputFile))
@@ -609,6 +516,7 @@ if __name__ == '__main__':
         roundingDigits = 7
         significantDigits = 9
         id = 0
+        changesetId = -1
         translations = None
 
     makeosmfile(Options)

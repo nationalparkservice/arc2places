@@ -95,6 +95,11 @@ parser.add_option("--id", dest="id", type=int,
                   help="ID to start counting from for the output file. " +
                        "Defaults to 0.", default=0)
 
+parser.add_option("--changeset-id", dest="changesetId", type=int,
+                  help="Sentinal ID number for the changeset.  Only used " +
+                       "when an osmChange file is being created. " +
+                       "Defaults to -1.", default=-1)
+
 parser.set_defaults(translationMethod=None, outputFile=None,
                     verbose=False, debugTags=False, forceOverwrite=False,
                     mergeNodes=False, mergeWayNodes=False, outputChange=False,
