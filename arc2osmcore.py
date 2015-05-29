@@ -44,19 +44,6 @@ import arcpy
 import utils
 from geom import *
 
-'''
-Since we will be running under ArcGIS 10.x+ we will always have python 2.5+
-and xml.etree.ElementTree. However, lxml (See http://lxml.de/tutorial.html)
-should be the fastest method
-'''
-try:
-    from lxml import eTree
-
-    utils.info("running with lxml.etree")
-except ImportError:
-    import xml.etree.ElementTree as eTree
-    utils.info("running with ElementTree")
-
 
 def loadtranslations(options):
     translator = options.translationMethod
@@ -394,8 +381,20 @@ def output_file(options):
     path = options.outputFile
     if not path:
         return
-    if options.verbose:
-        utils.info("Outputting XML")
+    '''
+    Since we will be running under ArcGIS 10.x+ we will always have python 2.5+
+    and xml.etree.ElementTree. However, lxml (See http://lxml.de/tutorial.html)
+    should be the fastest method
+    '''
+    try:
+        from lxml import eTree
+        if options.verbose:
+            utils.info("Outputting XML with lxml.etree")
+    except ImportError:
+        import xml.etree.ElementTree as eTree
+        if options.verbose:
+            utils.info("Outputting XML with ElementTree")
+
     # First, set up a few data structures for optimization purposes
     nodes = [geom for geom in Geometry.geometries if type(geom) == Point]
     ways = [geom for geom in Geometry.geometries if type(geom) == Way]
