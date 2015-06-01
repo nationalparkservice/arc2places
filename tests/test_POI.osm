@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<osmChange generator="npsarc2osm" version="0.6">
+  <create>
+    <node changeset="-1" id="-1" lat="61.205468084" lon="-149.919254908" version="1" visible="true">
+      <tag k="nps:create_date" v="2015-05-27 09:57:46.812001"/>
+      <tag k="nps:source_id" v="{8E8EE88F-0B30-4270-9E1C-2FFE14DF769D}"/>
+      <tag k="nps:feature_id" v="{DFDED70C-3B25-43B2-BB56-D81D6A0A731B}"/>
+      <tag k="amenity" v="ranger_station"/>
+      <tag k="nps:create_user" v="Regan"/>
+      <tag k="name" v="show1"/>
+    </node>
+    <node changeset="-1" id="-2" lat="61.204957569" lon="-149.915337262" version="1" visible="true">
+      <tag k="amenity" v="fuel"/>
+      <tag k="nps:source_id" v="{B63BD9AB-C621-421A-A03E-5C961A242100}"/>
+      <tag k="nps:feature_id" v="{37EBCB2D-A437-4C4A-81B5-3298AF1108E0}"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:is_extant" v="Yes"/>
+      <tag k="nps:create_user" v="Regan"/>
+      <tag k="nps:map_method" v="Tablet-Digitized"/>
+      <tag k="nps:create_date" v="2015-05-27 09:57:46.812001"/>
+      <tag k="nps:region_code" v="AKR"/>
+      <tag k="nps:unit_code" v="AKRO"/>
+      <tag k="name" v="show4"/>
+    </node>
+    <node changeset="-1" id="-3" lat="61.204440864" lon="-149.915804384" version="1" visible="true">
+      <tag k="amenity" v="fuel"/>
+      <tag k="nps:create_date" v="2015-05-27 09:57:46.812001"/>
+      <tag k="nps:feature_id" v="{4D3B2E89-A53C-445C-A2AA-A8FA25BFEBFC}"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:create_user" v="Regan"/>
+      <tag k="nps:xy_error" v="&gt; 10 m"/>
+      <tag k="source" v="Image"/>
+      <tag k="nps:source_id" v="{D12572C8-160C-44D9-839C-75EF1CD90772}"/>
+      <tag k="nps:unit_code" v="AKRO"/>
+      <tag k="name" v="show3"/>
+    </node>
+    <node changeset="-1" id="-4" lat="61.204954309" lon="-149.919438763" version="1" visible="true">
+      <tag k="nps:create_date" v="2015-05-27 09:57:46.812001"/>
+      <tag k="nps:source_id" v="{6C26A7F9-7D23-4DE3-82E2-4DCBB2B20D6F}"/>
+      <tag k="nps:feature_id" v="{897A0E06-447A-4A8D-8D7E-D4DF936D59E5}"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="amenity" v="ranger_station"/>
+      <tag k="nps:create_user" v="Regan"/>
+      <tag k="name" v="show2"/>
+    </node>
+  </create>
+</osmChange>

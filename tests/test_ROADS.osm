@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<osmChange generator="npsarc2osm" version="0.6">
+  <create>
+    <node changeset="-1" id="-2" lat="61.205435354" lon="-149.921592517" version="1" visible="true"/>
+    <node changeset="-1" id="-3" lat="61.206420031" lon="-149.919769002" version="1" visible="true"/>
+    <node changeset="-1" id="-4" lat="61.206676579" lon="-149.918133238" version="1" visible="true"/>
+    <node changeset="-1" id="-6" lat="61.207346207" lon="-149.919791443" version="1" visible="true"/>
+    <node changeset="-1" id="-7" lat="61.207185633" lon="-149.922004177" version="1" visible="true"/>
+    <node changeset="-1" id="-8" lat="61.206095264" lon="-149.92292199" version="1" visible="true"/>
+    <node changeset="-1" id="-10" lat="61.205141471" lon="-149.920428208" version="1" visible="true"/>
+    <node changeset="-1" id="-11" lat="61.205825306" lon="-149.918737611" version="1" visible="true"/>
+    <way changeset="-1" id="-1" version="1" visible="true">
+      <nd ref="-2"/>
+      <nd ref="-3"/>
+      <nd ref="-4"/>
+      <tag k="nps:road_label" v="drive me"/>
+      <tag k="nps:road_alt_names" v="regan's road"/>
+      <tag k="nps:is_extant" v="Yes"/>
+      <tag k="surface" v="asphalt"/>
+      <tag k="nps:road_maintainer" v="NPS"/>
+      <tag k="nps:region_code" v="AKR"/>
+      <tag k="nps:unit_code" v="AKRO"/>
+      <tag k="nps:source_id" v="{04599ADE-9BE2-46F2-84A2-F5FEBE490AD0}"/>
+      <tag k="nps:road_class" v="Secondary"/>
+      <tag k="name" v="road1"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:map_method" v="Differential GPS"/>
+      <tag k="nps:road_status" v="Existing"/>
+      <tag k="access" v="yes"/>
+      <tag k="oneway" v="no"/>
+      <tag k="nps:route_number" v="1"/>
+      <tag k="highway" v="secondary"/>
+    </way>
+    <way changeset="-1" id="-5" version="1" visible="true">
+      <nd ref="-4"/>
+      <nd ref="-6"/>
+      <nd ref="-7"/>
+      <nd ref="-8"/>
+      <nd ref="-2"/>
+      <tag k="nps:source_id" v="{93CB94D6-FFD1-49DD-9231-E035B067B045}"/>
+      <tag k="nps:road_class" v="Primary"/>
+      <tag k="name" v="road2"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:road_maintainer" v="NPS"/>
+      <tag k="proposed" v="Primary"/>
+      <tag k="nps:is_extant" v="No"/>
+      <tag k="surface" v="cobblestone"/>
+      <tag k="nps:road_status" v="Proposed"/>
+      <tag k="access" v="no"/>
+      <tag k="oneway" v="yes"/>
+      <tag k="nps:route_number" v="2"/>
+      <tag k="highway" v="proposed"/>
+    </way>
+    <way changeset="-1" id="-9" version="1" visible="true">
+      <nd ref="-2"/>
+      <nd ref="-10"/>
+      <nd ref="-11"/>
+      <nd ref="-4"/>
+      <tag k="nps:source_id" v="{7FD6BFD5-11A4-430A-9F2A-D34A42AC31CC}"/>
+      <tag k="nps:road_class" v="Private"/>
+      <tag k="name" v="road3"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:road_maintainer" v="NPS"/>
+      <tag k="nps:map_method" v="COGO"/>
+      <tag k="surface" v="paved"/>
+      <tag k="nps:road_status" v="Existing"/>
+      <tag k="access" v="yes"/>
+      <tag k="nps:xy_error" v="&gt; 5 m and &lt;= 10 m"/>
+      <tag k="oneway" v="-1"/>
+      <tag k="nps:route_number" v="3"/>
+      <tag k="highway" v="road"/>
+    </way>
+    <way changeset="-1" id="-12" version="1" visible="true">
+      <nd ref="-3"/>
+      <nd ref="-11"/>
+      <tag k="nps:source_id" v="{549F9377-B1FF-4CCE-BCCB-B86A41633EFC}"/>
+      <tag k="nps:road_class" v="Private"/>
+      <tag k="name" v="road4"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:road_maintainer" v="NPS"/>
+      <tag k="proposed" v="Private"/>
+      <tag k="nps:is_extant" v="Other"/>
+      <tag k="surface" v="sand"/>
+      <tag k="nps:road_status" v="Planned"/>
+      <tag k="access" v="no"/>
+      <tag k="oneway" v="no"/>
+      <tag k="highway" v="proposed"/>
+    </way>
+  </create>
+</osmChange>

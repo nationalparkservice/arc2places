@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<osmChange generator="npsarc2osm" version="0.6">
+  <create>
+    <node changeset="-1" id="-2" lat="61.204556961" lon="-149.918594184" version="1" visible="true"/>
+    <node changeset="-1" id="-3" lat="61.205669618" lon="-149.918050518" version="1" visible="true"/>
+    <node changeset="-1" id="-4" lat="61.205758699" lon="-149.916860568" version="1" visible="true"/>
+    <node changeset="-1" id="-6" lat="61.204202679" lon="-149.917296282" version="1" visible="true"/>
+    <node changeset="-1" id="-7" lat="61.204727864" lon="-149.916733821" version="1" visible="true"/>
+    <node changeset="-1" id="-9" lat="61.205314447" lon="-149.915574203" version="1" visible="true"/>
+    <node changeset="-1" id="-10" lat="61.204816895" lon="-149.914011897" version="1" visible="true"/>
+    <node changeset="-1" id="-11" lat="61.203982261" lon="-149.915179858" version="1" visible="true"/>
+    <node changeset="-1" id="-13" lat="61.206378368" lon="-149.916264441" version="1" visible="true"/>
+    <node changeset="-1" id="-14" lat="61.20617146" lon="-149.916320742" version="1" visible="true"/>
+    <node changeset="-1" id="-15" lat="61.206218893" lon="-149.91583949" version="1" visible="true"/>
+    <node changeset="-1" id="-16" lat="61.206320015" lon="-149.915410727" version="1" visible="true"/>
+    <node changeset="-1" id="-17" lat="61.206058904" lon="-149.915236428" version="1" visible="true"/>
+    <node changeset="-1" id="-18" lat="61.205883819" lon="-149.915407429" version="1" visible="true"/>
+    <node changeset="-1" id="-19" lat="61.205883154" lon="-149.914902669" version="1" visible="true"/>
+    <node changeset="-1" id="-20" lat="61.205971047" lon="-149.914346922" version="1" visible="true"/>
+    <node changeset="-1" id="-21" lat="61.205811856" lon="-149.913931847" version="1" visible="true"/>
+    <node changeset="-1" id="-23" lat="61.206986907" lon="-149.918255138" version="1" visible="true"/>
+    <node changeset="-1" id="-24" lat="61.206945567" lon="-149.917656598" version="1" visible="true"/>
+    <node changeset="-1" id="-25" lat="61.206668767" lon="-149.917593185" version="1" visible="true"/>
+    <node changeset="-1" id="-26" lat="61.206609478" lon="-149.91686827" version="1" visible="true"/>
+    <node changeset="-1" id="-27" lat="61.206427344" lon="-149.916960979" version="1" visible="true"/>
+    <node changeset="-1" id="-28" lat="61.206476374" lon="-149.916212243" version="1" visible="true"/>
+    <node changeset="-1" id="-30" lat="61.206035975" lon="-149.917031088" version="1" visible="true"/>
+    <node changeset="-1" id="-31" lat="61.206027324" lon="-149.916576849" version="1" visible="true"/>
+    <node changeset="-1" id="-32" lat="61.205822521" lon="-149.916543786" version="1" visible="true"/>
+    <node changeset="-1" id="-33" lat="61.205916306" lon="-149.916026883" version="1" visible="true"/>
+    <node changeset="-1" id="-34" lat="61.205636598" lon="-149.915864872" version="1" visible="true"/>
+    <node changeset="-1" id="-35" lat="61.205706117" lon="-149.915489674" version="1" visible="true"/>
+    <node changeset="-1" id="-36" lat="61.205466804" lon="-149.915411563" version="1" visible="true"/>
+    <node changeset="-1" id="-38" lat="61.206475227" lon="-149.918103117" version="1" visible="true"/>
+    <node changeset="-1" id="-39" lat="61.206378091" lon="-149.917541456" version="1" visible="true"/>
+    <node changeset="-1" id="-40" lat="61.206206926" lon="-149.917523861" version="1" visible="true"/>
+    <node changeset="-1" id="-41" lat="61.206201546" lon="-149.917019703" version="1" visible="true"/>
+    <node changeset="-1" id="-43" lat="61.205488488" lon="-149.914941627" version="1" visible="true"/>
+    <node changeset="-1" id="-44" lat="61.205284947" lon="-149.914870722" version="1" visible="true"/>
+    <node changeset="-1" id="-45" lat="61.205258564" lon="-149.914458368" version="1" visible="true"/>
+    <node changeset="-1" id="-46" lat="61.205094224" lon="-149.914350824" version="1" visible="true"/>
+    <way changeset="-1" id="-1" version="1" visible="true">
+      <nd ref="-2"/>
+      <nd ref="-3"/>
+      <nd ref="-4"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="horse" v="no"/>
+      <tag k="nps:source_id" v="{FE5DC3F4-0A8D-447D-A5F1-CF65569C6593}"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="trail1"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:create_user" v="nps\resarwas"/>
+      <tag k="atv" v="yes"/>
+      <tag k="nps:trail_type" v="Standard/Terra Trail"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </way>
+    <way changeset="-1" id="-5" version="1" visible="true">
+      <nd ref="-2"/>
+      <nd ref="-6"/>
+      <nd ref="-7"/>
+      <tag k="nps:trail_status" v="Proposed"/>
+      <tag k="horse" v="yes"/>
+      <tag k="nps:source_id" v="{2020B5B7-FB92-423B-9F9F-C796B49EAC9F}"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="trail2"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:create_user" v="nps\resarwas"/>
+      <tag k="atv" v="no"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="tracktype" v="grade5"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </way>
+    <way changeset="-1" id="-8" version="1" visible="true">
+      <nd ref="-7"/>
+      <nd ref="-9"/>
+      <nd ref="-10"/>
+      <nd ref="-11"/>
+      <nd ref="-7"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="horse" v="no"/>
+      <tag k="nps:source_id" v="{51DBA0B5-7137-4444-B6D8-660709FBF24A}"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="sidewalk1"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="canoe" v="yes"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:create_user" v="nps\resarwas"/>
+      <tag k="atv" v="no"/>
+      <tag k="footway" v="sidewalk"/>
+      <tag k="nps:trail_type" v="Water Trail"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Sidewalk Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </way>
+    <way changeset="-1" id="-12" version="1" visible="true">
+      <nd ref="-13"/>
+      <nd ref="-14"/>
+      <nd ref="-15"/>
+      <nd ref="-16"/>
+      <nd ref="-17"/>
+      <nd ref="-18"/>
+      <nd ref="-19"/>
+      <nd ref="-20"/>
+      <nd ref="-21"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="horse" v="no"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="multi -trail"/>
+      <tag k="atv" v="no"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </way>
+    <way changeset="-1" id="-22" version="1" visible="true">
+      <nd ref="-23"/>
+      <nd ref="-24"/>
+      <nd ref="-25"/>
+      <nd ref="-26"/>
+      <nd ref="-27"/>
+      <nd ref="-28"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="horse" v="no"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="multi -trail"/>
+      <tag k="atv" v="no"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </way>
+    <way changeset="-1" id="-29" version="1" visible="true">
+      <nd ref="-30"/>
+      <nd ref="-31"/>
+      <nd ref="-32"/>
+      <nd ref="-33"/>
+      <nd ref="-34"/>
+      <nd ref="-35"/>
+      <nd ref="-36"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="horse" v="no"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="segmented"/>
+      <tag k="atv" v="no"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </way>
+    <way changeset="-1" id="-37" version="1" visible="true">
+      <nd ref="-38"/>
+      <nd ref="-39"/>
+      <nd ref="-40"/>
+      <nd ref="-41"/>
+      <nd ref="-30"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="horse" v="no"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="segmented"/>
+      <tag k="atv" v="no"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </way>
+    <way changeset="-1" id="-42" version="1" visible="true">
+      <nd ref="-36"/>
+      <nd ref="-43"/>
+      <nd ref="-44"/>
+      <nd ref="-45"/>
+      <nd ref="-46"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="horse" v="no"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="segmented"/>
+      <tag k="atv" v="no"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </way>
+  </create>
+</osmChange>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<osmChange generator="npsarc2osm" version="0.6">
+  <create>
+    <node changeset="-1" id="-1" lat="61.20730073" lon="-149.923600032" version="1" visible="true">
+      <tag k="nps:source_id" v="{882C5D05-FCEB-48C2-AC46-80948E82F06F}"/>
+      <tag k="name" v="foursome"/>
+    </node>
+    <node changeset="-1" id="-2" lat="61.207196258" lon="-149.923593642" version="1" visible="true">
+      <tag k="nps:source_id" v="{882C5D05-FCEB-48C2-AC46-80948E82F06F}"/>
+      <tag k="name" v="foursome"/>
+    </node>
+    <node changeset="-1" id="-3" lat="61.207286641" lon="-149.923443451" version="1" visible="true">
+      <tag k="nps:source_id" v="{882C5D05-FCEB-48C2-AC46-80948E82F06F}"/>
+      <tag k="name" v="foursome"/>
+    </node>
+    <node changeset="-1" id="-4" lat="61.207191034" lon="-149.923416126" version="1" visible="true">
+      <tag k="nps:source_id" v="{882C5D05-FCEB-48C2-AC46-80948E82F06F}"/>
+      <tag k="name" v="foursome"/>
+    </node>
+    <node changeset="-1" id="-5" lat="61.206843402" lon="-149.923361754" version="1" visible="true">
+      <tag k="nps:source_id" v="{755AA702-E5CE-490C-B308-CB78918E081A}"/>
+      <tag k="name" v="threesome"/>
+    </node>
+    <node changeset="-1" id="-6" lat="61.206752517" lon="-149.923333823" version="1" visible="true">
+      <tag k="nps:source_id" v="{755AA702-E5CE-490C-B308-CB78918E081A}"/>
+      <tag k="name" v="threesome"/>
+    </node>
+    <node changeset="-1" id="-7" lat="61.20678151" lon="-149.923191514" version="1" visible="true">
+      <tag k="nps:source_id" v="{755AA702-E5CE-490C-B308-CB78918E081A}"/>
+      <tag k="name" v="threesome"/>
+    </node>
+  </create>
+</osmChange>
