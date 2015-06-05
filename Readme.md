@@ -1,29 +1,87 @@
-arc2osm
-=======
+# arc2places
 
 This project provides tools for uploading National Park Service GIS data
 from ESRI data sources to the [NP Places system](https://github.com/nationalparkservice/places-api)
 which is based on the OSM data model.
 
-This work was derived from Paul Norman's [ogr2osm](https://github.com/pnorman/ogr2osm) tool which was derived from
+This kernel of this project was derived from Paul Norman's
+[ogr2osm](https://github.com/pnorman/ogr2osm) tool which was derived from
 the UVM tool of the same name.
 
-This tool is for initial loading (or seeding) data into Places.  It will create
-new features in places for the features in your GIS dataset.  This may create
+This project is for initial loading (or seeding) data into Places.  It will create
+new features in Places for the features in your GIS dataset.  This may create
 duplicate features in Places if there are already similar features in your area.
-There are other tools planned to help manage data if it is already in places.
+Contact the [NPMap Team](http://www.nps.gov/npmap/team/) if you need to replace
+or update the existing data for your park or region.
 
-This tool can be slow for large dataset (based on the total number or vertices,
+There are additional tools planned to assist with two-way synchronization
+between Places and the GIS data (provided the Places data was seeded with
+tools in this project)
+
+There are multiple components to this project:
+
+###1. Places Toolbox (Places.pyt)
+This is an ArcGIS Toolbox with tools for seeding GIS data to Places, and
+planned tools for two way syncing between GIS data and Places.  This is the
+primary interface for the typical ArcGIS user
+
+###2. Command line tools.
+There are command line versions of several of the tools in the toolbox suitable
+batch processing or server side scripting on Windows.  There are versions of
+some of the tools that do not require ArcGIS
+
+  * **arc2osm** - Create an OsmChange File from an ESRI feature class (requires ArcGIS license)
+  * **ogr2osm** - Create an OsmChange File from an OGR dataset (could be ESRI feature class with suitable OGR drivers).
+     Does not require an ArcGIS license, and works on non-windows computers
+  * **osm2places** - Uploads an OsmChange file to Places, and creates a CSV link file
+     with Places Ids matched to GEOMETRYID (configurable in translations).
+     Does not require an ArcGIS licence but it does require active directory
+     authentication to write to Places (details pending)
+
+###3. All of these components rely on the [translation files](https://github.com/nationalparkservice/arc2places/tree/master/translations)
+for the logic mapping eGIS data to Place Data.  These translation files are based
+on fairly simple configuration files allowing them to be adapted to different
+database schemas.
+
+
+##Place Toolbox
+
+To test the toolbox, clone or download this repo and open Places.pyt in ArcToolbox.
+Places.pyt relies on the structure and files in the repo, so be sure to move it
+as a unit.  When it is ready for production an installation file will be created.
+
+Portions of the tool that write to Places rely on authentication tokens that are
+not included in the repo.  Contact [Regan](mailto:regan_sarwas@nps.gov) for assistance with testing.
+
+
+##arc2osm and ogr2osm
+
+###Create OSM upload file
+
+To upload GIS features to Places you need to create an OSM upload file.
+This can be done with ogr2osm or arc2osm on windows or Mac computers.
+There are two upload file format available: [JOSM](http://wiki.openstreetmap.org/wiki/JOSM_file_format)
+and [OsmChange](http://wiki.openstreetmap.org/wiki/OsmChange).
+
+Currently, ogr2osm only creates the JOSM format, while arc2osm can create either.
+See the [Upload to Places](https://github.com/regan-sarwas/arc2osm#upload-to-places)
+for details on which format you should use.
+
+All features in the JOSM and OsmChange files are considered new features to
+be created in Places.
+
+These tool can be slow for large dataset (based on the total number or vertices,
 not features).  Consider breaking your data into smaller chunks if you have
 problems.
 
-Supported ArcGIS geometries:
+####Supported ArcGIS geometries
+
 * Points
 * Polylines
 * Polygons
-* Multipoints
 
-Multipoints are treated as separate nodes (with the same tags).
+Multipoints are possible with the command line tools (not the toolbox), however
+they are treated as separate nodes (with the same tags).
 No relationship is created because there is no [OSM multipoint relation](http://wiki.openstreetmap.org/wiki/Types_of_relation)
 This causes a problem with syncing Places to GIS because there is not longer
 a one-to-one map between the places id and nps:source_id, so **do not use multipoints**.
@@ -46,12 +104,12 @@ closed ways or relations.  Each polygon has the same tags. This causes a problem
 with syncing Places to GIS because there is not longer a one-to-one map between
 the places id and nps:source_id, so **do not use multipart poygons**.
 
-**TODO**
+####Issues
+There are a few key fetures that are yet to be implemented
 - [ ] merge multiple outer or outer/inner parts into one relationship for multi-polygons
 - [ ] merge multi-part polylines into a single route type relation
 - [ ] merge multi-part points into a single 'multipoint' type relation.
-
-**CHECK LIMITS**
+- [ ] Check Limits
 OSM limits the number of nodes in a way to 2000, and the number of elements
 in a changeset to 50000.  Places currently defaults to 50000 for both.
 It is highly likely that there will be datasets with more than 50,000 vertices.
@@ -65,24 +123,8 @@ referential integrity with th GIS.
 3) Create several ways and join them in a route relation.  Put the tags on the
 route.  Need to 'merge' the ways when syncing with GIS.
 
-Create OSM upload file
-======================
 
-To upload GIS features to Places you need to create an OSM upload file.
-This can be done with ogr2osm or arc2osm on windows or Mac computers.
-There are two upload file format available: [JOSM](http://wiki.openstreetmap.org/wiki/JOSM_file_format)
-and [OsmChange](http://wiki.openstreetmap.org/wiki/OsmChange).
-
-Currently, ogr2osm only creates the JOSM format, while arc2osm can create either.
-See the [Upload to Places](https://github.com/regan-sarwas/arc2osm#upload-to-places)
-for details on which format you should use.
-
-All features in the JOSM and OsmChange files are considered new features to
-be created in Places.
-
-
-Using arc2osm on Windows
-------------------------
+###Using arc2osm on Windows
 
 This requires ArcGIS to be installed on the windows computer.  It was tested
 with ArcGIS 10.3 and python 2.7.5, however it should work with ArcGIS 10.1 sp1
@@ -92,8 +134,8 @@ with ArcGIS Pro, but this has not been tested.
 ...[More to come]
 
 
-Using ogr2osm on Windows
-------------------------
+###Using ogr2osm on Windows
+
 
 For Windows users with ArcGIS installed, I recommend using arc2osm.
 The following has not been tested, so proceed at your own risk.
@@ -113,14 +155,14 @@ There are many options - see http://gis.stackexchange.com/questions/2276/how-to-
 for details.
 
 
-Using arc2osm on the Mac
-------------------------
+###Using arc2osm on the Mac
+
 
 Esri does not support ArcGIS on the Mac, so this option is not available.
 
 
-Using ogr2osm on the Mac
-------------------------
+###Using ogr2osm on the Mac
+
 
 1) Install FGDB API (optional)
 
@@ -158,15 +200,15 @@ python ogr2osm.py --help
 python ogr2osm.py /path/to/data.gdb/my_trails -o output.osm -t trails
 ```
 
-###TODO
+####TODO
 
 - [ ] fork osm2ogr and add option to create OsmChange file
 - [ ] fork osm2ogr and make the attribute names all upper case
 - [ ] fork osm2ogr and fix multipoint creation
 
 
-Upload to Places
-================
+##Uploading to Places
+
 
 The JOSM format can be uploaded to Places with the [JOSM editor](http://wiki.openstreetmap.org/wiki/JOSM),
 or with [osmosis](http://wiki.openstreetmap.org/wiki/Osmosis) if you have direct access to the Places database
@@ -184,8 +226,8 @@ The benefit of using the API to upload an OsmChange file is that the API returns
 the OSM (Places) IDs of created features.  This allows the creation of a link
 file which can be used for syncing GIS data with Places data.
 
-osm2places
-----------
+
+###osm2places
 
 This is a python script which takes an OsmChange file (and users credentials)
 and uploads the changes to Places.  It uses the response from Places to create
@@ -205,7 +247,7 @@ is not saved.
 python ogr2places.py /path/to/input.osm /path/to/output.csv
 ```
 
-Update ArcGIS data with Places Ids
-==================================
+
+##Update ArcGIS data with Places Ids
 
 ...
