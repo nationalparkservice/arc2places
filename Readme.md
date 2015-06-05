@@ -1,7 +1,7 @@
 # arc2places
 
 This project provides tools for uploading National Park Service GIS data
-from ESRI data sources to the [NP Places system](https://github.com/nationalparkservice/places-api)
+from ESRI data sources to the [NP Places system](http://www.nps.gov/npmap/tools/places/)
 which is based on the OSM data model.
 
 This kernel of this project was derived from Paul Norman's
@@ -30,18 +30,25 @@ There are command line versions of several of the tools in the toolbox suitable
 batch processing or server side scripting on Windows.  There are versions of
 some of the tools that do not require ArcGIS
 
-  * **arc2osm** - Create an OsmChange File from an ESRI feature class (requires ArcGIS license)
-  * **ogr2osm** - Create an OsmChange File from an OGR dataset (could be ESRI feature class with suitable OGR drivers).
-     Does not require an ArcGIS license, and works on non-windows computers
+  * **arc2osm** - Create an upload file (in a standard OSM format)
+     from an ESRI feature class (requires ArcGIS license).
+  * **ogr2osm** - Create an upload file (in a standard OSM format) from an
+     OGR dataset (could be ESRI feature class with suitable OGR drivers).
+     Does not require an ArcGIS license and works on non-windows computers.
   * **osm2places** - Uploads an OsmChange file to Places, and creates a CSV link file
      with Places Ids matched to GEOMETRYID (configurable in translations).
      Does not require an ArcGIS licence but it does require active directory
      authentication to write to Places (details pending)
+  * **placesids2arc** - Adds the Places Ids returned with osm2places to an
+     ESRI feature class (currently requires an ArcGIS license)
 
-###3. All of these components rely on the [translation files](https://github.com/nationalparkservice/arc2places/tree/master/translations)
-for the logic mapping eGIS data to Place Data.  These translation files are based
-on fairly simple configuration files allowing them to be adapted to different
-database schemas.
+###3. Translation Files
+All tools rely on the [translation files](https://github.com/nationalparkservice/arc2places/tree/master/translations)
+for the logic mapping ESRI data sources to Place tagging schemes.
+The translation files are based on the Park Service EGIS Data Standards and the
+[Places Tracing Guide](http://nationalparkservice.github.io/places-tracing-guide/).
+They are fairly simple configuration files allowing them to be adapted to different
+database schemas if necessary.
 
 
 ##Place Toolbox
@@ -53,6 +60,9 @@ as a unit.  When it is ready for production an installation file will be created
 Portions of the tool that write to Places rely on authentication tokens that are
 not included in the repo.  Contact [Regan](mailto:regan_sarwas@nps.gov) for assistance with testing.
 
+The toolbox is primarily an ArcGIS interface to the same functionality
+provided with the command line tools.  Additional information can be gleaned
+by reading about the command line tools.
 
 ##arc2osm and ogr2osm
 
@@ -251,3 +261,5 @@ python ogr2places.py /path/to/input.osm /path/to/output.csv
 ##Update ArcGIS data with Places Ids
 
 ...
+
+###placesids2arc
