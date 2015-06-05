@@ -1,5 +1,5 @@
 """
-Utility functions for use with AlaskaPak Scripts
+Utility functions for use with Toolbox Scripts
 
 :Created: 2013-10-24
 
@@ -35,6 +35,11 @@ def die(msg):
         arcpy.AddError(msg)
         print("ERROR: " + str(msg))
         sys.exit()
+
+
+def error(msg):
+        arcpy.AddError(msg)
+        print("Error: " + str(msg))
 
 
 def warn(msg):
@@ -92,3 +97,32 @@ def get_points(points_feature, sr=None):
                                spatial_reference=sr) as searchCursor:
         points = [row[0] for row in searchCursor]
     return points
+
+
+def hasfield(table, fieldname):
+    """
+    Check if a field exists in a table
+
+    :param table: The table to search for fieldname.
+    :param fieldname: The name of a field to look for
+    :return: True if fieldname is a column name in table
+    """
+    return fieldname in [f.name for f in arcpy.Describe(table).fields]
+
+
+def fieldtype(table, fieldname):
+    """
+    Returns the field type as lower case or None
+
+    :param table: The table to search for fieldname.
+    :param fieldname: The name of a field to look for
+    :return: None if fieldname is not a column name in table
+    the type is a string in the set: ['blob', 'date', 'double', 'guid',
+    'integer', 'oid', 'raster', 'single', 'smallinteger', 'string']
+
+    """
+    f_type = [f.type for f in arcpy.Describe(table).fields
+              if f.name.lower() == fieldname.lower()]
+    if not f_type:
+        return None
+    return f_type[0].lower()
