@@ -500,22 +500,27 @@ def makeosmfile(options):
                    .format(Geometry.elementIdCounter, options.outputFile))
 
 
-if __name__ == '__main__':
-    class Options:
-        sourceFile = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
-        outputFile = r"C:\tmp\places\test_parking.osm"
-        translationMethod = "parkinglots"
-        verbose = True
-        debugTags = False
-        forceOverwrite = True
-        mergeNodes = False
-        mergeWayNodes = False
-        outputChange = False
-        addTimestamp = False
-        roundingDigits = 7
-        significantDigits = 9
-        id = 0
-        changesetId = -1
-        translations = None
+class DefaultOptions:
+    sourceFile = None
+    outputFile = None
+    translationMethod = None
+    verbose = False
+    debugTags = False
+    forceOverwrite = True
+    mergeNodes = False
+    mergeWayNodes = False
+    outputChange = True
+    addTimestamp = False
+    roundingDigits = 7
+    significantDigits = 9
+    id = 0
+    changesetId = -1
+    translations = None
 
-    makeosmfile(Options)
+
+if __name__ == '__main__':
+    opts = DefaultOptions
+    opts.sourceFile = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
+    opts.outputFile = r"C:\tmp\places\test_parking.osm"
+    opts.translationMethod = "parkinglots"
+    makeosmfile(opts)

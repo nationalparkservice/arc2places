@@ -212,13 +212,12 @@ class CreatePlaceUpload(object):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
 
     def execute(self, parameters, messages):
-        class Options:
-            sourceFile = parameters[0].valueAsText
-            outputFile = parameters[1].valueAsText
-            translationMethod = TranslatorUtils.get_translator(parameters[2],
-                                                               parameters[3])
-
-        arc2osmcore.makeosmfile(Options)
+        options = arc2osmcore.DefaultOptions
+        options.sourceFile = parameters[0].valueAsText
+        options.outputFile = parameters[1].valueAsText
+        options.translationMethod = TranslatorUtils.get_translator(
+            parameters[2], parameters[3])
+        arc2osmcore.makeosmfile(options)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
