@@ -13,7 +13,9 @@ defaults = {
 # values map one to one from GIS field name to Places tag
 fieldmap = {
     # GIS_FieldName : Places Tag
-    'POINAME': 'name'
+    'POINAME': 'name',
+    'POITYPE': 'nps:type',
+    'FEATTYPE': 'nps:feature_type'
 }
 
 # alternate GIS field names.
