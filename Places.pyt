@@ -428,8 +428,9 @@ class SeedPlaces(object):
 class GetUpdatesFromPlaces(object):
     def __init__(self):
         self.label = "Get Updates from Places"
-        self.description = ("... "
-                            "...")
+        self.description = ("Query the Places system for new edits "
+                            "and create a feature class or version "
+                            "for reconciliation with master version.")
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
@@ -456,8 +457,8 @@ class GetUpdatesFromPlaces(object):
 class PushUpdatesToPlaces(object):
     def __init__(self):
         self.label = "Send Updates to Places"
-        self.description = ("... "
-                            "...")
+        self.description = ("Find changes to the dataset used to seed "
+                            "and push those changes to Places")
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
