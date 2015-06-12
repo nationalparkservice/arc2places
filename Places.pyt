@@ -411,15 +411,15 @@ class SeedPlaces(object):
         if valid == 'good':
             if not placescore.init4places(featureclass):
                 return
-            # FIXME modify arc2osmcore to return the file contents
-            changefile = arc2osmcore.makeosmfile(options)
-            if not changefile:
-                return
-            error, csvfile = osm2places.upload_bytes(changefile)
+            error, changefile = arc2osmcore.makeosmfile(options)
             if error:
                 arcpy.AddError(error)
-            if csvfile:
-                placescore.add_places_ids(featureclass, csvfile)
+            else:
+                error, csvfile = osm2places.upload_bytes(changefile)
+                if error:
+                    arcpy.AddError(error)
+                if csvfile:
+                    placescore.add_places_ids(featureclass, csvfile)
         else:
             arcpy.AddWarning("Feature class is not suitable for Places.")
             # Run validation again to give the user the warnings.
