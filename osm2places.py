@@ -5,7 +5,10 @@
 #   c:\python27\ArcGIS10.3\Scripts\pip install requests_oauthlib
 
 from requests_oauthlib import OAuth1Session
+import requests
 import xml.etree.ElementTree as ET
+import optparse
+import os
 
 # Before accessing resources you will need to obtain a few credentials from
 # your provider (i.e. OSM) and authorization from the user for whom you wish
@@ -56,9 +59,12 @@ def openchangeset(oauth, root):
                              '<tag k="created_by" v="arc2places"/>'
                              '<tag k="comment" v="upload of OsmChange file"/>'
                              '</changeset></osm>')
-    resp = oauth.put(root+'/api/0.6/changeset/create',
-                     data=osm_changeset_payload,
-                     headers={'Content-Type': 'text/xml'})
+    try:
+        resp = oauth.put(root+'/api/0.6/changeset/create',
+                         data=osm_changeset_payload,
+                         headers={'Content-Type': 'text/xml'})
+    except requests.exceptions.ConnectionError:
+        return "Unable to Connect to " + root, None
     if resp.status_code != 200:
         baseerror = "Failed to open changeset. Status: {0}, Response: {0}"
         error = baseerror.format(resp.status_code, resp.text)
@@ -158,12 +164,11 @@ def upload(readpath, writepath, root=None, oauth=None):
     :return: error message or None on success
     """
     with open(readpath, 'rb') as fr:
+        error, data = upload_bytes(fr.read(), root, oauth)
+        if error:
+            return error
         with open(writepath, 'wb') as fw:
-            error, data = upload_bytes(fr.read(), root, oauth)
-            if not error:
-                fw.write(data)
-            else:
-                return error
+            fw.write(data)
 
 
 def test():
@@ -175,5 +180,40 @@ def test():
         print "Upload successful."
 
 
+def cmdline():
+    # Setup program usage
+    usage = """%prog SRC DST
+    or:    %prog --help
+
+    Uploads SRC to Places and saves the response in DST
+    SRC is an OsmChange file
+    DST is a CSV file that relates the GIS ids in the change file
+    to the id numbers assigned in Places."""
+
+    parser = optparse.OptionParser(usage=usage)
+
+    # Parse and process arguments
+    (options, args) = parser.parse_args()
+
+    if len(args) < 2:
+        parser.error(u"You must specify a source and destination")
+    elif len(args) > 2:
+        parser.error(u"You have specified too many arguments.")
+
+    # Input and output file
+    srcfile = args[0]
+    dstfile = args[1]
+    if not os.path.exists(srcfile):
+        parser.error(u"The input file does not exist.")
+    if os.path.exists(dstfile):
+        parser.error(u"The destination file exist.")
+    error = upload(srcfile, dstfile)
+    if error:
+        print error
+    else:
+        print "Upload successful."
+
+
 if __name__ == '__main__':
-    test()
+    # test()
+    cmdline()
