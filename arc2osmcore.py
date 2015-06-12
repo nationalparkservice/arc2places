@@ -378,9 +378,6 @@ def output_xml(options):
     :param options:
     :return: none
     """
-    path = options.outputFile
-    if not path:
-        return
     '''
     Since we will be running under ArcGIS 10.x+ we will always have python 2.5+
     and xml.etree.ElementTree. However, lxml (See http://lxml.de/tutorial.html)
@@ -407,12 +404,12 @@ def output_xml(options):
 
     if options.outputChange:
         rootnode = eTree.Element('osmChange',
-                                 {"version": "0.6", "generator": "npsarc2osm"})
+                                 {"version": "0.6", "generator": "arc2places"})
         elementroot = eTree.Element('create')
         rootnode.append(elementroot)
     else:
         rootnode = eTree.Element('osm',
-                                 {"version": "0.6", "generator": "npsarc2osm"})
+                                 {"version": "0.6", "generator": "arc2places"})
         elementroot = rootnode
 
     # Build up a dict for optional settings
