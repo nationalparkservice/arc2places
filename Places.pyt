@@ -1,7 +1,7 @@
 import arcpy
 import arc2osmcore
 import placescore
-# import upload
+import osm2places
 
 
 class TranslatorUtils(object):
@@ -254,7 +254,11 @@ class PushUploadToPlaces(object):
         return
 
     def execute(self, parameters, messages):
-        arcpy.AddWarning("Tool not Implemented.")
+        upload_path = parameters[0].valueAsText
+        response_path = parameters[1].valueAsText
+        error = osm2places.upload(upload_path, response_path)
+        if error:
+            arcpy.AddError(error)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
@@ -411,12 +415,11 @@ class SeedPlaces(object):
             changefile = arc2osmcore.makeosmfile(options)
             if not changefile:
                 return
-            # FIXME get upload module
-            csvfile = None
-            # csvfile = upload(changefile)
-            if not csvfile:
-                return
-            placescore.add_places_ids(featureclass, csvfile)
+            error, csvfile = osm2places.upload_bytes(changefile)
+            if error:
+                arcpy.AddError(error)
+            if csvfile:
+                placescore.add_places_ids(featureclass, csvfile)
         else:
             arcpy.AddWarning("Feature class is not suitable for Places.")
             # Run validation again to give the user the warnings.
