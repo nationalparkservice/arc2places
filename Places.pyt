@@ -452,6 +452,7 @@ class GetUpdatesFromPlaces(object):
         return
 
     def execute(self, parameters, messages):
+        # FIXME: Implement
         arcpy.AddWarning("Tool not Implemented.")
 
 
@@ -480,4 +481,5 @@ class PushUpdatesToPlaces(object):
         return
 
     def execute(self, parameters, messages):
+        # FIXME: Implement
         arcpy.AddWarning("Tool not Implemented.")

@@ -32,6 +32,7 @@ def validate(featureclass, quiet=False):
             utils.error("Feature class not found.")
         return 'feature class not found'
 
+    # FIXME: Implement
     return 'ok'
 
 
@@ -60,6 +61,7 @@ def init4places(featureclass, quiet=False):
             utils.error("Feature class not found.")
         return False
 
+    # FIXME: Implement
     return True
 
 

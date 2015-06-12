@@ -22,6 +22,7 @@ from secrets import *
 
 
 def setup(site):
+    # FIXME replace with read cache, test cache, get creds, cache creds
     url = secrets[site]['url']
     client_token = secrets[site]['consumer_key']
     client_secret = secrets[site]['consumer_secret']
