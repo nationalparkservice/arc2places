@@ -397,19 +397,18 @@ class SeedPlaces(object):
 
     def execute(self, parameters, messages):
         featureclass = parameters[0].valueAsText
-
-        class Options:
-            sourceFile = parameters[0].valueAsText
-            outputFile = parameters[1].valueAsText
-            translationMethod = TranslatorUtils.get_translator(parameters[1],
-                                                               parameters[2])
+        options = arc2osmcore.DefaultOptions
+        options.sourceFile = featureclass
+        options.outputFile = None
+        options.translationMethod = TranslatorUtils.get_translator(
+            parameters[1], parameters[2])
 
         valid = placescore.validate(featureclass, quiet=True)
         if valid == 'good':
             if not placescore.init4places(featureclass):
                 return
             # FIXME modify arc2osmcore to return the file contents
-            changefile = arc2osmcore.makeosmfile(Options)
+            changefile = arc2osmcore.makeosmfile(options)
             if not changefile:
                 return
             # FIXME get upload module
