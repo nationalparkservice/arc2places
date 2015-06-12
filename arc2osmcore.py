@@ -369,7 +369,7 @@ def mergewaypoints(options):
             way.points = merged_points
 
 
-def output_file(options):
+def output_xml(options):
     """
     Writes an JOSM file (http://wiki.openstreetmap.org/wiki/JOSM_file_format)
     suitable for use uploading with JOSM or an osmChange file
@@ -477,8 +477,10 @@ def output_file(options):
                 xmlobject.append(tag)
 
         elementroot.append(xmlobject)
-    xml = eTree.ElementTree(rootnode)
-    xml.write(path, encoding='utf-8', xml_declaration=True)
+    data = eTree.tostring(rootnode, encoding='utf-8')
+    if data:
+        return None, data
+    return "Unable to generate XML", None
 
 
 def makeosmfile(options):
@@ -494,10 +496,18 @@ def makeosmfile(options):
         mergewaypoints(options)
     options.translations['preOutputTransform'](
         Geometry.geometries, Feature.features)
-    output_file(options)
-    if options.verbose:
-        utils.info(u"Wrote {0:d} elements to file '{1:s}'"
-                   .format(Geometry.elementIdCounter, options.outputFile))
+    error, data = output_xml(options)
+    if options.outputFile:
+        with open(options.outputFile, 'wb') as fw:
+            fw.write(data)
+        if options.verbose:
+            utils.info(u"Wrote {0:d} elements to file '{1:s}'"
+                       .format(Geometry.elementIdCounter, options.outputFile))
+    else:
+        if options.verbose:
+            utils.info(u"Returning {0:d} converted elements"
+                       .format(Geometry.elementIdCounter))
+        return error, data
 
 
 class DefaultOptions:
