@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as Et
 import optparse
 import os
 import sys
@@ -108,13 +108,13 @@ def fixchangefile(cid, data):
 
 def makeidmap(idxml, uploadfile):
     placesids = {}
-    root = ET.fromstring(idxml)
+    root = Et.fromstring(idxml)
     if root.tag != "diffResult":
         return "Response is not a diffResult", None
     for child in root:
         placesids[child.attrib['old_id']] = child.attrib['new_id']
     gisids = {}
-    root = ET.parse(uploadfile).getroot()
+    root = Et.parse(uploadfile).getroot()
     # this must be a valid osmChange file,
     # or we wouldn't get this far, so proceed
     for child in root[0]:
