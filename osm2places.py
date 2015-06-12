@@ -1,14 +1,19 @@
-# requests_oauthlib is needed
-# sudo easy_install pip
-# sudo pip install requests requests_oauthlib
-# on windows:
-#   c:\python27\ArcGIS10.3\Scripts\pip install requests_oauthlib
-
-from requests_oauthlib import OAuth1Session
-import requests
 import xml.etree.ElementTree as ET
 import optparse
 import os
+import sys
+try:
+    from requests_oauthlib import OAuth1Session
+except ImportError:
+    OAuth1Session = None
+    print("requests_oauthlib is needed.  Add it to your system with:")
+    if os == 'nt':
+        print("c:\python27\ArcGIS10.3\Scripts\pip install requests_oauthlib")
+    else:
+        print("sudo easy_install pip (if you do not have pip)")
+        print("sudo pip install requests_oauthlib")
+    sys.exit()
+import requests
 
 # Before accessing resources you will need to obtain a few credentials from
 # your provider (i.e. OSM) and authorization from the user for whom you wish
