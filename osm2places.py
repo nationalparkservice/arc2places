@@ -2,6 +2,9 @@ import xml.etree.ElementTree as Et
 import optparse
 import os
 import sys
+import urlparse
+import json
+
 try:
     from requests_oauthlib import OAuth1Session
 except ImportError:
@@ -22,41 +25,76 @@ from secrets import *
 
 
 def setup(site):
-    # FIXME replace with read cache, test cache, get creds, cache creds
     url = secrets[site]['url']
     client_token = secrets[site]['consumer_key']
     client_secret = secrets[site]['consumer_secret']
-    access_token = secrets[site]['token']
-    access_secret = secrets[site]['token_secret']
-    if not access_secret:
-        # get request token
-        request_url = url + '/oauth/request_token'
-        oauth = OAuth1Session(client_token, client_secret=client_secret)
-        fetch_response = oauth.fetch_request_token(request_url)
-        request_token = fetch_response['oauth_token']
-        request_secret = fetch_response['oauth_token_secret']
 
-        # authorize
-        verifier = secrets[site]['verifier']
-        oauth = OAuth1Session(client_token,
-                              client_secret=client_secret,
-                              resource_owner_key=request_token,
-                              resource_owner_secret=request_secret,
-                              verifier=verifier)
+    # Get Request Tokens
+    request_url = url + '/oauth/request_token'
+    res = requests.post(request_url, None)
+    if res.status_code != 200:
+        return 'Request Error', res.status_code, res.text
 
-        # get access tokens
-        access_url = url + '/oauth/access_token'
-        fetch_response = oauth.fetch_access_token(access_url)
-        access_token = fetch_response['oauth_token']
-        access_secret = fetch_response['oauth_token_secret']
+    rough_tokens = urlparse.parse_qs(res.text)
+    # each item in the dict is a list with only one item
+    request_tokens = {}
+    for key in rough_tokens:
+        request_tokens[key] = rough_tokens[key][0]
 
-        # cache access_tokens
+    # Authorize User
+    auth_url = url + '/oauth/add_active_directory_user'
+    userid, username = getuseridentity(site, request_tokens)
+    auth_data = {
+        'query': request_tokens,
+        'userId': userid,
+        'name': username
+    }
+    header = {
+        'Content-type': 'application/json',
+        'Accept': 'text/plain'
+    }
+    # Ignore the response (display name)
+    res = requests.post(auth_url, data=json.dumps(auth_data), headers=header)
+    if res.status_code != 200:
+        return 'Authorization Error', res.status_code, res.text
 
+    # Get Access Tokens
+    access_url = url + '/oauth/access_token'
+    auth = ('OAuth ' +
+            'oauth_token="' + request_tokens['oauth_token'] + '", ' +
+            'oauth_token_secret="' + request_tokens['oauth_token_secret'] + '"')
+    header = {'authorization': auth}
+    res = requests.request('post', url=access_url, headers=header)
+    if res.status_code != 200:
+        return 'Access Error', res.status_code, res.text
+
+    access_tokens = urlparse.parse_qs(res.text)
+
+    # Intialize the Oauth object to create signed requests
     oauth = OAuth1Session(client_token,
                           client_secret=client_secret,
-                          resource_owner_key=access_token,
-                          resource_owner_secret=access_secret)
-    return url, oauth
+                          resource_owner_key=access_tokens['oauth_token'],
+                          resource_owner_secret=access_tokens[
+                              'oauth_token_secret'])
+    return None, url, oauth
+
+
+# noinspection PyUnusedLocal
+def getuseridentity(site, request_tokens):
+    username = os.getenv('username')
+    req = 'http://insidemaps.nps.gov/user/lookup?query=' + username
+    res = requests.get(req)
+    if res.status_code != 200:
+        return 'User Error', res.status_code, res.text
+    data = json.loads(res.text)
+    if len(data) < 1:
+        return 'User Error', 200, 'User not found'
+    try:
+        userid = data['userId']
+        username = data['firstName'] + ' ' + data['lastName']
+    except KeyError:
+        return 'User Error', 200, 'Unexpected response from user lookup'
+    return None, userid, username
 
 
 def openchangeset(oauth, root):
@@ -66,7 +104,7 @@ def openchangeset(oauth, root):
                              '<tag k="comment" v="upload of OsmChange file"/>'
                              '</changeset></osm>')
     try:
-        resp = oauth.put(root+'/api/0.6/changeset/create',
+        resp = oauth.put(root + '/api/0.6/changeset/create',
                          data=osm_changeset_payload,
                          headers={'Content-Type': 'text/xml'})
     except requests.exceptions.ConnectionError:
@@ -82,7 +120,7 @@ def openchangeset(oauth, root):
 
 
 def uploadchangeset(oauth, root, cid, change):
-    path = root+'/api/0.6/changeset/' + cid + '/upload'
+    path = root + '/api/0.6/changeset/' + cid + '/upload'
     print 'POST', path
     resp = oauth.post(path, data=change, headers={'Content-Type': 'text/xml'})
     if resp.status_code != 200:
@@ -97,7 +135,7 @@ def uploadchangeset(oauth, root, cid, change):
 
 
 def closechangeset(oauth, root, cid):
-    oauth.put(root+'/api/0.6/changeset/' + cid + '/close')
+    oauth.put(root + '/api/0.6/changeset/' + cid + '/close')
     # print 'Closed Changeset #', cid
 
 
@@ -107,7 +145,7 @@ def fixchangefile(cid, data):
     return data.replace(i, o)
 
 
-def makeidmap(idxml, uploadfile):
+def makeidmap(idxml, uploaddata):
     placesids = {}
     root = Et.fromstring(idxml)
     if root.tag != "diffResult":
@@ -115,7 +153,7 @@ def makeidmap(idxml, uploadfile):
     for child in root:
         placesids[child.attrib['old_id']] = child.attrib['new_id']
     gisids = {}
-    root = Et.parse(uploadfile).getroot()
+    root = Et.fromstring(uploaddata)
     # this must be a valid osmChange file,
     # or we wouldn't get this far, so proceed
     for child in root[0]:
@@ -141,7 +179,7 @@ def upload_bytes(data, server=None, user=None):
              to open(name, 'wb').write().  The error or the data is None
     """
     if not user:
-        server, user = setup('local')
+        server, user = setup('places')
     error, cid = openchangeset(user, server)
     if cid:
         error, resp = uploadchangeset(user, server, cid,
@@ -178,8 +216,9 @@ def upload(readpath, writepath, root=None, oauth=None):
 
 
 def test():
-    url, tokens = setup('local')
-    error = upload('./test_POI.osm', './test_POI_ids.csv', url, tokens)
+    url, tokens = setup('places')
+    error = upload('./tests/test_POI.osm', './tests/test_POI_pids.csv', url,
+                   tokens)
     if error:
         print error
     else:
@@ -221,5 +260,5 @@ def cmdline():
 
 
 if __name__ == '__main__':
-    # test()
-    cmdline()
+    test()
+    # cmdline()
