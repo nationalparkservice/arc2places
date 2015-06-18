@@ -149,7 +149,7 @@ valuemap = {
         'Public Building': {'building': 'public'},
         'Quarry (Mine)': {'landuse': 'quarry'},
         'Radiator Water': {'emergency': 'water_tank'},
-        'Ranger Station': {'amenity': 'ranger_station'},
+        'Ranger Station': {'amenity': 'ranger_station', 'building': 'yes'},
         'Rapids': {'waterway': 'rapids'},
         'Recycling': {'amenity': 'recycling'},
         'Reef (Bar)': {'natural': 'reef'},
