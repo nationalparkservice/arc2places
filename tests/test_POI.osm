@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<osmChange generator="npsarc2osm" version="0.6">
+<osmChange generator="arc2places" version="0.6">
   <create>
     <node changeset="-1" id="-1" lat="61.205468084" lon="-149.919254908" version="1" visible="true">
       <tag k="nps:create_date" v="2015-05-27 09:57:46.812001"/>
