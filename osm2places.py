@@ -34,13 +34,22 @@ def setup(site, options=None):
 
     # Get Request Tokens
     request_url = url + '/oauth/request_token'
+    if options and options.verbose:
+        print "Getting Request Tokens from", request_url
+        print "Client Token", client_token
+        print "Client Secret", client_secret
     res = requests.post(request_url, None)
     if res.status_code != 200:
         return 'Request Error', res.status_code, res.text
 
     request_tokens = simplifydict(urlparse.parse_qs(res.text))
+    if options and options.verbose:
+        print "Request Token", request_tokens['oauth_token']
+        print "Request Secret", request_tokens['oauth_token_secret']
 
     # Authorize User
+    if options and options.verbose:
+        print "Authorizing user"
     auth_url = url + '/oauth/add_active_directory_user'
     error, userid, username = getuseridentity(site, request_tokens, options)
     if error:
@@ -58,9 +67,13 @@ def setup(site, options=None):
     res = requests.post(auth_url, data=json.dumps(auth_data), headers=header)
     if res.status_code != 200:
         return 'Authorization Error', res.status_code, res.text
+    if options and options.verbose:
+        print "Authorized user", res.text
 
     # Get Access Tokens
     access_url = url + '/oauth/access_token'
+    if options and options.verbose:
+        print "Getting Access Tokens from", access_url
     auth = ('OAuth ' +
             'oauth_token="' + request_tokens['oauth_token'] + '", ' +
             'oauth_token_secret="' + request_tokens['oauth_token_secret'] + '"')
@@ -70,8 +83,11 @@ def setup(site, options=None):
         return 'Access Error', res.status_code, res.text
 
     access_tokens = simplifydict(urlparse.parse_qs(res.text))
+    if options and options.verbose:
+        print "Access Token", access_tokens['oauth_token']
+        print "Access Secret", access_tokens['oauth_token_secret']
 
-    # Intialize the Oauth object to create signed requests
+    # Initialize the Oauth object to create signed requests
     oauth = OAuth1Session(client_token,
                           client_secret=client_secret,
                           resource_owner_key=access_tokens['oauth_token'],
@@ -82,12 +98,15 @@ def setup(site, options=None):
 
 # noinspection PyUnusedLocal
 def getuseridentity(site, request_tokens, options=None):
-    if options and 'username' in options:
-        username = options['username']
+    if options and options.username:
+        username = options.username
     else:
-        username = os.getenv('username')
+        username = os.getenv('USERNAME')
     if not username:
         return 'User Error', 0, 'No user given'
+
+    if options and options.verbose:
+        print "Looking up id for user", username
 
     req = 'http://insidemaps.nps.gov/user/lookup?query=' + username
     res = requests.get(req)
@@ -98,10 +117,12 @@ def getuseridentity(site, request_tokens, options=None):
         return 'User Error', 200, 'User not found'
     try:
         userid = data[0]['userId']
-        username = data[0]['firstName'] + ' ' + data[0]['lastName']
+        displayname = data[0]['firstName'] + ' ' + data[0]['lastName']
     except KeyError:
         return 'User Error', 200, 'Unexpected response from user lookup'
-    return None, userid, username
+    if options and options.verbose:
+        print "Found id", userid
+    return None, userid, displayname
 
 
 def simplifydict(dictoflists):
@@ -119,8 +140,10 @@ def simplifydict(dictoflists):
     return newdict
 
 
-def openchangeset(oauth, root):
+def openchangeset(oauth, root, options=None):
     # return Error (str), Changeset Id (str)
+    if options and options.verbose:
+        print 'Create change set'
     osm_changeset_payload = ('<osm><changeset>'
                              '<tag k="created_by" v="arc2places"/>'
                              '<tag k="comment" v="upload of OsmChange file"/>'
@@ -137,13 +160,16 @@ def openchangeset(oauth, root):
         return error, None
     else:
         cid = resp.text
-        # print "Opened Changeset #", cid
+    if options and options.verbose:
+        print "Created change set", cid
     return None, cid
 
 
-def uploadchangeset(oauth, root, cid, change):
+def uploadchangeset(oauth, root, cid, change, options=None):
+    # return Error (str), Upload Response (str)
     path = root + '/api/0.6/changeset/' + cid + '/upload'
-    print 'POST', path
+    if options and options.verbose:
+        print 'Upload to change set', cid
     resp = oauth.post(path, data=change, headers={'Content-Type': 'text/xml'})
     if resp.status_code != 200:
         baseerror = "Failed to upload changeset. Status: {0}, Response: {0}"
@@ -151,14 +177,18 @@ def uploadchangeset(oauth, root, cid, change):
         return error, None
     else:
         data = resp.text
-        # print "Uploaded Changeset #", cid
-        # print "response",data
+        if options and options.verbose:
+            print "Uploaded change set successfully"
+            # print "response",data
     return None, data
 
 
-def closechangeset(oauth, root, cid):
+def closechangeset(oauth, root, cid, options=None):
+    if options and options.verbose:
+        print "Close change set", cid
     oauth.put(root + '/api/0.6/changeset/' + cid + '/close')
-    # print 'Closed Changeset #', cid
+    if options and options.verbose:
+        print "Closed change set successfully"
 
 
 def fixchangefile(cid, data):
@@ -167,7 +197,9 @@ def fixchangefile(cid, data):
     return data.replace(i, o)
 
 
-def makeidmap(idxml, uploaddata):
+def makeidmap(idxml, uploaddata, options=None):
+    if options and options.verbose:
+        print "Process response"
     placesids = {}
     root = Et.fromstring(idxml)
     if root.tag != "diffResult":
@@ -186,16 +218,19 @@ def makeidmap(idxml, uploaddata):
     resp = "PlaceId,GEOMETRYID\n"
     for tempid in gisids:
         resp += placesids[tempid] + "," + gisids[tempid] + "\n"
+    if options and options.verbose:
+        print "Processed response"
     return None, resp
 
 
-def upload_bytes(data, server=None, user=None, options=None):
+def upload_bytes(data, options=None, server=None, user=None):
     """
     Writes input as an OsmChange file to the server as the oauth user
 
     :rtype : (str, bytes)
     :param data: bytes as from open(name, 'rb').read() containing the upload
     :param server: string - url of OSM API 0.6 server.
+    :param options: an object of type DefaultOptions for setting behavior options
     :param user: oauth object representing the credentials of the current user
     :return: tuple of an error as string, and data as bytes suitable for input
              to open(name, 'wb').write().  The error or the data is None
@@ -204,13 +239,13 @@ def upload_bytes(data, server=None, user=None, options=None):
         error, server, user = setup('places', options)
         if error:
             return str(error) + ' ' + str(server) + ' ' + str(user), None
-    error, cid = openchangeset(user, server)
+    error, cid = openchangeset(user, server, options)
     if cid:
         error, resp = uploadchangeset(user, server, cid,
-                                      fixchangefile(cid, data))
-        closechangeset(user, server, cid)
+                                      fixchangefile(cid, data), options)
+        closechangeset(user, server, cid, options)
         if resp:
-            error, idmap = makeidmap(resp, data)
+            error, idmap = makeidmap(resp, data, options)
             if idmap:
                 return None, idmap
             return "Failed to relate Places and GIS date " + error, None
@@ -218,7 +253,7 @@ def upload_bytes(data, server=None, user=None, options=None):
     return "Unable to open a changeset, check the permissions. " + error, None
 
 
-def upload(readpath, writepath, root=None, oauth=None, options=None):
+def upload(readpath, writepath, options=None, root=None, oauth=None):
     """
     Uploads an OsmChange file and saves the results in a file.
 
@@ -227,29 +262,38 @@ def upload(readpath, writepath, root=None, oauth=None, options=None):
     :rtype : str
     :param readpath: string - file system path of OsmChange to upload
     :param writepath: string - file system path to create with response
+    :param options: an object of type DefaultOptions for setting behavior options
     :param root: string - base url of OSM API 0.6 server.
     :param oauth: oauth object representing the credentials of the current user
     :return: error message or None on success
     """
     with open(readpath, 'rb') as fr:
-        error, data = upload_bytes(fr.read(), root, oauth, options)
+        error, data = upload_bytes(fr.read(), options, root, oauth)
         if error:
             return error
         with open(writepath, 'wb') as fw:
             fw.write(data)
 
 
+class DefaultOptions:
+    username = None
+    verbose = False
+
+
 def test():
-    error, url, tokens = setup('places', {'username':
-                                          'RESarwas'})
+    opts = DefaultOptions()
+    opts.verbose = True
+    error, url, tokens = setup('places', opts)
     if error:
         print str(error) + ' ' + str(url) + ' ' + str(tokens)
-    error = upload('./tests/test_TRAILS.osm', './tests/test_TRAILS_pids.csv', url,
+        return
+
+    error = upload('./tests/test_Parking.osm', './tests/test_parking_pids.csv', opts, url,
                    tokens)
     if error:
         print error
     else:
-        print "Upload successful."
+        print "Done."
 
 
 def cmdline():
@@ -268,6 +312,8 @@ def cmdline():
         "Domain user logon name. " +
         "Defaults to None. When None, will load from " +
         "'username' environment variable."), default=None)
+    parser.add_option("-v", "--verbose", dest="verbose", action="store_true")
+    parser.set_defaults(verbose=False)
 
     # Parse and process arguments
     (options, args) = parser.parse_args()

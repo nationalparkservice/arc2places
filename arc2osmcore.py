@@ -526,7 +526,7 @@ class DefaultOptions:
 
 
 if __name__ == '__main__':
-    opts = DefaultOptions
+    opts = DefaultOptions()
     opts.sourceFile = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
     opts.outputFile = r"C:\tmp\places\test_parking.osm"
     opts.translationMethod = "parkinglots"
