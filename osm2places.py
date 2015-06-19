@@ -24,7 +24,7 @@ import requests
 from secrets import *
 
 
-def setup(site):
+def setup(site, options=None):
     url = secrets[site]['url']
     client_token = secrets[site]['consumer_key']
     client_secret = secrets[site]['consumer_secret']
@@ -43,7 +43,9 @@ def setup(site):
 
     # Authorize User
     auth_url = url + '/oauth/add_active_directory_user'
-    userid, username = getuseridentity(site, request_tokens)
+    error, userid, username = getuseridentity(site, request_tokens, options)
+    if error:
+        return error, userid, username
     auth_data = {
         'query': request_tokens,
         'userId': userid,
@@ -80,8 +82,14 @@ def setup(site):
 
 
 # noinspection PyUnusedLocal
-def getuseridentity(site, request_tokens):
-    username = os.getenv('username')
+def getuseridentity(site, request_tokens, options=None):
+    if options and 'username' in options:
+        username = options['username']
+    else:
+        username = os.getenv('username')
+    if not username:
+        return 'User Error', 0, 'No user given'
+
     req = 'http://insidemaps.nps.gov/user/lookup?query=' + username
     res = requests.get(req)
     if res.status_code != 200:
@@ -90,8 +98,8 @@ def getuseridentity(site, request_tokens):
     if len(data) < 1:
         return 'User Error', 200, 'User not found'
     try:
-        userid = data['userId']
-        username = data['firstName'] + ' ' + data['lastName']
+        userid = data[0]['userId']
+        username = data[0]['firstName'] + ' ' + data['lastName']
     except KeyError:
         return 'User Error', 200, 'Unexpected response from user lookup'
     return None, userid, username
@@ -167,7 +175,7 @@ def makeidmap(idxml, uploaddata):
     return None, resp
 
 
-def upload_bytes(data, server=None, user=None):
+def upload_bytes(data, server=None, user=None, options=None):
     """
     Writes input as an OsmChange file to the server as the oauth user
 
@@ -179,7 +187,9 @@ def upload_bytes(data, server=None, user=None):
              to open(name, 'wb').write().  The error or the data is None
     """
     if not user:
-        server, user = setup('places')
+        error, server, user = setup('places', options)
+        if error:
+            return str(error) + ' ' + str(server) + ' ' + str(user), None
     error, cid = openchangeset(user, server)
     if cid:
         error, resp = uploadchangeset(user, server, cid,
@@ -194,7 +204,7 @@ def upload_bytes(data, server=None, user=None):
     return "Unable to open a changeset, check the permissions. " + error, None
 
 
-def upload(readpath, writepath, root=None, oauth=None):
+def upload(readpath, writepath, root=None, oauth=None, options=None):
     """
     Uploads an OsmChange file and saves the results in a file.
 
@@ -208,7 +218,7 @@ def upload(readpath, writepath, root=None, oauth=None):
     :return: error message or None on success
     """
     with open(readpath, 'rb') as fr:
-        error, data = upload_bytes(fr.read(), root, oauth)
+        error, data = upload_bytes(fr.read(), root, oauth, options)
         if error:
             return error
         with open(writepath, 'wb') as fw:
@@ -216,7 +226,9 @@ def upload(readpath, writepath, root=None, oauth=None):
 
 
 def test():
-    url, tokens = setup('places')
+    error, url, tokens = setup('places')
+    if error:
+        print str(error) + ' ' + str(url) + ' ' + str(tokens)
     error = upload('./tests/test_POI.osm', './tests/test_POI_pids.csv', url,
                    tokens)
     if error:
@@ -237,6 +249,11 @@ def cmdline():
 
     parser = optparse.OptionParser(usage=usage)
 
+    parser.add_option("-u", "--username", dest="username", type=str, help=(
+        "Domain user logon name. " +
+        "Defaults to None. When None, will load from " +
+        "'username' environment variable."), default=None)
+
     # Parse and process arguments
     (options, args) = parser.parse_args()
 
@@ -252,7 +269,7 @@ def cmdline():
         parser.error(u"The input file does not exist.")
     if os.path.exists(dstfile):
         parser.error(u"The destination file exist.")
-    error = upload(srcfile, dstfile)
+    error = upload(srcfile, dstfile, options)
     if error:
         print error
     else:
