@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import xml.etree.ElementTree as Et
 import optparse
 import os
@@ -99,7 +102,7 @@ def getuseridentity(site, request_tokens, options=None):
         return 'User Error', 200, 'User not found'
     try:
         userid = data[0]['userId']
-        username = data[0]['firstName'] + ' ' + data['lastName']
+        username = data[0]['firstName'] + ' ' + data[0]['lastName']
     except KeyError:
         return 'User Error', 200, 'Unexpected response from user lookup'
     return None, userid, username
@@ -226,10 +229,11 @@ def upload(readpath, writepath, root=None, oauth=None, options=None):
 
 
 def test():
-    error, url, tokens = setup('places')
+    error, url, tokens = setup('places', {'username':
+                                          'RESarwas'})
     if error:
         print str(error) + ' ' + str(url) + ' ' + str(tokens)
-    error = upload('./tests/test_POI.osm', './tests/test_POI_pids.csv', url,
+    error = upload('./tests/test_TRAILS.osm', './tests/test_TRAILS_pids.csv', url,
                    tokens)
     if error:
         print error
