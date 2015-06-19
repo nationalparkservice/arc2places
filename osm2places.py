@@ -180,7 +180,7 @@ def makeidmap(idxml, uploaddata):
     # or we wouldn't get this far, so proceed
     for child in root[0]:
         tempid = child.attrib['id']
-        for tag in child:
+        for tag in child.findall('tag'):
             if tag.attrib['k'] == 'nps:source_id':
                 gisids[tempid] = tag.attrib['v']
     resp = "PlaceId,GEOMETRYID\n"
