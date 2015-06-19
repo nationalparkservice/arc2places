@@ -38,11 +38,7 @@ def setup(site, options=None):
     if res.status_code != 200:
         return 'Request Error', res.status_code, res.text
 
-    rough_tokens = urlparse.parse_qs(res.text)
-    # each item in the dict is a list with only one item
-    request_tokens = {}
-    for key in rough_tokens:
-        request_tokens[key] = rough_tokens[key][0]
+    request_tokens = simplifydict(urlparse.parse_qs(res.text))
 
     # Authorize User
     auth_url = url + '/oauth/add_active_directory_user'
@@ -73,7 +69,7 @@ def setup(site, options=None):
     if res.status_code != 200:
         return 'Access Error', res.status_code, res.text
 
-    access_tokens = urlparse.parse_qs(res.text)
+    access_tokens = simplifydict(urlparse.parse_qs(res.text))
 
     # Intialize the Oauth object to create signed requests
     oauth = OAuth1Session(client_token,
@@ -106,6 +102,21 @@ def getuseridentity(site, request_tokens, options=None):
     except KeyError:
         return 'User Error', 200, 'Unexpected response from user lookup'
     return None, userid, username
+
+
+def simplifydict(dictoflists):
+    """
+    urlparse.parse_qs returns a dict where each value is a list with
+     only one item.  This simplifies those lists.
+    """
+    newdict = {}
+    for key in dictoflists:
+        item = dictoflists[key]
+        if item and type(item) is list and len(item) == 1:
+            newdict[key] = item[0]
+        else:
+            newdict[key] = item
+    return newdict
 
 
 def openchangeset(oauth, root):
