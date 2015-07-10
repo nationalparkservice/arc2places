@@ -386,7 +386,7 @@ class SeedPlaces(object):
             displayName="Alternate Translator",
             direction="Input",
             datatype="GPString",
-            parameterType="Required",
+            parameterType="Optional",
             enabled=False)
 
         parameters = [feature, translator, alt_translator]
@@ -408,7 +408,7 @@ class SeedPlaces(object):
             parameters[1], parameters[2])
 
         valid = placescore.validate(featureclass, quiet=True)
-        if valid == 'good':
+        if valid == 'ok':
             if not placescore.init4places(featureclass):
                 return
             error, changefile = arc2osmcore.makeosmfile(options)

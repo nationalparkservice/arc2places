@@ -33,7 +33,7 @@ def validate(featureclass, quiet=False):
         return 'feature class not found'
 
     # FIXME: Implement
-    return 'ok'
+    return 'good'
 
 
 def init4places(featureclass, quiet=False):
@@ -148,13 +148,13 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
         arcpy.AddJoin_management(table_view, id_name, linkfile, id_name_csv)
         if dst_type == 'double':
             arcpy.CalculateField_management(table_view,
-                                            dst, 'float(!'+src+'!)')
+                                            dst, 'float(!' + src + '!)')
         if dst_type == 'integer':
             arcpy.CalculateField_management(table_view,
-                                            dst, 'int(!'+src+'!)')
+                                            dst, 'int(!' + src + '!)')
         if dst_type == 'string':
             arcpy.CalculateField_management(table_view,
-                                            dst, 'str(!'+src+'!)')
+                                            dst, 'str(!' + src + '!)')
     finally:
         arcpy.Delete_management(table_view)
     return True

@@ -298,7 +298,7 @@ def test():
 
 def cmdline():
     # Setup program usage
-    usage = """%prog SRC DST
+    usage = """%prog [Options] SRC DST
     or:    %prog --help
 
     Uploads SRC to Places and saves the response in DST
@@ -311,7 +311,7 @@ def cmdline():
     parser.add_option("-u", "--username", dest="username", type=str, help=(
         "Domain user logon name. " +
         "Defaults to None. When None, will load from " +
-        "'username' environment variable."), default=None)
+        "'USERNAME' environment variable."), default=None)
     parser.add_option("-v", "--verbose", dest="verbose", action="store_true")
     parser.set_defaults(verbose=False)
 
@@ -334,9 +334,9 @@ def cmdline():
     if error:
         print error
     else:
-        print "Upload successful."
+        print "Done."
 
 
 if __name__ == '__main__':
-    test()
-    # cmdline()
+    #test()
+    cmdline()
