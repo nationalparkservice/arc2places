@@ -54,3 +54,14 @@ Update Place:
 
 * Places url defaults to: http://10.147.153.193/api/0.6/
 * Places account defaults to the current Windows (AD) user.
+
+
+Conclusion:
+  Any feature class data can be used to seed Places. However there are caveats if the user wants to do syncing in the
+  future.  i.e. shapefiles are not supported, and editor tracking (date_edited) must be enabled.  I can either test
+  for those conditions and provide a warning, or I can put that in the documentation.  I will test for this when
+  doing the sync.
+  Actually, not all feature classes are valid, see validate() in placescore.py for a list of problems.
+  I should still check these on upload/sync and report warnings/fails.  I do not need a separate tool for this
+  I can remove the tool to init4places, and replace with the existing tool to add editor tracking
+
