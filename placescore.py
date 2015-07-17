@@ -14,6 +14,9 @@ def validate(featureclass, quiet=False):
         must have a spatial reference system
         geometryid (or alt) column = good othewise = ok
         if it has a placesid column it must be empty
+        Check that geometyid is fully populated and unique (otherwise sync will not work)
+        warn if there are multilines (multipolys are ok)
+        Do feature, vertex, and max vertex/feature counts, and verify below api capabilities
 
     :rtype : basestring
     :param featureclass: The ArcGIS feature class to validate
