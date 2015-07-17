@@ -248,8 +248,8 @@ def upload_bytes(data, options=None, server=None, user=None):
             error, idmap = makeidmap(resp, data, options)
             if idmap:
                 return None, idmap
-            return "Failed to relate Places and GIS date " + error, None
-        return "Server did not return and results. " + error, None
+            return "Failed to relate Places and GIS date. " + error, None
+        return "Server did not accept the upload request. " + error, None
     return "Unable to open a changeset, check the permissions. " + error, None
 
 
@@ -288,7 +288,7 @@ def test():
         print str(error) + ' ' + str(url) + ' ' + str(tokens)
         return
 
-    error = upload('./tests/test_Parking.osm', './tests/test_parking_pids.csv', opts, url,
+    error = upload('./tests/test_trail_routes.osm', './tests/test_trail_routes_pids.csv', opts, url,
                    tokens)
     if error:
         print error
@@ -338,5 +338,5 @@ def cmdline():
 
 
 if __name__ == '__main__':
-    #test()
+    # test()
     cmdline()
