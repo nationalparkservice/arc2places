@@ -1,0 +1,56 @@
+Notes to help me keep clear the various ways in which the state will be mutated.
+I've listed the various operations/tasks/tools what have you, and identified the inputs/outputs
+for each.
+
+Seed Places:
+  describe: Loads translated GIS data into the Places database.
+  inputs: GIS dataset, translator, Places url/account*
+  output: upload log (table) and modified places database
+  notes: This should only be done once, but this is not enforced
+         User should first compare GIS data to Place data to avoid duplication.
+         Output (upload log) is required for syncing (Get Places Edits and Update Place described below)
+         If you plan to use the GIS dataset in the future to update Place, you will need to enable editor tracking now
+
+Edit Places:
+  describe: Manual editing via id, or upload via JOSM, or other supported API tools
+  inputs: Places url/account
+  output: Modified places database
+
+Edit GIS:
+  describe: Manual editing via ArcMap or geoprocessing tools
+  inputs GIS dataset (writable)
+  output: modified GIS dataset
+  notes: Editor tracking must be turned on for syncing to work
+
+Get Places Edits:
+  describe: Find changes in places within the unit/bbox since last upload, and applies the inverse translation
+  inputs: places url/account, translator, date, unit or bounding box
+  output: GISP dataset, Modified places database
+  notes: The date could be null - get all changesets not loaded with arc2places.
+         The date could be max date from the upload log, but this may miss some changes.
+         TODO: how am a tracking if a change has been considered and/or dealt with?
+         TODO: Figure out the format of the GISP - I Can't capture deletes in a new GIS feature class,
+               applying changes to a copy of the GIS feature class is a problem since it has likely changed since the upload.
+
+Reconcile Places Edits:
+  describe: Add places edits to GIS and (maybe) reject/correct places edits to match GIS
+  inputs: GIS dataset, GISP dataset, places url/account
+  output: GIS dataset
+  notes: This will be a manual process initially.
+         TODO: Need to coordinate with format of GISP
+         TODO: manually updating Places will not be necessary if we implement 'authoritive' users/changesets.
+         new features in places that are NOT wanted will need to be manually deleted from places
+         new features in places that are wanted can be copy/pasted to the GIS dataset
+         updates in places that are NOT wanted will need to be manually corrected in places
+         updates in places that are wanted will need to be copy/pasted, or posted to the GIS dataset
+         deletes in places that are NOT wanted can be restored by bumping the edit data of the feature in GIS
+         deletes in places that are wanted can be accepted by deleting the feature in GIS
+
+Update Place:
+  describe: Find changes in GIS since last upload, and send them to Places and update the upload log.
+  inputs: GIS dataset with editor tracking, Places url/account, translator, upload log (writable)
+  output: modified upload log and modified places database
+
+
+* Places url defaults to: http://10.147.153.193/api/0.6/
+* Places account defaults to the current Windows (AD) user.
