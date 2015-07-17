@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<osmChange generator="npsarc2osm" version="0.6">
+  <create>
+    <node changeset="-1" id="-2" lat="61.2039" lon="-149.9183" version="1" visible="true"/>
+    <node changeset="-1" id="-3" lat="61.2042" lon="-149.9175" version="1" visible="true"/>
+    <node changeset="-1" id="-4" lat="61.2037" lon="-149.9174" version="1" visible="true"/>
+    <node changeset="-1" id="-5" lat="61.2055" lon="-149.9161" version="1" visible="true"/>
+    <node changeset="-1" id="-6" lat="61.2057" lon="-149.9151" version="1" visible="true"/>
+    <way changeset="-1" id="-1" version="1" visible="true">
+      <nd ref="-2"/>
+      <nd ref="-3"/>
+    </way>
+    <way changeset="-1" id="-7" version="1" visible="true">
+      <nd ref="-3"/>
+      <nd ref="-4"/>
+    </way>
+    <way changeset="-1" id="-8" version="1" visible="true">
+      <nd ref="-4"/>
+      <nd ref="-5"/>
+    </way>
+    <way changeset="-1" id="-9" version="1" visible="true">
+      <nd ref="-5"/>
+      <nd ref="-6"/>
+    </way>
+    <relation changeset="-1" id="-10" version="1" visible="true">
+      <member ref="-1" role="route" type="way"/>
+      <member ref="-7" role="route" type="way"/>
+      <tag k="type" v="route"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="horse" v="no"/>
+      <tag k="nps:source_id" v="{FE5DC3F4-0A8D-447D-A5F1-CF65569C6593}"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="trail1"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:create_user" v="nps\resarwas"/>
+      <tag k="atv" v="yes"/>
+      <tag k="nps:trail_type" v="Standard/Terra Trail"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </relation>
+    <relation changeset="-1" id="-11" version="1" visible="true">
+      <member ref="-8" role="member" type="way"/>
+      <member ref="-9" role="member" type="way"/>
+      <tag k="type" v="multilinestring"/>
+      <tag k="nps:trail_status" v="Proposed"/>
+      <tag k="horse" v="yes"/>
+      <tag k="nps:source_id" v="{2020B5B7-FB92-423B-9F9F-C796B49EAC9F}"/>
+      <tag k="bicycle" v="no"/>
+      <tag k="name" v="trail2"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:create_user" v="nps\resarwas"/>
+      <tag k="atv" v="no"/>
+      <tag k="motorcycle" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
+      <tag k="foot" v="yes"/>
+      <tag k="tracktype" v="grade5"/>
+      <tag k="highway" v="path"/>
+      <tag k="snowmobile" v="no"/>
+    </relation>
+  </create>
+</osmChange>
