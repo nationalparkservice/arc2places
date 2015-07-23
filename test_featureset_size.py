@@ -1,5 +1,4 @@
 import arcpy
-import arcpy.da
 import os
 
 

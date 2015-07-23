@@ -275,6 +275,7 @@ def upload(readpath, writepath, options=None, root=None, oauth=None):
             fw.write(data)
 
 
+# noinspection PyClassHasNoInit
 class DefaultOptions:
     username = None
     verbose = False

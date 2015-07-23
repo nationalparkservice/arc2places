@@ -31,9 +31,9 @@ def build_changes(fc, outfile, options):
                 None)
     if not arcpy.Exists(options.synctable):
         return u"Sync table {0:s} not found.".format(options.synctable), None
-    if not arcpy.describe(fc).editorTrackingEnabled:
+    if not arcpy.Describe(fc).editorTrackingEnabled:
         return u"Editor tracking must be enabled on the feature class.", None
-    editdate_fieldname = arcpy.describe(fc).editedAtFieldName
+    editdate_fieldname = arcpy.Describe(fc).editedAtFieldName
     
     """
     get lastupdate with select top 1 from synctable order by editdate_fieldname DESC
