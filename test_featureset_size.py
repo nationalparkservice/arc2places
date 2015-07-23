@@ -1,5 +1,4 @@
 import arcpy
-import arcpy.da
 import os
 
 src = os.path.join("Database Connections",
@@ -17,7 +16,7 @@ where = "DISTRIBUTE = 'Public' and RESTRICTION = 'Unrestricted' AND INPLACES = '
 # with arcpy.da.SearchCursor(src, ['SHAPE@', 'OID@']) as cursor:
 with arcpy.da.SearchCursor(src, ['SHAPE@'], where) as cursor:
     for feature in cursor:
-        #feature_count += 1
+        # feature_count += 1
         # print feature_count, feature[0], vertex_count, max_vertices
         geom = feature[0]
         if geom and geom.type == 'polyline' and not geom.isMultipart:
@@ -28,7 +27,7 @@ with arcpy.da.SearchCursor(src, ['SHAPE@'], where) as cursor:
             if max_vertices < vertices:
                 max_vertices = vertices
             # print feature_count, feature[0], vertex_count, max_vertices
-            #print feature_count, vertex_count, max_vertices
+            # print feature_count, vertex_count, max_vertices
         else:
             if geom:
                 print "unexpected geometry", geom.type, "multipart", geom.isMultipart

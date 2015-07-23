@@ -507,6 +507,7 @@ def makeosmfile(options):
         return error, data
 
 
+# noinspection PyClassHasNoInit
 class DefaultOptions:
     sourceFile = None
     outputFile = None
