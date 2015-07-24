@@ -3,6 +3,8 @@ import arc2osmcore
 import placescore
 import osm2places
 
+places = placescore.Places('http://url.to.server')
+
 
 class TranslatorUtils(object):
     # Display names for various translators
@@ -100,7 +102,7 @@ class ValidateForPlaces(object):
     def __init__(self):
         self.label = "1) Validate Data For Places"
         self.description = ("Checks if a feature class is suitable for "
-                            "uploading to Places.")
+                            "uploading/syncing to Places.")
         self.category = "Seed Places Step by Step"
 
     def getParameterInfo(self):
@@ -112,6 +114,8 @@ class ValidateForPlaces(object):
             parameterType="Required")
         feature.filter.list = ["Polygon", "Polyline", "Point"]
 
+        # TODO - Add optional translator parameter; used to filter features
+
         parameters = [feature]
         return parameters
 
@@ -122,7 +126,18 @@ class ValidateForPlaces(object):
         return
 
     def execute(self, parameters, messages):
-        placescore.validate(parameters[0].valueAsText)
+        translator = None  # parameters[1].valueAsText
+        issues = placescore.valid4upload(parameters[0].valueAsText, places, translator)
+        if issues:
+            arcpy.AddWarning("Feature class is not suitable for Uploading.")
+            for issue in issues:
+                arcpy.AddWarning(issue)
+        else:
+            issues = placescore.valid4sync(parameters[0].valueAsText, translator)
+            if issues:
+                arcpy.AddWarning("Feature class is not suitable for future Syncing.")
+                for issue in issues:
+                    arcpy.AddWarning(issue)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
@@ -337,18 +352,12 @@ class IntegratePlacesIds(object):
         return
 
     def execute(self, parameters, messages):
-        valid = placescore.validate(parameters[0].valueAsText, quiet=True)
-        if valid == 'good':
-            placescore.add_places_ids(parameters[0].valueAsText,
-                                      parameters[1].valueAsText,
-                                      parameters[2].valueAsText,
-                                      parameters[3].valueAsText,
-                                      parameters[4].valueAsText,
-                                      parameters[5].valueAsText)
-        else:
-            arcpy.AddWarning("Feature class is not suitable for Integration.")
-            # Run validation again to give the user the warnings.
-            placescore.validate(parameters[0].valueAsText)
+        placescore.add_places_ids(parameters[0].valueAsText,
+                                  parameters[1].valueAsText,
+                                  parameters[2].valueAsText,
+                                  parameters[3].valueAsText,
+                                  parameters[4].valueAsText,
+                                  parameters[5].valueAsText)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
@@ -389,6 +398,10 @@ class SeedPlaces(object):
             parameterType="Optional",
             enabled=False)
 
+        # FIXME - osm2places returns a upload log table, need option for save this table
+        # TODO - Add option to upload without future syncing (ignore sync warnings)
+        # TODO - Add option to add Places IDs to feature class.
+
         parameters = [feature, translator, alt_translator]
         return parameters
 
@@ -406,24 +419,36 @@ class SeedPlaces(object):
         options.outputFile = None
         options.translationMethod = TranslatorUtils.get_translator(
             parameters[1], parameters[2])
+        # TODO - Get a translator object
+        translator = None
+        # TODO - Get option from parameters
+        ignore_sync_warnings = False
+        #  TODO - Get option from parameters
+        addIds = False
 
-        valid = placescore.validate(featureclass, quiet=True)
-        if valid == 'ok':
-            if not placescore.init4places(featureclass):
-                return
-            error, changefile = arc2osmcore.makeosmfile(options)
-            if error:
-                arcpy.AddError(error)
-            else:
-                error, csvfile = osm2places.upload_bytes(changefile)
+        issues = placescore.valid4upload(featureclass, places, translator)
+        if issues:
+            arcpy.AddWarning("Feature class is not suitable for Uploading.")
+            for issue in issues:
+                arcpy.AddWarning(issue)
+        else:
+            sync_issues = placescore.valid4sync(featureclass, translator)
+            if sync_issues:
+                arcpy.AddWarning("Feature class is not suitable for future Syncing.")
+                for issue in sync_issues:
+                    arcpy.AddWarning(issue)
+            if not sync_issues or ignore_sync_warnings:
+                error, changefile = arc2osmcore.makeosmfile(options)
                 if error:
                     arcpy.AddError(error)
-                if csvfile:
-                    placescore.add_places_ids(featureclass, csvfile)
-        else:
-            arcpy.AddWarning("Feature class is not suitable for Places.")
-            # Run validation again to give the user the warnings.
-            valid = placescore.validate(featureclass)
+                else:
+                    error, table = osm2places.upload_bytes(changefile)
+                    if error:
+                        arcpy.AddError(error)
+                    if table:
+                        # TODO save the table
+                        if addIds:
+                            placescore.add_places_ids(featureclass, table)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal

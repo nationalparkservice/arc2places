@@ -2,7 +2,58 @@ import arcpy
 import utils
 
 
-def validate(featureclass, quiet=False):
+# TODO move to a separate module (separate sibling classes for places and OSM?)
+class Places:
+    def __init__(self, baseurl=''):
+        self.baseurl = baseurl
+        self.max_waynodes = None
+        self.max_elements = None
+        self.server_available = False
+        self.called_capabilities = False
+
+    def get_capabilities(self):
+        def get_capabilities_from_server():
+            self.called_capabilities = True
+            # TODO: implement call baseurl/api/capabilities and parse results
+
+            return 50000, 500000
+
+        if not self.max_waynodes:
+            self.max_waynodes, self.max_elements = get_capabilities_from_server()
+
+        return self.max_waynodes, self.max_elements
+
+    # TODO Add other properties
+    # TODO Add functions from osm2places
+
+
+# TODO Move to a separate module (separate sibling classes for arc and ogr)
+class Translator:
+    def __init__(self, name):
+        self.name = name
+
+    # TODO - refactor code in arc2osmcore to here
+    # TODO - refactor code in places.pyt to here
+
+    def filter_function(self,):
+        pass
+
+
+def get_feature_info(featureclass, translator=None):
+    """
+    Internal method to count the features and vertices in a polyline, polygon featureclass
+    :param featureclass: a polyline or polygon feature class to count
+    :param translator: is an instance of the Translator class it is used to filter the featureclass
+    :return: List of (oid, List of vertex_count_per_part) tuples, one for each feature.
+    vertex_count_per_part, is the number of vertices in a single part of the feature
+    """
+    # TODO - Implement
+    results = translator.filter_features(featureclass)
+    return results
+
+
+# TODO - Maybe this should be a method on the Translator (different versions for arc and ogr)
+def valid4upload(featureclass, places, translator=None):
 
     """
     Checks if a feature class is suitable for uploading to Places.
@@ -14,29 +65,89 @@ def validate(featureclass, quiet=False):
         * Must have a spatial reference system
         * Do feature, vertex, and max vertex/feature counts, and verify below api capabilities
         * No multilines (multipolys are ok)
-        Checks for Sync:
-        * Check that geometyid is fully populated and unique (otherwise sync will not work)
-        * must support editor tracking (geodatabase)
 
-    :rtype : basestring
+    :rtype : List (of basestring)
     :param featureclass: The ArcGIS feature class to validate
-    :param quiet: Turns off all messages
-    :return: 'ok' if the feature class meets minimum requirements for upload
-             'good' if the feature class is suitable for syncing
-             anything else then the feature class should not be used
+    :param places: A Places object (needed for places connection info)
+    :param translator: a Translator object (used to filter the featureclass)
+    :return: empty list (or None) if there are not issues (ok to upload)
+             returns list of issues (strings) that preculde upload.
+             method will try to return as many issues as possible.
     """
     if not featureclass:
-        if not quiet:
-            utils.error("No feature class provided.")
-        return 'no feature class'
+        return ['no feature class']
 
     if not arcpy.Exists(featureclass):
-        if not quiet:
-            utils.error("Feature class not found.")
-        return 'feature class not found'
+        return ['feature class not found']
 
-    # FIXME: Implement
-    return 'good'
+    info = arcpy.Describe(featureclass)
+
+    if info.datasetType != 'FeatureClass':
+        return ['Dataset type ' + info.datasetType + ' is not supported. Must be a FeatureClass.']
+
+    issues = []
+    if info.featureType != 'Simple':
+        issues.append('Feature Type ' + info.featureType + ' is not supported. Must be Simple.')
+
+    sr = info.spatialRefernce
+    if not sr or sr.type not in ['Geographic', 'Projected']:
+        issues.append('Feature Class must have a Geographic or Projected spatial reference system.')
+
+    if info.shapeType not in ['Polygon', 'Polyline', 'Point']:
+        issues.append('Shape Type ' + info.shapeType + ' is not supported. Must be Polygon, Polyline or Point.')
+        return issues
+
+    # The following is only dones for Polygon, Polyline and Points
+    max_waynodes, max_elements = places.get_capabilities()
+    feature_list = get_feature_info(featureclass, translator)
+    feature_count = len(feature_list)
+    vertex_count = sum([sum(partlist) for (oid, partlist) in feature_list])
+    multiparts = [oid for (oid, partlist) in feature_list if 1 < len(partlist)]
+    if info.shapeType == 'Polygon':
+        relation_count = len(multiparts)
+        big_features = [oid for (oid, partlist) in feature_list if max_waynodes < max(partlist)]
+    else:
+        relation_count = 0
+        if info.shapeType == 'Polyline':
+            big_features = [oid for (oid, partlist) in feature_list if max_waynodes < sum(partlist)]
+        else:
+            big_features = []
+    if big_features:
+        issue = 'Some features have too many (' + max_waynodes + '+) vertices. OIDs: '
+        issue += ','.join([str(oid) for oid in big_features])
+        issues.append(issue)
+    if multiparts and info.shapeType == 'Polyline':
+        issue = 'Multipart polylines are not supported. OIDs: '
+        issue += ','.join([str(oid) for oid in multiparts])
+        issues.append(issue)
+    if max_elements < feature_count + vertex_count + relation_count:
+        issues.append('Feature class is too large. Limit is ' + str(max_elements) + ' features plus vertices.')
+
+    return issues
+
+
+def valid4sync(featureclass, translator=None):
+
+    """
+    Checks if a feature class is suitable for syncing with Places.
+
+    Requires arcpy and ArcGIS 10.x ArcView or better license
+
+        Assumes but does not check that feature is suitable for Upload
+        Additional checks for Syncing:
+        * Check that geometryid is fully populated and unique (otherwise sync will not work)
+        * must support editor tracking (geodatabase)
+
+    :rtype : List (of basestring)
+    :param featureclass: The ArcGIS feature class to validate
+    :param translator: a Translator object (used to filter the featureclass)
+    :return: An empty list if there are no issues (suitable for syncing)
+             returns list of issues (strings) that preculde syncing.
+             method will try to return as many issues as possible.
+    """
+
+    # TODO - Implement
+    return [featureclass, translator]
 
 
 def init4places(featureclass, quiet=False):
@@ -69,8 +180,8 @@ def init4places(featureclass, quiet=False):
 
 
 def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
-                   places_name='PLACESID', id_name_csv='GEOMETRYID',
-                   places_name_csv='PLACESID', quiet=False):
+                   places_name='PLACESID', id_name_link='GEOMETRYID',
+                   places_name_link='PLACESID', quiet=False):
 
     """
     Populates the PlacesId in an EGIS dataset.
@@ -80,11 +191,11 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
 
     :rtype : bool
     :param featureclass: The ArcGIS feature class to validate
-    :param linkfile: a CSV file with Places Ids linked to EGIS Ids
+    :param linkfile: an ArcGIS dataset path to a table with Places Ids linked to EGIS Ids
     :param id_name: The name of the EGIS ID column in the feature class
     :param places_name:  The name of the Places ID column in the feature class
-    :param id_name_csv: The name of the EGIS ID column in the CSV file
-    :param places_name_csv:  The name of the Places ID column in the CSV
+    :param id_name_link: The name of the EGIS ID column in the CSV file
+    :param places_name_link:  The name of the Places ID column in the CSV
     :param quiet: Turns off all messages
     :return: True if successful, False otherwise
 
@@ -99,6 +210,8 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
         if not quiet:
             utils.error("Feature class not found.")
         return False
+
+    # TODO - check that both datasets have table properties (use arcpy.Describe)
 
     if not linkfile:
         if not quiet:
@@ -122,16 +235,16 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
                         .format(places_name))
         return False
 
-    if not utils.hasfield(linkfile, id_name_csv):
+    if not utils.hasfield(linkfile, id_name_link):
         if not quiet:
             utils.error("Field '{0:s}' not found in Link file."
-                        .format(id_name_csv))
+                        .format(id_name_link))
         return False
 
-    if not utils.hasfield(linkfile, places_name_csv):
+    if not utils.hasfield(linkfile, places_name_link):
         if not quiet:
             utils.error("Field '{0:s}' not found in Link file."
-                        .format(places_name_csv))
+                        .format(places_name_link))
         return False
 
     # We will have a dst_type, because we verified the field exists
@@ -146,9 +259,9 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
     view_name = arcpy.Describe(table_view).basename
     join_name = arcpy.Describe(linkfile).basename
     dst = view_name + "." + places_name
-    src = join_name + "." + places_name_csv
+    src = join_name + "." + places_name_link
     try:
-        arcpy.AddJoin_management(table_view, id_name, linkfile, id_name_csv)
+        arcpy.AddJoin_management(table_view, id_name, linkfile, id_name_link)
         if dst_type == 'double':
             arcpy.CalculateField_management(table_view,
                                             dst, 'float(!' + src + '!)')
@@ -158,6 +271,7 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
         if dst_type == 'string':
             arcpy.CalculateField_management(table_view,
                                             dst, 'str(!' + src + '!)')
+    # TODO - could fail if table_view if fatureclass is not writable
     finally:
         arcpy.Delete_management(table_view)
     return True
