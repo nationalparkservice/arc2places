@@ -9,14 +9,14 @@ def validate(featureclass, quiet=False):
 
     Requires arcpy and ArcGIS 10.x ArcView or better license
 
-        Checks: geodatabase = good, shapefile = ok, others = fail
-        geometry: polys, lines, point, no multipoints, patches, etc
-        must have a spatial reference system
-        geometryid (or alt) column = good othewise = ok
-        if it has a placesid column it must be empty
-        Check that geometyid is fully populated and unique (otherwise sync will not work)
-        warn if there are multilines (multipolys are ok)
-        Do feature, vertex, and max vertex/feature counts, and verify below api capabilities
+        Checks for Upload:
+        * Geometry: polys, lines, point, no multipoints, patches, etc
+        * Must have a spatial reference system
+        * Do feature, vertex, and max vertex/feature counts, and verify below api capabilities
+        * No multilines (multipolys are ok)
+        Checks for Sync:
+        * Check that geometyid is fully populated and unique (otherwise sync will not work)
+        * must support editor tracking (geodatabase)
 
     :rtype : basestring
     :param featureclass: The ArcGIS feature class to validate
