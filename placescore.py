@@ -3,6 +3,7 @@ import utils
 
 
 # TODO move to a separate module (separate sibling classes for places and OSM?)
+# TODO rename to Osm_api_server
 class Places:
     def __init__(self, baseurl=''):
         self.baseurl = baseurl
@@ -150,6 +151,7 @@ def valid4sync(featureclass, translator=None):
     return [featureclass, translator]
 
 
+# TODO: rename and implement add/populate GEOMETRYID
 def init4places(featureclass, quiet=False):
 
     """

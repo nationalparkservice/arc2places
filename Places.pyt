@@ -3,6 +3,7 @@ import arc2osmcore
 import placescore
 import osm2places
 
+# TODO: configure the places server
 places = placescore.Places('http://url.to.server')
 
 
@@ -88,7 +89,8 @@ class Toolbox(object):
                             "syncing Places with ArcGIS data (primarily data"
                             "in an EGIS data schema).")
         self.tools = [ValidateForPlaces,
-                      SetupForPlaces,
+                      EnableEditorTracking,
+                      AddUniqueId,
                       CreatePlaceUpload,
                       PushUploadToPlaces,
                       IntegratePlacesIds,
@@ -102,7 +104,7 @@ class ValidateForPlaces(object):
     def __init__(self):
         self.label = "1) Validate Data For Places"
         self.description = ("Checks if a feature class is suitable for "
-                            "uploading/syncing to Places.")
+                            "uploading and syncing to Places.")
         self.category = "Seed Places Step by Step"
 
     def getParameterInfo(self):
@@ -141,9 +143,9 @@ class ValidateForPlaces(object):
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
-class SetupForPlaces(object):
+class EnableEditorTracking(object):
     def __init__(self):
-        self.label = "2) Setup Data For Places Syncing"
+        self.label = "2) Enable Editor Tracking"
         self.description = ("Adds a PlacesID column and turns on archiving. "
                             "Feature class must be in a Geodatabase.")
         self.category = "Seed Places Step by Step"
@@ -157,6 +159,8 @@ class SetupForPlaces(object):
             parameterType="Required")
         feature.filter.list = ["Polygon", "Polyline", "Point"]
 
+        # TODO - Add parameters for call to arcpy.EnableEditorTracking_management()
+
         parameters = [feature]
         return parameters
 
@@ -167,19 +171,46 @@ class SetupForPlaces(object):
         return
 
     def execute(self, parameters, messages):
-        valid = placescore.validate(parameters[0].valueAsText, quiet=True)
-        if valid == 'good':
-            placescore.init4places(parameters[0].valueAsText)
-        else:
-            arcpy.AddWarning("Feature class is not suitable for Syncing.")
-            # Run validation again to give the user the warnings.
-            placescore.validate(parameters[0].valueAsText)
+        arcpy.EnableEditorTracking_management(parameters[0].valueAsText,
+                                              last_edit_date_field='EDITDATE', add_fields='ADDFIELDS')
+
+
+# noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
+class AddUniqueId(object):
+    def __init__(self):
+        self.label = "3) Add and populate a unique feature id for syncing"
+        self.description = "Adds and populates a unique feature id (GUID) for syncing. "
+        self.category = "Seed Places Step by Step"
+
+    def getParameterInfo(self):
+        feature = arcpy.Parameter(
+            name="feature",
+            displayName="Feature Class",
+            direction="Input",
+            datatype="GPFeatureLayer",
+            parameterType="Required")
+        feature.filter.list = ["Polygon", "Polyline", "Point"]
+
+        # TODO - add column name option, default to GEOMETRYID
+
+        parameters = [feature]
+        return parameters
+
+    def updateParameters(self, parameters):
+        return
+
+    def updateMessages(self, parameters):
+        return
+
+    def execute(self, parameters, messages):
+        # TODO: Implement
+        arcpy.AddWarning("Tool not Implemented.")
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class CreatePlaceUpload(object):
     def __init__(self):
-        self.label = "3) Creates a Places Upload File"
+        self.label = "4) Creates a Places Upload File"
         self.description = ("Exports a feature class to a file "
                             "suitable for uploading to Places.")
         self.category = "Seed Places Step by Step"
@@ -238,7 +269,7 @@ class CreatePlaceUpload(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class PushUploadToPlaces(object):
     def __init__(self):
-        self.label = "4) Send Upload File to Places"
+        self.label = "5) Send Upload File to Places"
         self.description = ("Sends an OsmChange File to Places and creates "
                             "a CSV link table of Places Ids and EGIS Ids.")
         self.category = "Seed Places Step by Step"
@@ -254,10 +285,12 @@ class PushUploadToPlaces(object):
 
         response = arcpy.Parameter(
             name="response",
-            displayName="Places ID File",
+            displayName="Upload Log Table",
             direction="Input",
             datatype="GPString",
             parameterType="Required")
+
+        # TODO: need to add workspace parameter (selection)
 
         parameters = [upload, response]
         return parameters
@@ -266,20 +299,24 @@ class PushUploadToPlaces(object):
         return
 
     def updateMessages(self, parameters):
+        # TODO make sure table does not exist in workspace
         return
 
     def execute(self, parameters, messages):
         upload_path = parameters[0].valueAsText
         response_path = parameters[1].valueAsText
-        error = osm2places.upload(upload_path, response_path)
+        error, table = osm2places.upload_osm_file(upload_path, places)
         if error:
             arcpy.AddError(error)
+        if table:
+            # TODO: save the table to response_path
+            pass
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class IntegratePlacesIds(object):
     def __init__(self):
-        self.label = "5) Add Places Ids to EGIS"
+        self.label = "6) Add Places Ids to EGIS"
         self.description = ("Populates the PlacesId in an EGIS dataset using "
                             "a CSV link table of Places Ids and EGIS Ids.")
         self.category = "Seed Places Step by Step"
@@ -442,7 +479,7 @@ class SeedPlaces(object):
                 if error:
                     arcpy.AddError(error)
                 else:
-                    error, table = osm2places.upload_bytes(changefile)
+                    error, table = osm2places.upload_osm_data(changefile, places)
                     if error:
                         arcpy.AddError(error)
                     if table:

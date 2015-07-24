@@ -223,7 +223,8 @@ def makeidmap(idxml, uploaddata, options=None):
     return None, resp
 
 
-def upload_bytes(data, options=None, server=None, user=None):
+# TODO: remove this method
+def xxx_upload_bytes(data, options=None, server=None, user=None):
     """
     Writes input as an OsmChange file to the server as the oauth user
 
@@ -253,7 +254,8 @@ def upload_bytes(data, options=None, server=None, user=None):
     return "Unable to open a changeset, check the permissions. " + error, None
 
 
-def upload(readpath, writepath, options=None, root=None, oauth=None):
+# TODO: remove this method
+def xxx_upload(readpath, writepath, options=None, root=None, oauth=None):
     """
     Uploads an OsmChange file and saves the results in a file.
 
@@ -268,11 +270,40 @@ def upload(readpath, writepath, options=None, root=None, oauth=None):
     :return: error message or None on success
     """
     with open(readpath, 'rb') as fr:
-        error, data = upload_bytes(fr.read(), options, root, oauth)
+        error, data = xxx_upload_bytes(fr.read(), options, root, oauth)
         if error:
             return error
         with open(writepath, 'wb') as fw:
             fw.write(data)
+
+
+# TODO: decide on error handeling protocol (exceptions, Eithers, or (Error,Data))
+def upload_osm_file(filepath, server, csv_path=None, options=None):
+    """
+    Uploads an OsmChange file to an OSM API server and returns an upload log
+
+    :param filepath: A filesystem path to an OSM Change file
+    :param server: An Osm_api_server object (needed for places connection info)
+    :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
+    :return: Either an error or an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
+    """
+    # TODO: implement this method
+    if csv_path and filepath and server and options:
+        return filepath
+
+
+def upload_osm_data(data, server, csv_path=None, options=None):
+    """
+    Uploads an OsmChange file to an OSM API server and returns an upload log
+
+    :param data: bytes as from open(name, 'rb').read() containing the upload
+    :param server: An Osm_api_server object (needed for places connection info)
+    :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
+    :return: Either an error or an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
+    """
+    # TODO: implement this method
+    if csv_path and data and server and options:
+        return data
 
 
 # noinspection PyClassHasNoInit
@@ -285,12 +316,13 @@ def test():
     opts = DefaultOptions()
     opts.verbose = True
     error, url, tokens = setup('places', opts)
+    # TODO: import Osm_api_server
+    places = None  # Osm_api_server()
     if error:
         print str(error) + ' ' + str(url) + ' ' + str(tokens)
         return
 
-    error = upload('./tests/test_trail_routes.osm', './tests/test_trail_routes_pids.csv', opts, url,
-                   tokens)
+    error = upload_osm_file('./tests/test_trail_routes.osm', places, './tests/test_trail_routes_pids.csv', opts)
     if error:
         print error
     else:
@@ -331,7 +363,9 @@ def cmdline():
         parser.error(u"The input file does not exist.")
     if os.path.exists(dstfile):
         parser.error(u"The destination file exist.")
-    error = upload(srcfile, dstfile, options)
+    # TODO: import and configure an Osm_api_server
+    places = None  # Osm_api_server()
+    error = upload_osm_file(srcfile, places, dstfile, options)
     if error:
         print error
     else:
