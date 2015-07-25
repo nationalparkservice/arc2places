@@ -1,31 +1,6 @@
 import arcpy
 import utils
-
-
-# TODO move to a separate module (separate sibling classes for places and OSM?)
-# TODO rename to Osm_api_server
-class Places:
-    def __init__(self, baseurl=''):
-        self.baseurl = baseurl
-        self.max_waynodes = None
-        self.max_elements = None
-        self.server_available = False
-        self.called_capabilities = False
-
-    def get_capabilities(self):
-        def get_capabilities_from_server():
-            self.called_capabilities = True
-            # TODO: implement call baseurl/api/capabilities and parse results
-
-            return 50000, 500000
-
-        if not self.max_waynodes:
-            self.max_waynodes, self.max_elements = get_capabilities_from_server()
-
-        return self.max_waynodes, self.max_elements
-
-    # TODO Add other properties
-    # TODO Add functions from osm2places
+import Places
 
 
 # TODO Move to a separate module (separate sibling classes for arc and ogr)

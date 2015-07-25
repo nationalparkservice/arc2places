@@ -2,9 +2,10 @@ import arcpy
 import arc2osmcore
 import placescore
 import osm2places
+from OsmApiServer import Places
 
 # TODO: configure the places server
-places = placescore.Places('http://url.to.server')
+places = Places()
 
 
 class TranslatorUtils(object):
