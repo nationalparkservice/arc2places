@@ -6,6 +6,7 @@ import optparse
 import os
 from OsmApiServer import Places
 
+
 def makeidmap(idxml, uploaddata, options=None):
     if options and options.verbose:
         print "Process response"
@@ -32,8 +33,14 @@ def makeidmap(idxml, uploaddata, options=None):
     return None, resp
 
 
+def fixchangefile(cid, data):
+    i = 'changeset="-1"'
+    o = 'changeset="' + cid + '"'
+    return data.replace(i, o)
+
+
 # TODO: remove this method
-def xxx_upload_bytes(data, options=None, server=None, user=None):
+def xxx_upload_bytes(places, change, options=None):
     """
     Writes input as an OsmChange file to the server as the oauth user
 
@@ -45,22 +52,22 @@ def xxx_upload_bytes(data, options=None, server=None, user=None):
     :return: tuple of an error as string, and data as bytes suitable for input
              to open(name, 'wb').write().  The error or the data is None
     """
-    if not user:
-        error, server, user = setup('places', options)
-        if error:
-            return str(error) + ' ' + str(server) + ' ' + str(user), None
-    error, cid = openchangeset(user, server)
+    cid = places.createchangeset()
     if cid:
-        error, resp = uploadchangeset(user, server, cid,
-                                      fixchangefile(cid, data), options)
-        closechangeset(user, server, cid, options)
+        resp = places.uploadchangeset(cid, fixchangefile(cid, change))
         if resp:
-            error, idmap = makeidmap(resp, data, options)
+            error, idmap = makeidmap(resp, change, options)
             if idmap:
                 return None, idmap
-            return "Failed to relate Places and GIS date. " + error, None
-        return "Server did not accept the upload request. " + error, None
-    return "Unable to open a changeset, check the permissions. " + error, None
+            return "Failed to relate Places and GIS date. " + places.error, None
+        upload_error = places.error
+        places.closechangeset(cid)
+        close_error = places.error
+        error = "Server did not accept the upload request. " + places.error
+        if close_error:
+            error += '\nserver cold not close change request.' + places.error
+        return error, None
+    return "Unable to open a changeset, check the permissions. " + places.error, None
 
 
 # TODO: remove this method
@@ -122,15 +129,9 @@ class DefaultOptions:
 
 
 def test():
-    opts = DefaultOptions()
-    opts.verbose = True
-    # TODO: import Osm_api_server
-    places = None  # Osm_api_server()
-    if error:
-        print str(error) + ' ' + str(url) + ' ' + str(tokens)
-        return
-
-    error = upload_osm_file('./tests/test_trail_routes.osm', places, './tests/test_trail_routes_pids.csv', opts)
+    places = Places()
+    places.turn_verbose_on()
+    error = upload_osm_file('./tests/test_trail_routes.osm', places, './tests/test_trail_routes_pids.csv')
     if error:
         print error
     else:
