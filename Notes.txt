@@ -120,3 +120,17 @@ I am providing tools to support workflow #3, with the goal of also supporting wo
 [2] NPMap team would need to agree to this additional workload.
 [3] While this is duplicative, it may not be bad as the two systems have different needs and purposes.
 
+
+
+Goals:
+ Should work from a suite of command line commands as well as Arc Toolbox tools
+   places.pyt, configures/validates the arcpy.parameters for input to modules
+     Info, warning and errors use arcpy commnds
+   commandline scripts use optparse to configure the command line options and arguments
+     info, warning and errors print to standard output
+      to support this, pass a logger to all classes and functions,
+      logger should have three methods, AddInfo, AddWarning, AddError, so arcpy is a logger,
+       and a simple class with these three methods sending input to stdout (via print) works for cmd line tools
+ Should work from Mac and PC (On Mac use ogr, on PC, use ogr or arcpy)
+ Should work with any OSM API server, including Places (special authentication)
+
