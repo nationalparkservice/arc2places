@@ -66,9 +66,9 @@ def upload_osm_data(data, server, csv_path=None, options=None):
     :param options: A set of attributes that provide additional control for this method
     :return: Either an error or an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
     """
-    cid = server.createchangeset()
+    cid = server.create_changeset()
     if cid:
-        resp = server.uploadchangeset(cid, fixchangefile(cid, data))
+        resp = server.upload_changeset(cid, fixchangefile(cid, data))
         if resp:
             error, upload_log = makeidmap(resp, data, options)
             if upload_log:
@@ -81,7 +81,7 @@ def upload_osm_data(data, server, csv_path=None, options=None):
                     return None, upload_log
             return "Failed to relate Places and GIS date. " + error, None
         upload_error = server.error
-        server.closechangeset(cid)
+        server.close_changeset(cid)
         close_error = server.error
         error = "Server did not accept the upload request. " + upload_error
         if close_error:

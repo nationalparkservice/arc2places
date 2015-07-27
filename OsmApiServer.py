@@ -1,3 +1,4 @@
+"""This module provides classes that communicate with Open Street Map (OSM) API servers"""
 __author__ = 'RESarwas'
 
 import os
@@ -11,9 +12,10 @@ except ImportError:
     OAuth1Session = None
     print("requests_oauthlib is needed.  Add it to your system with:")
     if os == 'nt':
+        # TODO: fix the path and include info on installing pip for version < 2.7.9
         print("c:\python27\ArcGIS10.3\Scripts\pip install requests_oauthlib")
     else:
-        print("sudo easy_install pip (if you do not have pip)")
+        print("sudo easy_install pip #if you do not have pip")
         print("sudo pip install requests_oauthlib")
     sys.exit()
 import requests
@@ -41,20 +43,20 @@ def simplifydict(dictoflists):
 
 
 class OsmApiServer:
-    def __init__(self, name='', baseurl=''):
-        self.name = name
-        self.max_waynodes = None
-        self.max_elements = None
-        self.version = '0.6'
-        self.server_available = False
-        self.called_capabilities = False
-        self._verbose = False
-        self.username = os.getenv('USERNAME')
-        self.oauth = None
+    def __init__(self, name=''):
         self.error = None
-        
-        # TODO: Sort this out, use name or baseurl to pick server style
-        self.baseurl = baseurl
+        self.logger = None  # TODO: implement logger
+        self.name = name
+        self.server_online = True
+        self.username = os.getenv('USERNAME')
+
+        self._baseurl = secrets[self.name]['url']
+        self._called_capabilities = False
+        self._max_waynodes = None
+        self._max_elements = None
+        self._oauth = None
+        self._verbose = False
+        self._version = '0.6'
 
     def turn_verbose_on(self):
         self._verbose = True
@@ -62,26 +64,32 @@ class OsmApiServer:
     def turn_verbose_off(self):
         self._verbose = True
 
-    def get_capabilities(self):
-        def get_capabilities_from_server():
-            self.called_capabilities = True
-            # TODO: implement call baseurl/api/capabilities and parse results
-            self.version = '0.6'
-            self.max_waynodes = 50000
-            self.max_elements = 500000
+    def get_max_waynodes(self):
+        if not self._max_waynodes and not self._called_capabilities:
+            self._get_capabilities()
+        return self._max_waynodes
 
-        if not self.max_waynodes:
-            get_capabilities_from_server()
+    def get_max_elements(self):
+        if not self._max_elements and not self._called_capabilities:
+            self._get_capabilities()
+        return self._max_elements
 
-        return self.max_waynodes, self.max_elements
+    def refresh_capabilities(self):
+        self._get_capabilities()
 
-    def connect(self):
-        self.baseurl = secrets[self.name]['url']
+    def _get_capabilities(self):
+        self._called_capabilities = True
+        # TODO: implement call baseurl/api/capabilities and parse results
+        self._version = '0.6'
+        self._max_waynodes = 50000
+        self._max_elements = 500000
+
+    def _connect(self):
         client_token = secrets[self.name]['consumer_key']
         client_secret = secrets[self.name]['consumer_secret']
 
         # Get Request Tokens
-        request_url = self.baseurl + '/oauth/request_token'
+        request_url = self._baseurl + '/oauth/request_token'
         if self._verbose:
             print "Getting Request Tokens from", request_url
             print "Client Token", client_token
@@ -90,7 +98,7 @@ class OsmApiServer:
         if resp.status_code != 200:
             baseerror = "Request Error. Status: {0}, Response: {0}"
             self.error = baseerror.format(resp.status_code, resp.text)
-            self.oauth = None
+            self._oauth = None
 
         request_tokens = simplifydict(urlparse.parse_qs(resp.text))
         if self._verbose:
@@ -99,14 +107,14 @@ class OsmApiServer:
 
         # Authorize User
         if self.name == 'places':
-            if not self.authorize_npsuser(request_tokens):
+            if not self._authorize_npsuser(request_tokens):
                 return
         else:
             self.error = 'OSM user authentication not yet supported'
             return
 
         # Get Access Tokens
-        access_url = self.baseurl + '/oauth/access_token'
+        access_url = self._baseurl + '/oauth/access_token'
         if self._verbose:
             print "Getting Access Tokens from", access_url
         auth = ('OAuth ' +
@@ -116,7 +124,7 @@ class OsmApiServer:
         res = requests.request('post', url=access_url, headers=header)
         if res.status_code != 200:
             self.error = 'Access Error' + str(res.status_code) + res.text
-            self.oauth = None
+            self._oauth = None
             return
 
         access_tokens = simplifydict(urlparse.parse_qs(res.text))
@@ -125,21 +133,21 @@ class OsmApiServer:
             print "Access Secret", access_tokens['oauth_token_secret']
 
         # Initialize the Oauth object to create signed requests
-        self.oauth = OAuth1Session(client_token,
-                                   client_secret=client_secret,
-                                   resource_owner_key=access_tokens['oauth_token'],
-                                   resource_owner_secret=access_tokens['oauth_token_secret'])
+        self._oauth = OAuth1Session(client_token,
+                                    client_secret=client_secret,
+                                    resource_owner_key=access_tokens['oauth_token'],
+                                    resource_owner_secret=access_tokens['oauth_token_secret'])
         return
 
-    def authorize_npsuser(self, request_tokens):
+    def _authorize_npsuser(self, request_tokens):
         if self._verbose:
             print "Authorizing NPS user"
-        auth_url = self.baseurl + '/oauth/add_active_directory_user'
-        error, userid, username = self.getnpsuseridentity()
+        auth_url = self._baseurl + '/oauth/add_active_directory_user'
+        error, userid, username = self._get_npsuser_identity()
         if error:
             baseerror = error + ". Userid: {0}, Username: {0}"
             self.error = baseerror.format(userid, username)
-            self.oauth = None
+            self._oauth = None
             return False
 
         auth_data = {
@@ -156,13 +164,13 @@ class OsmApiServer:
         if res.status_code != 200:
             baseerror = "Authorization Error. Status: {0}, Response: {0}"
             self.error = baseerror.format(res.status_code, res.text)
-            self.oauth = None
+            self._oauth = None
             return False
         if self._verbose:
             print "Authorized NPS user", username
         return True
 
-    def getnpsuseridentity(self):
+    def _get_npsuser_identity(self):
         if not self.username:
             return 'User Error', 0, 'No user given'
 
@@ -185,7 +193,7 @@ class OsmApiServer:
             print "Found id", userid
         return None, userid, displayname
 
-    def createchangeset(self, application, comment=None):
+    def create_changeset(self, application, comment=None):
         """
         Uses the credentials of the current user to open a change set.
 
@@ -195,26 +203,26 @@ class OsmApiServer:
         :return: returns None on error, or the changeset id as a positive int
         """
 
-        if not self.oauth:
-            self.connect()
-        if not self.oauth:
+        if not self._oauth:
+            self._connect()
+        if not self._oauth:
             return None
         if not application:
             self.error = 'No application name provided for the changeset'
             return None
         if self._verbose:
             print 'Create change set'
-        url = self.baseurl + '/api/' + self.version + '/changeset/create'
+        url = self._baseurl + '/api/' + self._version + '/changeset/create'
         osm_changeset_payload = ('<osm><changeset>'
                                  '<tag k="created_by" v="{0}"/>').format(application)
         if comment:
             osm_changeset_payload += '<tag k="comment" v="upload of OsmChange file"/>'
         osm_changeset_payload += '</changeset></osm>'
         try:
-            resp = self.oauth.put(url, data=osm_changeset_payload,
-                                  headers={'Content-Type': 'text/xml'})
+            resp = self._oauth.put(url, data=osm_changeset_payload,
+                                   headers={'Content-Type': 'text/xml'})
         except requests.exceptions.ConnectionError:
-            self.error = "Unable to Connect to " + self.baseurl
+            self.error = "Unable to Connect to " + self._baseurl
             return None
         if resp.status_code == 400:
             self.error = 'There are errors parsing the XML'
@@ -229,7 +237,7 @@ class OsmApiServer:
             print "Created change set", cid
         return cid
 
-    def uploadchangeset(self, cid, change):
+    def upload_changeset(self, cid, change):
         """
         Uploads an osm changefile to an open changest (cid)
 
@@ -238,14 +246,14 @@ class OsmApiServer:
         :return: returns the api upload response xml or None on error
         """
 
-        if not self.oauth:
-            self.connect()
-        if not self.oauth:
+        if not self._oauth:
+            self._connect()
+        if not self._oauth:
             return None
-        url = self.baseurl + '/api/' + self.version + '/changeset/' + cid + '/upload'
+        url = self._baseurl + '/api/' + self._version + '/changeset/' + cid + '/upload'
         if self._verbose:
             print 'Upload to change set', cid
-        resp = self.oauth.post(url, data=change, headers={'Content-Type': 'text/xml'})
+        resp = self._oauth.post(url, data=change, headers={'Content-Type': 'text/xml'})
         if resp.status_code != 200:
             baseerror = "Failed to upload changeset. Status: {0}, Response: {0}"
             self.error = baseerror.format(resp.status_code, resp.text)
@@ -257,24 +265,24 @@ class OsmApiServer:
                 print "Uploaded change set successfully"
         return data
 
-    def closechangeset(self, cid):
+    def close_changeset(self, cid):
         """
         Closes the changeset provided.
 
         :param cid: String, The id (number) of a changeset opened by the current user
         :return: No return value, check error property for errors
         """
-        if not self.oauth:
-            self.connect()
-        if not self.oauth:
+        if not self._oauth:
+            self._connect()
+        if not self._oauth:
             return None
         if not cid:
             self.error = 'No changeset id provided'
             return
         if self._verbose:
             print "Close change set", cid
-        url = self.baseurl + '/api/' + self.version + '/changeset/' + cid + '/close'
-        resp = self.oauth.put(url)
+        url = self._baseurl + '/api/' + self._version + '/changeset/' + cid + '/close'
+        resp = self._oauth.put(url)
         if resp.status_code == 404:
             self.error = 'no changeset with the given id could be found'
             return

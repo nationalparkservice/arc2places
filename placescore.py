@@ -74,7 +74,8 @@ def valid4upload(featureclass, places, translator=None):
         return issues
 
     # The following is only dones for Polygon, Polyline and Points
-    max_waynodes, max_elements = places.get_capabilities()
+    max_waynodes = places.get_max_waynodes()
+    max_elements = places.get_max_elements()
     feature_list = get_feature_info(featureclass, translator)
     feature_count = len(feature_list)
     vertex_count = sum([sum(partlist) for (oid, partlist) in feature_list])
