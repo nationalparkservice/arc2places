@@ -4,7 +4,7 @@
 import xml.etree.ElementTree as Et
 import optparse
 import os
-from OsmApiServer import Places
+from OsmApiServer import OsmApiServer, Places
 
 
 # TODO: create/return an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
@@ -91,9 +91,13 @@ def upload_osm_data(data, server, csv_path=None, options=None):
 
 
 def test():
-    places = Places()
-    places.turn_verbose_on()
-    error = upload_osm_file('./tests/test_trail_routes.osm', places, './tests/test_trail_routes_pids.csv')
+    class Options:
+        verbose = True
+    # TODO: Create logger
+    api_server = Places()
+    api_server.turn_verbose_on()
+    error, table = upload_osm_file('./tests/test_trail_routes.osm', api_server,
+                                   './tests/test_trail_routes_pids.csv', Options)
     if error:
         print error
     else:
@@ -116,6 +120,9 @@ def cmdline():
         "Domain user logon name. " +
         "Defaults to None. When None, will load from " +
         "'USERNAME' environment variable."), default=None)
+    parser.add_option("-s", "--server", dest="server", type=str, help=(
+        "Name of server to connect to. I.e. 'places', 'osm', 'osm-dev', 'local'." +
+        "Defaults to 'places'.  Name must be defined in the secrets file."), default='places')
     parser.add_option("-v", "--verbose", dest="verbose", action="store_true")
     parser.set_defaults(verbose=False)
 
@@ -134,12 +141,17 @@ def cmdline():
         parser.error(u"The input file does not exist.")
     if os.path.exists(dstfile):
         parser.error(u"The destination file exist.")
-    places = Places()
+    if options.server:
+        # TODO: verify that this is a valid server
+        api_server = OsmApiServer(options.server)
+    else:
+        api_server = Places()
     if options.verbose:
-        places.turn_verbose_on()
+        # TODO: Create logger
+        api_server.turn_verbose_on()
     if options.username:
-        places.username = options.username
-    error = upload_osm_file(srcfile, places, dstfile, options)
+        api_server.username = options.username
+    error = upload_osm_file(srcfile, api_server, dstfile, options)
     if error:
         print error
     else:
