@@ -5,6 +5,7 @@ import xml.etree.ElementTree as Et
 import optparse
 import os
 from OsmApiServer import OsmApiServer, Places
+from Logger import Logger
 
 
 # TODO: create/return an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
@@ -93,9 +94,10 @@ def upload_osm_data(data, server, csv_path=None, options=None):
 def test():
     class Options:
         verbose = True
-    # TODO: Create logger
     api_server = Places()
     api_server.turn_verbose_on()
+    api_server.logger = Logger()
+    api_server._debug = True
     error, table = upload_osm_file('./tests/test_trail_routes.osm', api_server,
                                    './tests/test_trail_routes_pids.csv', Options)
     if error:
@@ -147,7 +149,7 @@ def cmdline():
     else:
         api_server = Places()
     if options.verbose:
-        # TODO: Create logger
+        api_server.logger = Logger()
         api_server.turn_verbose_on()
     if options.username:
         api_server.username = options.username

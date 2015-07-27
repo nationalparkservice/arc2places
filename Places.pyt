@@ -3,9 +3,11 @@ import arc2osmcore
 import placescore
 import osm2places
 from OsmApiServer import Places
+from Logger import ArcpyLogger
 
-# TODO: configure the places server
 places = Places()
+places.logger = ArcpyLogger()
+places.turn_verbose_on()
 
 
 class TranslatorUtils(object):
