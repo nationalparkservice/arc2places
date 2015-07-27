@@ -5,6 +5,7 @@ import os
 import sys
 import urlparse
 import json
+import xml.etree.ElementTree as eTree
 
 try:
     from requests_oauthlib import OAuth1Session
@@ -52,7 +53,6 @@ class OsmApiServer:
         self.error = None
         self.logger = None
         self.name = name
-        self.server_online = True
         self.username = os.getenv('USERNAME')
 
         self._baseurl = secrets[self.name]['url']
@@ -61,6 +61,8 @@ class OsmApiServer:
         self._max_waynodes = None
         self._max_elements = None
         self._oauth = None
+        self._server_accepts_version = None
+        self._status = None
         self._verbose = False
         self._version = '0.6'
 
@@ -71,28 +73,76 @@ class OsmApiServer:
         self._verbose = True
 
     def get_max_waynodes(self):
-        if not self._max_waynodes and not self._called_capabilities:
+        if self._max_waynodes is None and not self._called_capabilities:
             self._get_capabilities()
         return self._max_waynodes
 
     def get_max_elements(self):
-        if not self._max_elements and not self._called_capabilities:
+        if self._max_elements is None and not self._called_capabilities:
             self._get_capabilities()
         return self._max_elements
+
+    def is_online(self):
+        if self._status is None and not self._called_capabilities:
+            self._get_capabilities()
+        return self._status == 'online'
+
+    def is_version_supported(self):
+        if self._server_accepts_version is None and not self._called_capabilities:
+            self._get_capabilities()
+        return self._server_accepts_version
 
     def refresh_capabilities(self):
         self._get_capabilities()
 
     def _get_capabilities(self):
+        if not self._baseurl:
+            self.error = "'" + self.name + "' is not a well known server name.  Add it to secrets.py"
+            return
+        capabilities_url = self._baseurl + '/api/capabilities'
+        if self._verbose and self.logger:
+            self.logger.info("Getting capabilities from " + capabilities_url)
+        resp = requests.get(capabilities_url)
+        if self._debug and self.logger:
+            self.logger.debug('status ' + str(resp.status_code) + '\ntext ' + resp.text)
         self._called_capabilities = True
-        # TODO: implement call baseurl/api/capabilities and parse results
-        self._version = '0.6'
-        self._max_waynodes = 50000
-        self._max_elements = 500000
+        if resp.status_code != 200:
+            baseerror = "Get cababilities failed. Status: {0}, Response: {0}"
+            self.error = baseerror.format(resp.status_code, resp.text)
+            return
+        try:
+            root = eTree.fromstring(resp.text)
+        except eTree.ParseError:
+            self.error = 'Get cababilities response is not valid XML.'
+            return
+        min_version = None
+        max_version = None
+        try:
+            api = root[0]
+            for child in api:
+                if child.tag == 'version':
+                    min_version = float(child.attrib['minimum'])
+                    max_version = float(child.attrib['maximum'])
+                if child.tag == 'waynodes':
+                    self._max_waynodes = int(child.attrib['maximum'])
+                if child.tag == 'changesets':
+                    self._max_elements = int(child.attrib['maximum_elements'])
+                if child.tag == 'status':
+                    self._status = child.attrib['api']
+        except (KeyError, ValueError):
+            self.error = 'XML returned by get capabilities not in standard format'
+            return
+        version = float(self._version)
+        self._server_accepts_version = min_version <= version <= max_version
+        if self._verbose and self.logger:
+            self.logger.info("Got capabilities")
 
     def _connect(self):
         if not OAuth1Session:
             self.error = "requests_oauthlib module not loaded."
+            return
+        if not self._baseurl:
+            self.error = "'" + self.name + "' is not a well known server name.  Add it to secrets.py"
             return
 
         client_token = secrets[self.name]['consumer_key']
@@ -319,3 +369,19 @@ class Places(OsmApiServer):
 class Osm(OsmApiServer):
     def __init__(self):
         OsmApiServer.__init__(self, name='osm')
+
+
+if __name__ == '__main__':
+    import Logger
+    places = Places()
+    places.turn_verbose_on()
+    places.logger = Logger.Logger()
+    places._debug = True
+    online = places.is_online()
+    if places.error is not None:
+        print 'ERROR', places.error
+    else:
+        print 'is online', online
+        print 'is version supported', places.is_version_supported()
+        print 'max_waynodes', places.get_max_waynodes()
+        print 'max_elements', places.get_max_elements()
