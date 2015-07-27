@@ -12,8 +12,13 @@ except ImportError:
     OAuth1Session = None
     print("requests_oauthlib is needed.  Add it to your system with:")
     if os == 'nt':
-        # TODO: fix the path and include info on installing pip for version < 2.7.9
-        print("c:\python27\ArcGIS10.3\Scripts\pip install requests_oauthlib")
+        pydir = os.path.dirname(sys.executable)
+        print(pydir + r'\Scripts\pip.exe install requests_oauthlib')
+        if not os.path.exists(pydir + r'\Scripts\pip.exe'):
+            print('However, You must first install pip')
+            print 'Download <https://bootstrap.pypa.io/get-pip.py> to ' + pydir + r'\Scripts\get-pip.py'
+            print 'Then run'
+            print sys.executable + ' ' + pydir + r'\Scripts\get-pip.py'
     else:
         print("sudo easy_install pip #if you do not have pip")
         print("sudo pip install requests_oauthlib")
