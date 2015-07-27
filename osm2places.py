@@ -7,9 +7,11 @@ import os
 from OsmApiServer import Places
 
 
+# TODO: create/return an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
+# TODO: Add date, version, changeset id, and any other available info that might be helpful in sync process
 def makeidmap(idxml, uploaddata, options=None):
-    if options and options.verbose:
-        print "Process response"
+    if options and options.verbose and options.logger:
+        options.logger.info("Process response")
     placesids = {}
     root = Et.fromstring(idxml)
     if root.tag != "diffResult":
@@ -28,8 +30,8 @@ def makeidmap(idxml, uploaddata, options=None):
     resp = "PlaceId,GEOMETRYID\n"
     for tempid in gisids:
         resp += placesids[tempid] + "," + gisids[tempid] + "\n"
-    if options and options.verbose:
-        print "Processed response"
+    if options and options.verbose and options.logger:
+        options.logger.info("Processed response")
     return None, resp
 
 
@@ -37,60 +39,6 @@ def fixchangefile(cid, data):
     i = 'changeset="-1"'
     o = 'changeset="' + cid + '"'
     return data.replace(i, o)
-
-
-# TODO: remove this method
-def xxx_upload_bytes(places, change, options=None):
-    """
-    Writes input as an OsmChange file to the server as the oauth user
-
-    :rtype : (str, bytes)
-    :param data: bytes as from open(name, 'rb').read() containing the upload
-    :param server: string - url of OSM API 0.6 server.
-    :param options: an object of type DefaultOptions for setting behavior options
-    :param user: oauth object representing the credentials of the current user
-    :return: tuple of an error as string, and data as bytes suitable for input
-             to open(name, 'wb').write().  The error or the data is None
-    """
-    cid = places.createchangeset()
-    if cid:
-        resp = places.uploadchangeset(cid, fixchangefile(cid, change))
-        if resp:
-            error, idmap = makeidmap(resp, change, options)
-            if idmap:
-                return None, idmap
-            return "Failed to relate Places and GIS date. " + places.error, None
-        upload_error = places.error
-        places.closechangeset(cid)
-        close_error = places.error
-        error = "Server did not accept the upload request. " + places.error
-        if close_error:
-            error += '\nserver cold not close change request.' + places.error
-        return error, None
-    return "Unable to open a changeset, check the permissions. " + places.error, None
-
-
-# TODO: remove this method
-def xxx_upload(readpath, writepath, options=None, root=None, oauth=None):
-    """
-    Uploads an OsmChange file and saves the results in a file.
-
-    The OsmChange file is send to the server at root as the oauth user.
-
-    :rtype : str
-    :param readpath: string - file system path of OsmChange to upload
-    :param writepath: string - file system path to create with response
-    :param options: an object of type DefaultOptions for setting behavior options
-    :param root: string - base url of OSM API 0.6 server.
-    :param oauth: oauth object representing the credentials of the current user
-    :return: error message or None on success
-    """
-    with open(readpath, 'rb') as fr:
-        error, data = xxx_upload_bytes(fr.read(), options, root, oauth)
-        if error:
-            return error
-        with open(writepath, 'wb') as fw:
-            fw.write(data)
 
 
 # TODO: decide on error handeling protocol (exceptions, Eithers, or (Error,Data))
@@ -101,31 +49,45 @@ def upload_osm_file(filepath, server, csv_path=None, options=None):
     :param filepath: A filesystem path to an OSM Change file
     :param server: An Osm_api_server object (needed for places connection info)
     :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
+    :param options: A set of attributes that provide additional control for this method
     :return: Either an error or an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
     """
-    # TODO: implement this method
-    if csv_path and filepath and server and options:
-        return filepath
+    with open(filepath, 'rb') as fr:
+        return upload_osm_data(fr.read(), server, csv_path, options)
 
 
 def upload_osm_data(data, server, csv_path=None, options=None):
     """
-    Uploads an OsmChange file to an OSM API server and returns an upload log
+    Uploads contents of an OsmChange file to an OSM API server and returns an upload log
 
-    :param data: bytes as from open(name, 'rb').read() containing the upload
-    :param server: An Osm_api_server object (needed for places connection info)
+    :param data: unicode (or bytes as from open(name, 'rb').read()) containing the change file contents to upload
+    :param server: An Osm_api_server object (needed for connection info)
     :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
+    :param options: A set of attributes that provide additional control for this method
     :return: Either an error or an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
     """
-    # TODO: implement this method
-    if csv_path and data and server and options:
-        return data
-
-
-# noinspection PyClassHasNoInit
-class DefaultOptions:
-    username = None
-    verbose = False
+    cid = server.createchangeset()
+    if cid:
+        resp = server.uploadchangeset(cid, fixchangefile(cid, data))
+        if resp:
+            error, upload_log = makeidmap(resp, data, options)
+            if upload_log:
+                if csv_path:
+                    # FIXME: upload_log does not implement this method (it is just text right now)
+                    error = upload_log.save_to_csv(csv_path)
+                    if error:
+                        return "Failed to sve CSV. " + error, None
+                else:
+                    return None, upload_log
+            return "Failed to relate Places and GIS date. " + error, None
+        upload_error = server.error
+        server.closechangeset(cid)
+        close_error = server.error
+        error = "Server did not accept the upload request. " + upload_error
+        if close_error:
+            error += '\nserver cold not close change request. ' + close_error
+        return error, None
+    return "Unable to open a changeset, check the network, and your permissions. " + server.error, None
 
 
 def test():
@@ -172,8 +134,11 @@ def cmdline():
         parser.error(u"The input file does not exist.")
     if os.path.exists(dstfile):
         parser.error(u"The destination file exist.")
-    # TODO: import and configure an Osm_api_server
     places = Places()
+    if options.verbose:
+        places.turn_verbose_on()
+    if options.username:
+        places.username = options.username
     error = upload_osm_file(srcfile, places, dstfile, options)
     if error:
         print error
