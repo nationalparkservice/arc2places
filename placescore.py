@@ -1,6 +1,6 @@
 import arcpy
 import utils
-import Places
+# from OsmApiServer import Places
 
 
 # TODO Move to a separate module (separate sibling classes for arc and ogr)
