@@ -1,55 +1,51 @@
-__author__ = 'RESarwas'
-
+from __future__ import print_function
 import datetime
-try:
-    import arcpy
-except ImportError:
-    arcpy = None
 
 
 class Logger:
-    @staticmethod
     def debug(self, text):
         print('DEBUG', datetime.datetime.now(), text)
 
-    @staticmethod
     def error(self, text):
         print('ERROR', text)
 
-    @staticmethod
     def info(self, text):
         print('INFO', text)
 
-    @staticmethod
     def warn(self, text):
         print('WARN', text)
 
 
 class ArcpyLogger(Logger):
-    @staticmethod
+    def __init__(self):
+        try:
+            self.arcpy = __import__('arcpy')
+        except ImportError:
+            self.arcpy = None
+
     def debug(self, text):
-        if arcpy:
-            arcpy.AddMessage(text)
+        if self.arcpy:
+            self.arcpy.AddMessage(text)
         else:
             Logger.debug(self, text)
 
     @staticmethod
     def error(self, text):
-        if arcpy:
-            arcpy.AddError(text)
+        if self.arcpy:
+            self.arcpy.AddError(text)
         else:
             Logger.info(self, text)
 
     @staticmethod
     def info(self, text):
-        if arcpy:
-            arcpy.AddMessage(text)
+        if self.arcpy:
+            self.arcpy.AddMessage(text)
         else:
             Logger.info(self, text)
 
     @staticmethod
     def warn(self, text):
-        if arcpy:
-            arcpy.AddWarning(text)
+        if self.arcpy:
+            self.arcpy.AddWarning(text)
         else:
             Logger.info(self, text)
