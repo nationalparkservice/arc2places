@@ -1,5 +1,6 @@
 __author__ = 'regan'
 
+import sys
 import os
 import json
 
@@ -33,44 +34,64 @@ class Translator:
 
     def __init__(self, name, module):
         self.name = name
-        self.path = os.path.realpath(module.__file__)
         self.translation_module = module
+        if getattr(module, '__file__', False):
+            self.path = os.path.realpath(module.__file__)
+        else:
+            self.path = None
 
-    def filter_tags(self, tags):
+        self._filter_tags_function = self._get_filter_tags_function()
+        self._filter_feature_function = self._get_filter_feature_function()
+        self._filter_feature_post_function = self._get_filter_feature_post_function()
+        self._transform_pre_output_function = self._get_transform_pre_output_function()
+
+    def _get_filter_tags_function(self):
         default = lambda x: x
         func = get_function(self.translation_module, 'filter_tags')
         if func is None:
             func = get_function(self.translation_module, 'filterTags')
         if func is None:
             func = default
-        return func(tags)
+        return func
+
+    def filter_tags(self, tags):
+        return self._filter_tags_function(tags)
 
     def filter_feature(self, feature, fieldnames, reproject):
+        return self._filter_feature_function(feature, fieldnames, reproject)
+
+    def filter_feature_post(self, feature, arcfeature, arcgeometry):
+        return self._filter_feature_post_function(feature, arcfeature, arcgeometry)
+
+    def transform_pre_output(self, geometries, features):
+        return self._transform_pre_output_function(geometries, features)
+
+    def _get_filter_feature_function(self):
         default = lambda x, y, z: x
         func = get_function(self.translation_module, 'filter_feature')
         if func is None:
             func = get_function(self.translation_module, 'filterFeature')
         if func is None:
             func = default
-        return func(feature, fieldnames, reproject)
+        return func
 
-    def filter_feature_post(self, feature, arcfeature, arcgeometry):
+    def _get_filter_feature_post_function(self):
         default = lambda x, y, z: x
         func = get_function(self.translation_module, 'filter_feature_post')
         if func is None:
             func = get_function(self.translation_module, 'filterFeaturePost')
         if func is None:
             func = default
-        return func(feature, arcfeature, arcgeometry)
+        return func
 
-    def transform_pre_output(self, geometries, features):
+    def _get_transform_pre_output_function(self):
         default = lambda x, y: None
         func = get_function(self.translation_module, 'transform_pre_output')
         if func is None:
             func = get_function(self.translation_module, 'preOutputTransform')
         if func is None:
             func = default
-        return func(geometries, features)
+        return func
 
     @staticmethod
     def get_translator_from_display_name(name):
@@ -79,7 +100,7 @@ class Translator:
             Translator.get_translator(filename)
 
     @staticmethod
-    def get_translator(name):
+    def get_translator(filename):
         """
         Get a translator by name.  ultimately name is the basename without extension of a python module in sys.path
         The user can provide any name or path.  If the path exists, the directory is adde to sys.path, and the
@@ -94,12 +115,55 @@ class Translator:
 
         For the typical users, a list of the files in the translations folder of the script will be presented as choices
 
-
-        :param name:
-        :return:
+        :param filename: a basename or full path of a python module
+        :return: an instance of the Translator class
         """
-        # TODO Implement
-        return name
+        if not filename:
+            error = 'No name provided, using the default (identity) translators'
+            return Translator(filename, None)
+
+        # add dirs to sys.path if necessary
+        (root, ext) = os.path.splitext(filename)
+        if os.path.exists(filename) and ext == '.py':
+            # user supplied translation file directly
+            path = os.path.dirname(root)
+            if os.path.exists(path) and path not in sys.path:
+                sys.path.insert(0, path)
+        else:
+            # first check translations in the subdir translations of cwd
+            path = os.path.join(os.getcwd(), "translations")
+            if os.path.exists(path) and path not in sys.path:
+                sys.path.insert(0, path)
+            # then check subdir of script dir
+            path = os.path.join(os.path.dirname(__file__), "translations")
+            if os.path.exists(path) and path not in sys.path:
+                sys.path.insert(1, path)
+            # (the cwd will also be checked implicitly)
+
+        # strip .py if present, as import wants just the module name
+        if ext == '.py':
+            filename = os.path.basename(root)
+
+        translationmodule = None
+        try:
+            translationmodule = __import__(filename, fromlist=[''])
+        except ImportError:
+            error = (
+                u"Could not load translation method '{0:s}'. Translation "
+                u"script must be in your current directory, or in the "
+                u"'translations' subdirectory of your current or "
+                u"arc2osmcore.py directory. The following directories have "
+                u"been considered: {1:s}"
+                .format(filename, str(sys.path)))
+        except SyntaxError as e:
+            error = (
+                u"Syntax error in '{0:s}'."
+                "Translation script is malformed:\n{1:s}"
+                .format(filename, e))
+        msg = u"Successfully loaded '{0:s}' translation method ('{1:s}')."\
+            .format(filename, os.path.realpath(translationmodule.__file__))
+
+        return Translator(filename, translationmodule)
 
     @staticmethod
     def get_well_known_display_names():
