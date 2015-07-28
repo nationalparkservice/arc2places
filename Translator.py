@@ -45,6 +45,8 @@ class Translator:
         self.error = error
         self.function_status = {}
 
+        # Function in the module with the correct name and number of arguments are
+        # assigned to the predefined methods of the translator object. 
         self._filter_tags_function = self._get_filter_tags_function()
         self._filter_feature_function = self._get_filter_feature_function()
         self._filter_feature_post_function = self._get_filter_feature_post_function()
@@ -117,18 +119,14 @@ class Translator:
     @staticmethod
     def get_translator(filename):
         """
-        Get a translator by name.  ultimately name is the basename without extension of a python module in sys.path
-        The user can provide any name or path.  If the path exists, the directory is adde to sys.path, and the
-        name is extracted.  If it is a simple name, then it is checked in
-        1) the translations folder of the current directory,
-        2) the translations folder of the script
-        3) the cwd and the rest of sys.path.
-        It is possible for a user to specify a translator that is a standard module, i.e. urllib, and if there is not
-        a translator with that name in the translations folder, the standard module will be loaded as a tranlator.
-        This will most likely be a harmless mistake as the translator will not have the required methods, and will do
-        nothing.
+        Get a translation module by name.
 
-        For the typical users, a list of the files in the translations folder of the script will be presented as choices
+        The user can provide a name or path.
+        if a python file exists at the path, then it is loaded as a module.
+        If a name is provided, then the following folders are searched for name[.py]
+        1) the translations folder of the current directory,
+        2) the translations folder of the script's directory
+        3) the cwd and the rest of sys.path.
 
         :param filename: a basename or full path of a python module
         :return: an instance of the Translator class
