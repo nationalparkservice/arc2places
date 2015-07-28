@@ -3,13 +3,16 @@ __author__ = 'regan'
 import sys
 import os
 import json
+import inspect
 
 
-def get_function(module, name):
+def get_function(module, name, arg_count):
     try:
         func = getattr(module, name)
         getattr(func, '__call__')
     except AttributeError:
+        func = None
+    if func and len(inspect.getargspec(func).args) != arg_count:
         func = None
     return func
 
@@ -46,7 +49,7 @@ class Translator:
         self.function_status = {}
 
         # Function in the module with the correct name and number of arguments are
-        # assigned to the predefined methods of the translator object. 
+        # assigned to the predefined methods of the translator object.
         self._filter_tags_function = self._get_filter_tags_function()
         self._filter_feature_function = self._get_filter_feature_function()
         self._filter_feature_post_function = self._get_filter_feature_post_function()
@@ -67,9 +70,9 @@ class Translator:
     def _get_filter_tags_function(self):
         default = lambda x: x
         self.function_status['filter_tags'] = 'Custom'
-        func = get_function(self.translation_module, 'filter_tags')
+        func = get_function(self.translation_module, 'filter_tags', 1)
         if func is None:
-            func = get_function(self.translation_module, 'filterTags')
+            func = get_function(self.translation_module, 'filterTags', 1)
         if func is None:
             func = default
             self.function_status['filter_tags'] = 'Default'
@@ -78,9 +81,9 @@ class Translator:
     def _get_filter_feature_function(self):
         default = lambda x, y, z: x
         self.function_status['filter_feature'] = 'Custom'
-        func = get_function(self.translation_module, 'filter_feature')
+        func = get_function(self.translation_module, 'filter_feature', 3)
         if func is None:
-            func = get_function(self.translation_module, 'filterFeature')
+            func = get_function(self.translation_module, 'filterFeature', 3)
         if func is None:
             func = default
             self.function_status['filter_feature'] = 'Default'
@@ -89,9 +92,9 @@ class Translator:
     def _get_filter_feature_post_function(self):
         default = lambda x, y, z: x
         self.function_status['filter_feature_post'] = 'Custom'
-        func = get_function(self.translation_module, 'filter_feature_post')
+        func = get_function(self.translation_module, 'filter_feature_post', 3)
         if func is None:
-            func = get_function(self.translation_module, 'filterFeaturePost')
+            func = get_function(self.translation_module, 'filterFeaturePost', 3)
         if func is None:
             func = default
             self.function_status['filter_feature_post'] = 'Default'
@@ -100,9 +103,9 @@ class Translator:
     def _get_transform_pre_output_function(self):
         default = lambda x, y: None
         self.function_status['transform_pre_output'] = 'Custom'
-        func = get_function(self.translation_module, 'transform_pre_output')
+        func = get_function(self.translation_module, 'transform_pre_output', 2)
         if func is None:
-            func = get_function(self.translation_module, 'preOutputTransform')
+            func = get_function(self.translation_module, 'preOutputTransform', 2)
         if func is None:
             func = default
             self.function_status['transform_pre_output'] = 'Default'
