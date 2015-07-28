@@ -49,6 +49,9 @@ def simplifydict(dictoflists):
 
 
 class OsmApiServer:
+
+    version = '0.6'
+
     def __init__(self, name=''):
         self.error = None
         self.logger = None
@@ -64,7 +67,6 @@ class OsmApiServer:
         self._server_accepts_version = None
         self._status = None
         self._verbose = False
-        self._version = '0.6'
 
     def turn_verbose_on(self):
         self._verbose = True
@@ -132,8 +134,7 @@ class OsmApiServer:
         except (KeyError, ValueError):
             self.error = 'XML returned by get capabilities not in standard format'
             return
-        version = float(self._version)
-        self._server_accepts_version = min_version <= version <= max_version
+        self._server_accepts_version = min_version <= float(self.version) <= max_version
         if self._verbose and self.logger:
             self.logger.info("Got capabilities")
 
@@ -273,7 +274,7 @@ class OsmApiServer:
             return None
         if self._verbose and self.logger:
             self.logger.info('Create change set')
-        url = self._baseurl + '/api/' + self._version + '/changeset/create'
+        url = self._baseurl + '/api/' + self.version + '/changeset/create'
         osm_changeset_payload = ('<osm><changeset>'
                                  '<tag k="created_by" v="{0}"/>').format(application)
         if comment:
@@ -311,7 +312,7 @@ class OsmApiServer:
             self._connect()
         if not self._oauth:
             return None
-        url = self._baseurl + '/api/' + self._version + '/changeset/' + cid + '/upload'
+        url = self._baseurl + '/api/' + self.version + '/changeset/' + cid + '/upload'
         if self._verbose and self.logger:
             self.logger.info('Upload to change set ' + cid)
         resp = self._oauth.post(url, data=change, headers={'Content-Type': 'text/xml'})
@@ -342,7 +343,7 @@ class OsmApiServer:
             return
         if self._verbose and self.logger:
             self.logger.info("Close change set " + cid)
-        url = self._baseurl + '/api/' + self._version + '/changeset/' + cid + '/close'
+        url = self._baseurl + '/api/' + self.version + '/changeset/' + cid + '/close'
         resp = self._oauth.put(url)
         if resp.status_code == 404:
             self.error = 'No changeset with the given id could be found'

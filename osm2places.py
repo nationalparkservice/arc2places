@@ -3,20 +3,20 @@
 
 import xml.etree.ElementTree as Et
 import optparse
+import sys
 import os
 import datetime
 from OsmApiServer import OsmApiServer, Places
 from Logger import Logger
+from DataTable import DataTable
 
 
-# TODO: create/return an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
-# TODO: Add date, version, changeset id, and any other available info that might be helpful in sync process
-def make_upload_log(diffResult, uploaddata, date, cid, user, options=None):
+def make_upload_log(diff_result, uploaddata, date, cid, user, options=None):
     if options and options.verbose and options.logger:
         options.logger.info("Process response")
     placesids = {}
     try:
-        root = Et.fromstring(diffResult)
+        root = Et.fromstring(diff_result)
     except Et.ParseError:
         return "Result from server is not valid XML", None
     if root.tag != "diffResult":
@@ -98,10 +98,9 @@ def upload_osm_data(data, server, csv_path=None, options=None):
             error, upload_log = make_upload_log(resp, data, timestamp, cid, server.username, options)
             if upload_log:
                 if csv_path:
-                    # FIXME: upload_log does not implement this method (it is just text right now)
-                    error = upload_log.save_to_csv(csv_path)
+                    error = upload_log.export_csv(csv_path)
                     if error:
-                        return "Failed to sve CSV. " + error, None
+                        return "Failed to save CSV. " + error, None
                 else:
                     return None, upload_log
             return "Failed to relate Places and GIS date. " + error, None
@@ -116,6 +115,7 @@ def upload_osm_data(data, server, csv_path=None, options=None):
 
 
 def test():
+    # noinspection PyClassHasNoInit
     class Options:
         verbose = True
     api_server = Places()
@@ -168,10 +168,19 @@ def cmdline():
     if os.path.exists(dstfile):
         parser.error(u"The destination file exist.")
     if options.server:
-        # TODO: verify that this is a valid server
         api_server = OsmApiServer(options.server)
     else:
         api_server = Places()
+    online = api_server.is_online()
+    if api_server.error:
+        print api_server.error
+        sys.exit(1)
+    if not online:
+        print "Server is not online right now, try again later."
+        sys.exit(1)
+    if not api_server.is_version_supported():
+        print "Server does not support version " + api_server.version + " of the OSM"
+        sys.exit(1)
     if options.verbose:
         api_server.logger = Logger()
         api_server.turn_verbose_on()
