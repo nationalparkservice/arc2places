@@ -32,27 +32,23 @@ class Translator:
 
     config = {}
 
-    def __init__(self, name, module):
+    def __init__(self, name, module, error=None):
+        """
+        Create a new Translator, not not call directly user Translator.get_translator()
+        """
         self.name = name
         self.translation_module = module
         if getattr(module, '__file__', False):
             self.path = os.path.realpath(module.__file__)
         else:
             self.path = None
+        self.error = error
+        self.function_status = {}
 
         self._filter_tags_function = self._get_filter_tags_function()
         self._filter_feature_function = self._get_filter_feature_function()
         self._filter_feature_post_function = self._get_filter_feature_post_function()
         self._transform_pre_output_function = self._get_transform_pre_output_function()
-
-    def _get_filter_tags_function(self):
-        default = lambda x: x
-        func = get_function(self.translation_module, 'filter_tags')
-        if func is None:
-            func = get_function(self.translation_module, 'filterTags')
-        if func is None:
-            func = default
-        return func
 
     def filter_tags(self, tags):
         return self._filter_tags_function(tags)
@@ -66,38 +62,57 @@ class Translator:
     def transform_pre_output(self, geometries, features):
         return self._transform_pre_output_function(geometries, features)
 
+    def _get_filter_tags_function(self):
+        default = lambda x: x
+        self.function_status['filter_tags'] = 'Custom'
+        func = get_function(self.translation_module, 'filter_tags')
+        if func is None:
+            func = get_function(self.translation_module, 'filterTags')
+        if func is None:
+            func = default
+            self.function_status['filter_tags'] = 'Default'
+        return func
+
     def _get_filter_feature_function(self):
         default = lambda x, y, z: x
+        self.function_status['filter_feature'] = 'Custom'
         func = get_function(self.translation_module, 'filter_feature')
         if func is None:
             func = get_function(self.translation_module, 'filterFeature')
         if func is None:
             func = default
+            self.function_status['filter_feature'] = 'Default'
         return func
 
     def _get_filter_feature_post_function(self):
         default = lambda x, y, z: x
+        self.function_status['filter_feature_post'] = 'Custom'
         func = get_function(self.translation_module, 'filter_feature_post')
         if func is None:
             func = get_function(self.translation_module, 'filterFeaturePost')
         if func is None:
             func = default
+            self.function_status['filter_feature_post'] = 'Default'
         return func
 
     def _get_transform_pre_output_function(self):
         default = lambda x, y: None
+        self.function_status['transform_pre_output'] = 'Custom'
         func = get_function(self.translation_module, 'transform_pre_output')
         if func is None:
             func = get_function(self.translation_module, 'preOutputTransform')
         if func is None:
             func = default
+            self.function_status['transform_pre_output'] = 'Default'
         return func
 
     @staticmethod
     def get_translator_from_display_name(name):
         if name in Translator.config:
             filename = Translator.config[name]['filename']
-            Translator.get_translator(filename)
+            return Translator.get_translator(filename)
+        else:
+            return Translator.get_translator(None)
 
     @staticmethod
     def get_translator(filename):
@@ -120,7 +135,7 @@ class Translator:
         """
         if not filename:
             error = 'No name provided, using the default (identity) translators'
-            return Translator(filename, None)
+            return Translator(filename, None, error)
 
         # add dirs to sys.path if necessary
         (root, ext) = os.path.splitext(filename)
@@ -145,6 +160,7 @@ class Translator:
             filename = os.path.basename(root)
 
         translationmodule = None
+        error = None
         try:
             translationmodule = __import__(filename, fromlist=[''])
         except ImportError:
@@ -152,18 +168,16 @@ class Translator:
                 u"Could not load translation method '{0:s}'. Translation "
                 u"script must be in your current directory, or in the "
                 u"'translations' subdirectory of your current or "
-                u"arc2osmcore.py directory. The following directories have "
+                u"script directory. The following directories have "
                 u"been considered: {1:s}"
                 .format(filename, str(sys.path)))
         except SyntaxError as e:
             error = (
                 u"Syntax error in '{0:s}'."
-                "Translation script is malformed:\n{1:s}"
+                u"Translation script is malformed:\n{1:s}"
                 .format(filename, e))
-        msg = u"Successfully loaded '{0:s}' translation method ('{1:s}')."\
-            .format(filename, os.path.realpath(translationmodule.__file__))
 
-        return Translator(filename, translationmodule)
+        return Translator(filename, translationmodule, error)
 
     @staticmethod
     def get_well_known_display_names():
@@ -197,3 +211,24 @@ def test():
         print name, Translator.get_shapetypes_for_display_name(name)
     for shapetype in ["Polygon", "Polyline", "Point"]:
         print shapetype, sorted(Translator.get_display_names_for_shape(shapetype)) + ["Other"]
+
+
+def test2():
+    for translator in [Translator.get_translator('poi'),
+                       Translator.get_translator('poix'),
+                       Translator.get_translator('poix'),
+                       Translator.get_translator_from_display_name('Parking Lots'),
+                       Translator.get_translator(None),
+                       Translator.get_translator(''),
+                       Translator.get_translator(r'C:\Users\resarwas\Documents\GitHub\arc2places\geom.py')]:
+        print '\nTranslator', translator.name, '\n'
+        if translator.translation_module is None:
+            print 'Error:', translator.error
+        else:
+            print u"Successfully loaded '{0:s}' translation method ('{1:s}').".format(
+                str(translator.name), str(translator.path))
+            print translator.function_status
+        print translator.filter_tags({'ALTNAME': 'Regan'})
+        print translator.filter_tags({'POITYPE': 'Lake'})
+
+test2()
