@@ -204,7 +204,7 @@ class Translator:
 set_translators()
 
 
-def test():
+def test1():
     print sorted(Translator.get_well_known_display_names()) + ["Other"]
     print Translator.isvalidshape('Polygon', 'Buildings')
     for name in Translator.get_well_known_display_names():
@@ -231,4 +231,6 @@ def test2():
         print translator.filter_tags({'ALTNAME': 'Regan'})
         print translator.filter_tags({'POITYPE': 'Lake'})
 
-test2()
+if __name__ == '__main__':
+    test1()
+    test2()
