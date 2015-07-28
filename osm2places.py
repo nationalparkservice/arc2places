@@ -4,36 +4,59 @@
 import xml.etree.ElementTree as Et
 import optparse
 import os
+import datetime
 from OsmApiServer import OsmApiServer, Places
 from Logger import Logger
 
 
 # TODO: create/return an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
 # TODO: Add date, version, changeset id, and any other available info that might be helpful in sync process
-def makeidmap(idxml, uploaddata, options=None):
+def make_upload_log(diffResult, uploaddata, date, cid, user, options=None):
     if options and options.verbose and options.logger:
         options.logger.info("Process response")
     placesids = {}
-    root = Et.fromstring(idxml)
+    try:
+        root = Et.fromstring(diffResult)
+    except Et.ParseError:
+        return "Result from server is not valid XML", None
     if root.tag != "diffResult":
-        return "Response is not a diffResult", None
+        return "Response from Server is not a diffResult", None
     for child in root:
-        placesids[child.attrib['old_id']] = child.attrib['new_id']
+        version = None
+        if 'new_version' in child.attrib:
+            version = child.attrib['new_version']
+        placesids[child.attrib['old_id']] = (child.attrib['new_id'], child.tag, version)
     gisids = {}
     root = Et.fromstring(uploaddata)
     # this must be a valid osmChange file,
-    # or we wouldn't get this far, so proceed
-    for child in root[0]:
-        tempid = child.attrib['id']
-        for tag in child.findall('tag'):
-            if tag.attrib['k'] == 'nps:source_id':
-                gisids[tempid] = tag.attrib['v']
-    resp = "PlaceId,GEOMETRYID\n"
+    # or we wouldn't get this far, so proceed without error checking
+    for child in root:
+        action = child.tag  # create, delete, update
+        for grandchild in child:
+            source_id = None
+            # skip elements with no tags (typically vertices)
+            has_tags = False
+            for tag in grandchild.findall('tag'):
+                has_tags = True
+                if tag.attrib['k'] == 'nps:source_id':
+                    source_id = tag.attrib['v']
+                    break
+            if has_tags:
+                tempid = grandchild.attrib['id']
+                gisids[tempid] = (source_id, action)
+    data = DataTable()
+    data.fieldnames = ['date', 'user', 'changeset', 'action', 'element', 'places_id', 'version_id', 'source_id']
+    data.fieldtypes = ['DATE', 'TEXT', 'LONG', 'TEXT', 'TEXT', 'TEXT', 'LONG', 'TEXT']
+    # resp = "PlaceId,GEOMETRYID\n"
     for tempid in gisids:
-        resp += placesids[tempid] + "," + gisids[tempid] + "\n"
+        load = gisids[tempid]
+        diff = placesids[tempid]
+        row = [date, user, cid, load[0], diff[1], diff[0], diff[2], load[1]]
+        data.rows.append(row)
+        # resp += placesids[tempid] + "," + gisids[tempid] + "\n"
     if options and options.verbose and options.logger:
         options.logger.info("Processed response")
-    return None, resp
+    return None, data
 
 
 def fixchangefile(cid, data):
@@ -69,9 +92,10 @@ def upload_osm_data(data, server, csv_path=None, options=None):
     """
     cid = server.create_changeset()
     if cid:
+        timestamp = datetime.datetime.now()
         resp = server.upload_changeset(cid, fixchangefile(cid, data))
         if resp:
-            error, upload_log = makeidmap(resp, data, options)
+            error, upload_log = make_upload_log(resp, data, timestamp, cid, server.username, options)
             if upload_log:
                 if csv_path:
                     # FIXME: upload_log does not implement this method (it is just text right now)
