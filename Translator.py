@@ -20,7 +20,7 @@ def set_translators():
     config_path = os.path.join(this_module_folder, translations_folder, config_file)
     try:
         with open(config_path) as fp:
-            Translator.translators = json.load(fp)
+            Translator.config = json.load(fp)
     except (IOError, ValueError):
         # If the file cannot be opened, IOError is raised
         # If the data being deserialized is not a valid JSON document, a ValueError will be raised.
@@ -29,7 +29,7 @@ def set_translators():
 
 class Translator:
 
-    translators = {}
+    config = {}
 
     def __init__(self, name, module):
         self.name = name
@@ -74,8 +74,8 @@ class Translator:
 
     @staticmethod
     def get_translator_from_display_name(name):
-        if name in Translator.translators:
-            filename = Translator.translators[name]['filename']
+        if name in Translator.config:
+            filename = Translator.config[name]['filename']
             Translator.get_translator(filename)
 
     @staticmethod
@@ -103,21 +103,21 @@ class Translator:
 
     @staticmethod
     def get_well_known_display_names():
-        return Translator.translators.keys()
+        return Translator.config.keys()
 
     @staticmethod
     def isvalidshape(geomtype, display_name):
-        return (display_name in Translator.translators and
-                geomtype in Translator.translators[display_name]["geomtypes"])
+        return (display_name in Translator.config and
+                geomtype in Translator.config[display_name]["geomtypes"])
 
     @staticmethod
     def get_display_names_for_shape(geomtype):
-        return [name for name in Translator.translators if geomtype in Translator.translators[name]["geomtypes"]]
+        return [name for name in Translator.config if geomtype in Translator.config[name]["geomtypes"]]
 
     @staticmethod
     def get_shapetypes_for_display_name(display_name):
-        if display_name in Translator.translators:
-            return Translator.translators[display_name]["geomtypes"]
+        if display_name in Translator.config:
+            return Translator.config[display_name]["geomtypes"]
         else:
             return []
 
