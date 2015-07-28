@@ -1,0 +1,26 @@
+{
+  "Buildings": {
+    "filename" : "buildings",
+    "geomtypes": ["Polygon"]
+  },
+  "Parking Lots": {
+    "filename" : "parkinglots",
+    "geomtypes": ["Polygon"]
+  },
+  "Roads": {
+    "filename" : "roads",
+    "geomtypes": ["Polyline"]
+  },
+  "Trails": {
+    "filename" : "trails",
+    "geomtypes": ["Polyline"]
+  },
+  "Points of Interest": {
+    "filename" : "poi",
+    "geomtypes": ["Point"]
+  },
+  "Generic": {
+    "filename" : "generic",
+    "geomtypes": ["Point", "Polyline", "Polygon"]
+  }
+}

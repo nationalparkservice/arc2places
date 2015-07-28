@@ -4,6 +4,7 @@ import placescore
 import osm2places
 from OsmApiServer import Places
 from Logger import ArcpyLogger
+from Translator import Translator
 
 places = Places()
 places.logger = ArcpyLogger()
@@ -11,44 +12,30 @@ places.turn_verbose_on()
 
 
 class TranslatorUtils(object):
-    # Display names for various translators
-    translators = {
-        'point': ["Points of Interest"],
-        'line': ["Roads", "Trails"],
-        'poly': ["Buildings", "Parking Lots"],
-        'any': ["Generic", "Other"]
-    }
-
-    # File names for translators (when not the case insensitive display name)
-    translator_names = {"Points of Interest": "poi",
-                        "Parking Lots": "parkinglots"}
-
-    all_translators = (translators['point'] + translators['line'] +
-                       translators['poly'] + translators['any'])
+    """
+    Provides coordination between translators and geometry type for all tools
+    Also adds support for custom ("Other") translator (i.e. not in list of well known translators)
+    """
+    @staticmethod
+    def get_display_names():
+        return sorted(Translator.get_well_known_display_names()) + ["Other"]
 
     @staticmethod
     def get_translator(std_param, alt_param):
-        translator = std_param.valueAsText
-        if translator in TranslatorUtils.translator_names:
-            translator = TranslatorUtils.translator_names[translator]
-        if translator == "Other":
-            translator = alt_param.valueAsText
-        return translator
+        std_translator = std_param.valueAsText
+        alt_translator = alt_param.valueAsText
+        if std_translator == "Other":
+            return Translator.get_translator(alt_translator)
+        return Translator.get_translator_from_display_name(std_translator)
 
     @staticmethod
     def update_messages(fc_param, trans_param):
         if fc_param.value and trans_param.value:
             shapetype = arcpy.Describe(fc_param.value).shapeType
             translator = trans_param.value
-            if ((shapetype == 'Polygon' and
-                (translator in TranslatorUtils.translators['point'] or
-                 translator in TranslatorUtils.translators['line'])) or
-                (shapetype == 'Polyline' and
-                (translator in TranslatorUtils.translators['point'] or
-                 translator in TranslatorUtils.translators['poly'])) or
-                (shapetype == 'Point' and
-                (translator in TranslatorUtils.translators['poly'] or
-                 translator in TranslatorUtils.translators['line']))):
+            if translator == "Other":
+                return  # no shape checking for Other
+            if not Translator.isvalidshape(shapetype, translator):
                 fc_param.setWarningMessage(
                     "Feature class shape does not match translator")
                 trans_param.setWarningMessage(
@@ -56,30 +43,15 @@ class TranslatorUtils(object):
 
     @staticmethod
     def update_parameters(fc_param, trans_param, alt_param):
-        alt_param.enabled = trans_param.value == 'Other'
         if fc_param.value:
             shapetype = arcpy.Describe(fc_param.value).shapeType
-            if shapetype == 'Polygon':
-                trans_param.filter.list = (
-                    TranslatorUtils.translators['poly'] +
-                    TranslatorUtils.translators['any'])
-            if shapetype == 'Polyline':
-                trans_param.filter.list = (
-                    TranslatorUtils.translators['line'] +
-                    TranslatorUtils.translators['any'])
-            if shapetype == 'Point':
-                trans_param.filter.list = (
-                    TranslatorUtils.translators['point'] +
-                    TranslatorUtils.translators['any'])
-
-        fc_param.filter.list = ["Polygon", "Polyline", "Point"]
+            trans_param.filter.list = sorted(Translator.get_display_names_for_shape(shapetype)) + ["Other"]
         if trans_param.value:
-            if trans_param.value in TranslatorUtils.translators['poly']:
-                fc_param.filter.list = ["Polygon"]
-            if trans_param.value in TranslatorUtils.translators['line']:
-                fc_param.filter.list = ["Polyline"]
-            if trans_param.value in TranslatorUtils.translators['point']:
-                fc_param.filter.list = ["Point"]
+            alt_param.enabled = trans_param.value == 'Other'
+            if trans_param.value == 'Other':
+                fc_param.filter.list = ["Polygon", "Polyline", "Point"]
+            else:
+                fc_param.filter.list = Translator.get_shapetypes_for_display_name(trans_param.value)
 
 
 class Toolbox(object):
@@ -240,7 +212,7 @@ class CreatePlaceUpload(object):
             direction="Input",
             datatype="GPString",
             parameterType="Required")
-        translator.filter.list = TranslatorUtils.all_translators
+        translator.filter.list = TranslatorUtils.get_display_names()
 
         alt_translator = arcpy.Parameter(
             name="alt_translator",
@@ -254,8 +226,7 @@ class CreatePlaceUpload(object):
         return parameters
 
     def updateParameters(self, parameters):
-        TranslatorUtils.update_parameters(parameters[0], parameters[2],
-                                          parameters[3])
+        TranslatorUtils.update_parameters(parameters[0], parameters[2], parameters[3])
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
@@ -264,8 +235,7 @@ class CreatePlaceUpload(object):
         options = arc2osmcore.DefaultOptions
         options.sourceFile = parameters[0].valueAsText
         options.outputFile = parameters[1].valueAsText
-        options.translationMethod = TranslatorUtils.get_translator(
-            parameters[2], parameters[3])
+        options.translationMethod = TranslatorUtils.get_translator(parameters[2], parameters[3])
         arc2osmcore.makeosmfile(options)
 
 
@@ -407,10 +377,6 @@ class SeedPlaces(object):
         self.description = ("Uploads a feature class to Places "
                             "and adds synchronization data to the "
                             "feature class")
-        self.point_translators = ["Points of Interest"]
-        self.line_translators = ["Roads", "Trails"]
-        self.poly_translators = ["Buildings", "Parking Lots"]
-        self.any_translators = ["Generic", "Other"]
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
@@ -426,9 +392,7 @@ class SeedPlaces(object):
             direction="Input",
             datatype="GPString",
             parameterType="Required")
-        translator.filter.list = \
-            self.point_translators + self.line_translators + \
-            self.poly_translators + self.any_translators
+        translator.filter.list = TranslatorUtils.get_display_names()
 
         alt_translator = arcpy.Parameter(
             name="alt_translator",
@@ -446,8 +410,7 @@ class SeedPlaces(object):
         return parameters
 
     def updateParameters(self, parameters):
-        TranslatorUtils.update_parameters(parameters[0], parameters[1],
-                                          parameters[2])
+        TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[1])
@@ -457,10 +420,9 @@ class SeedPlaces(object):
         options = arc2osmcore.DefaultOptions
         options.sourceFile = featureclass
         options.outputFile = None
-        options.translationMethod = TranslatorUtils.get_translator(
-            parameters[1], parameters[2])
-        # TODO - Get a translator object
-        translator = None
+        translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
+        # FIXME: expecting a name, not a Translator object
+        options.translationMethod = translator
         # TODO - Get option from parameters
         ignore_sync_warnings = False
         #  TODO - Get option from parameters
