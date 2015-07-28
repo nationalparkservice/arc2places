@@ -38,78 +38,11 @@ Based very heavily on code released under the following terms:
 """
 
 import sys
-import os
 import arcpy
 
 import utils
 from geom import *
-
-
-def loadtranslations(options):
-    translator = options.translationMethod
-    defautltranslations = {
-        'filterTags': lambda tags: tags,
-        'filterFeature':
-            lambda arcfeature, fieldnames, reproject: arcfeature,
-        'filterFeaturePost':
-            lambda feature, arcfeature, arcgeometry: feature,
-        'preOutputTransform': lambda geometries, features: None
-    }
-    newtranslations = {}
-    translationmodule = None
-
-    if translator:
-        # add dirs to path if necessary
-        (root, ext) = os.path.splitext(translator)
-        if os.path.exists(translator) and ext == '.py':
-            # user supplied translation file directly
-            sys.path.insert(0, os.path.dirname(root))
-        else:
-            # first check translations in the subdir translations of cwd
-            sys.path.insert(0, os.path.join(os.getcwd(), "translations"))
-            # then check subdir of script dir
-            sys.path.insert(1, os.path.join(os.path.dirname(__file__),
-                                            "translations"))
-            # (the cwd will also be checked implicitly)
-
-        # strip .py if present, as import wants just the module name
-        if ext == '.py':
-            translator = os.path.basename(root)
-
-        try:
-            translationmodule = __import__(translator, fromlist=[''])
-        except ImportError:
-            utils.die(
-                u"Could not load translation method '{0:s}'. Translation "
-                u"script must be in your current directory, or in the "
-                u"'translations' subdirectory of your current or "
-                u"arc2osmcore.py directory. The following directories have "
-                u"been considered: {1:s}"
-                .format(translator, str(sys.path)))
-        except SyntaxError as e:
-            utils.die(
-                u"Syntax error in '{0:s}'."
-                "Translation script is malformed:\n{1:s}"
-                .format(translator, e))
-        if options.verbose and translationmodule:
-            utils.info(
-                u"Successfully loaded '{0:s}' translation method ('{1:s}')."
-                .format(translator,
-                        os.path.realpath(translationmodule.__file__)))
-    else:
-        if options.verbose:
-            utils.info("Using default translations")
-
-    for k in defautltranslations:
-        if hasattr(translationmodule, k) and getattr(translationmodule, k):
-            newtranslations[k] = getattr(translationmodule, k)
-            if options.verbose:
-                utils.info("Using user " + k)
-        else:
-            newtranslations[k] = defautltranslations[k]
-            if options.verbose and not translator:
-                utils.info("Using default " + k)
-    return newtranslations
+from Translator import Translator
 
 
 def parsedata(options):
@@ -122,10 +55,9 @@ def parsedata(options):
                  [f.name for f in arcpy.ListFields(src) if
                   f.name != shapefield]
     sr = arcpy.SpatialReference(4326)  # WGS84
-    featurefilter = options.translations['filterFeature']
     with arcpy.da.SearchCursor(src, fieldnames, None, sr) as cursor:
         for arcfeature in cursor:
-            feature = featurefilter(arcfeature, fieldnames, None)
+            feature = options.translator.filter_feature(arcfeature, fieldnames, None)
             parsefeature(feature, fieldnames, options)
 
 
@@ -138,7 +70,6 @@ def parsefeature(arcfeature, fieldnames, options):
         return
     geometries = parsegeometry([arcgeometry], options)
 
-    featurefilter = options.translations['filterFeaturePost']
     for geometry in geometries:
         if geometry is None:
             return
@@ -148,7 +79,7 @@ def parsefeature(arcfeature, fieldnames, options):
         feature.geometry = geometry
         geometry.addparent(feature)
 
-        featurefilter(feature, arcfeature, arcgeometry)
+        options.translator.filter_feature_post(feature, arcfeature, arcgeometry)
 
 
 def getfeaturetags(arcfeature, fieldnames, options):
@@ -157,7 +88,6 @@ def getfeaturetags(arcfeature, fieldnames, options):
     passes them to the filterTags function, returning the result.
     """
     tags = {}
-    tagfilter = options.translations['filterTags']
     # skip the first field, as parsedata() put the shape there
     for i in range(len(fieldnames))[1:]:
         # arcpy returns unicode field names and field values (when text)
@@ -168,7 +98,7 @@ def getfeaturetags(arcfeature, fieldnames, options):
                 tags[fieldnames[i].upper()] = unicode(arcfeature[i])
             else:
                 tags[fieldnames[i].upper()] = str(arcfeature[i])
-    newtags = tagfilter(tags)
+    newtags = options.translator.filter_tags(tags)
     if options.debugTags:
         utils.info("Tags: " + str(newtags))
     return newtags
@@ -485,13 +415,26 @@ def makeosmfile(options):
     if options.verbose:
         utils.info(u"Preparing to convert '{0:s}' to '{1:s}'."
                    .format(options.sourceFile, options.outputFile))
-    options.translations = loadtranslations(options)
+    if not options.translator:
+        if options.verbose:
+            utils.info(u"Loading translator '{0:s}'.".format(options.translationMethod))
+        translator = Translator.get_translator(options.translationMethod)
+        if translator.translation_module is None:
+            utils.error('Error: ' + translator.error)
+        else:
+            if options.verbose:
+                utils.info(u"Successfully loaded '{0:s}' translation method ('{1:s}').".format(
+                    translator.name, translator.path))
+                for function in translator.function_status:
+                    utils.info(u"{1:s} method for function '{0:s}'".format(
+                        function, translator.function_status[function]))
+        options.translator = translator
     parsedata(options)
     if options.mergeNodes:
         mergepoints(options)
     if options.mergeWayNodes:
         mergewaypoints(options)
-    options.translations['preOutputTransform'](
+    options.translator.transform_pre_output(
         Geometry.geometries, Feature.features)
     error, data = output_xml(options)
     if options.outputFile:
@@ -511,7 +454,7 @@ def makeosmfile(options):
 class DefaultOptions:
     sourceFile = None
     outputFile = None
-    translationMethod = None
+    translator = Translator.get_translator(None)
     verbose = False
     debugTags = False
     forceOverwrite = True
@@ -530,5 +473,5 @@ if __name__ == '__main__':
     opts = DefaultOptions()
     opts.sourceFile = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
     opts.outputFile = r"C:\tmp\places\test_parking.osm"
-    opts.translationMethod = "parkinglots"
+    opts.translator = Translator.get_translator("parkinglots")
     makeosmfile(opts)

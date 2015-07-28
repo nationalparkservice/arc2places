@@ -227,7 +227,7 @@ def test2():
             print 'Error:', translator.error
         else:
             print u"Successfully loaded '{0:s}' translation method ('{1:s}').".format(
-                str(translator.name), str(translator.path))
+                translator.name, translator.path)
             print translator.function_status
         print translator.filter_tags({'ALTNAME': 'Regan'})
         print translator.filter_tags({'POITYPE': 'Lake'})
