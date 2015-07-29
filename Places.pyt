@@ -302,10 +302,10 @@ class PushUploadToPlaces(object):
         return
 
     def updateMessages(self, parameters):
-        table_name = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
-        if arcpy.Exists(table_name):
-            parameters[2].setErrorMessage("Output {0:s} already exists".format(table_name))
-        return
+        if parameters[1].hasValue and parameters[2].hasValue:
+            table_name = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
+            if arcpy.Exists(table_name):
+                parameters[2].setErrorMessage("Output {0:s} already exists".format(table_name))
 
     def execute(self, parameters, messages):
         upload_path = parameters[0].valueAsText
