@@ -76,7 +76,7 @@ class Toolbox(object):
         self.tools = [ValidateForPlaces,
                       EnableEditorTracking,
                       AddUniqueId,
-                      CreatePlaceUpload,
+                      CreatePlacesUpload,
                       PushUploadToPlaces,
                       IntegratePlacesIds,
                       SeedPlaces,
@@ -207,7 +207,7 @@ class AddUniqueId(object):
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
-class CreatePlaceUpload(object):
+class CreatePlacesUpload(object):
     def __init__(self):
         self.label = "4) Creates a Places Upload File"
         self.description = ("Exports a feature class to a file "
