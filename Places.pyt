@@ -439,11 +439,24 @@ class SeedPlaces(object):
             parameterType="Optional",
             enabled=False)
 
-        # FIXME - osm2places returns a upload log table, need option for save this table
+        workspace = arcpy.Parameter(
+            name="workspace",
+            displayName="Output Location",
+            direction="Input",
+            datatype="DEWorkspace",
+            parameterType="Required")
+
+        log_table = arcpy.Parameter(
+            name="log_table",
+            displayName="Upload Log Table",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Required")
+
         # TODO - Add option to upload without future syncing (ignore sync warnings)
         # TODO - Add option to add Places IDs to feature class.
 
-        parameters = [feature, translator, alt_translator]
+        parameters = [feature, translator, alt_translator, workspace, log_table]
         return parameters
 
     def updateParameters(self, parameters):
@@ -451,6 +464,10 @@ class SeedPlaces(object):
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[1])
+        if parameters[3].hasValue and parameters[4].hasValue:
+            table_name = os.path.join(parameters[3].valueAsText, parameters[3].valueAsText)
+            if arcpy.Exists(table_name):
+                parameters[2].setErrorMessage("Output {0:s} already exists".format(table_name))
 
     def execute(self, parameters, messages):
         featureclass = parameters[0].valueAsText
@@ -488,7 +505,14 @@ class SeedPlaces(object):
                     if error:
                         arcpy.AddError(error)
                     if table:
-                        # TODO save the table
+                        workspace = parameters[3].valueAsText
+                        table_name = parameters[4].valueAsText
+                        table_path = os.path.join(workspace, table_name)
+                        ext = os.path.splitext(table_name)[1].lower()
+                        if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
+                            table.export_csv(table_path)
+                        else:
+                            table.export_arcgis(workspace, table_name)
                         if addIds:
                             placescore.add_places_ids(featureclass, table)
 
