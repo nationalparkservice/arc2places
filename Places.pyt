@@ -12,6 +12,9 @@ places.logger = ArcpyLogger()
 places.turn_verbose_on()
 
 
+# TODO: make sure that any output file paths have invalid characters removed
+
+
 class TranslatorUtils(object):
     """
     Provides coordination between translators and geometry type for all tools
@@ -257,7 +260,11 @@ class CreatePlacesUpload(object):
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
-        # TODO: check existance of directory in parameter[1]
+        if parameters[1].hasValue:
+            path = parameters[1].valueAsText
+            dir_path = os.path.dirname(path)
+            if not os.path.exists(dir_path):
+                parameters[1].AddError("Path {0:s} is not valid".format(dir_path))
 
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
