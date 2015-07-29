@@ -1,3 +1,4 @@
+import os
 import arcpy
 import arc2osmcore
 import placescore
@@ -282,7 +283,7 @@ class PushUploadToPlaces(object):
 
         workspace = arcpy.Parameter(
             name="workspace",
-            displayName="Workspace for output",
+            displayName="Output Location",
             direction="Input",
             datatype="DEWorkspace",
             parameterType="Required")
@@ -301,12 +302,14 @@ class PushUploadToPlaces(object):
         return
 
     def updateMessages(self, parameters):
-        # TODO make sure table does not exist in workspace
+        table_name = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
+        if arcpy.Exists(table_name):
+            parameters[2].setErrorMessage("Output {0:s} already exists".format(table_name))
         return
 
     def execute(self, parameters, messages):
         upload_path = parameters[0].valueAsText
-        response_path = parameters[1].valueAsText
+        table_name = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
         error, table = osm2places.upload_osm_file(upload_path, places)
         if error:
             arcpy.AddError(error)
