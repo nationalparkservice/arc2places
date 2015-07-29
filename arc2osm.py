@@ -83,11 +83,11 @@ parser.add_option("-c", "--output-change", dest="outputChange",
 parser.add_option("--add-timestamp", dest="addTimestamp", action="store_true",
                   help=optparse.SUPPRESS_HELP)
 
-parser.add_option("--significant-digits",  dest="significantDigits", type=int,
+parser.add_option("--significant-digits", dest="significantDigits", type=int,
                   help="Number of decimal places for coordinates. " +
                   "Defaults to 9.", default=9)
 
-parser.add_option("--rounding-digits",  dest="roundingDigits", type=int,
+parser.add_option("--rounding-digits", dest="roundingDigits", type=int,
                   help="Number of decimal places for rounding. " +
                   "Defaults to 7.", default=7)
 
