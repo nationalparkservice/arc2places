@@ -26,6 +26,7 @@ class TranslatorUtils(object):
         alt_translator = alt_param.valueAsText
         if std_translator == "Other":
             return Translator.get_translator(alt_translator)
+        # TODO: this is only called in execute, so we can add diagnostic to output log
         return Translator.get_translator_from_display_name(std_translator)
 
     @staticmethod
@@ -91,19 +92,33 @@ class ValidateForPlaces(object):
             parameterType="Required")
         feature.filter.list = ["Polygon", "Polyline", "Point"]
 
-        # TODO - Add optional translator parameter; used to filter features
+        translator = arcpy.Parameter(
+            name="translator",
+            displayName="Standard Translator",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Optional")
+        translator.filter.list = TranslatorUtils.get_display_names()
 
-        parameters = [feature]
+        alt_translator = arcpy.Parameter(
+            name="alt_translator",
+            displayName="Alternate Translator",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Optional",
+            enabled=False)
+
+        parameters = [feature, translator, alt_translator]
         return parameters
 
     def updateParameters(self, parameters):
-        return
+        TranslatorUtils.update_parameters(parameters[0], parameters[2], parameters[3])
 
     def updateMessages(self, parameters):
-        return
+        TranslatorUtils.update_messages(parameters[0], parameters[2])
 
     def execute(self, parameters, messages):
-        translator = None  # parameters[1].valueAsText
+        translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
         issues = placescore.valid4upload(parameters[0].valueAsText, places, translator)
         if issues:
             arcpy.AddWarning("Feature class is not suitable for Uploading.")
@@ -235,7 +250,7 @@ class CreatePlaceUpload(object):
         options = arc2osmcore.DefaultOptions
         options.sourceFile = parameters[0].valueAsText
         options.outputFile = parameters[1].valueAsText
-        options.translationMethod = TranslatorUtils.get_translator(parameters[2], parameters[3])
+        options.translator = TranslatorUtils.get_translator(parameters[2], parameters[3])
         arc2osmcore.makeosmfile(options)
 
 
@@ -421,11 +436,10 @@ class SeedPlaces(object):
         options.sourceFile = featureclass
         options.outputFile = None
         translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
-        # FIXME: expecting a name, not a Translator object
-        options.translationMethod = translator
+        options.translator = translator
         # TODO - Get option from parameters
         ignore_sync_warnings = False
-        #  TODO - Get option from parameters
+        # TODO - Get option from parameters
         addIds = False
 
         issues = placescore.valid4upload(featureclass, places, translator)

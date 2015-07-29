@@ -44,6 +44,9 @@ import utils
 from geom import *
 from Translator import Translator
 
+# TODO: Use logger to accomodate arcpy and stdout messaging
+# TODO: refactor to make ogr/arc replacable
+
 
 def parsedata(options):
     src = options.sourceFile
