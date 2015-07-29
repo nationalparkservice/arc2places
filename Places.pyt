@@ -128,14 +128,15 @@ class ValidateForPlaces(object):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
 
     def execute(self, parameters, messages):
-        translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
-        issues = placescore.valid4upload(parameters[0].valueAsText, places, translator)
+        features = parameters[0].valueAsText
+        translator = TranslatorUtils.get_translator(parameters[1].valueAsText, parameters[2].valueAsText)
+        issues = placescore.valid4upload(features, places, translator)
         if issues:
             arcpy.AddWarning("Feature class is not suitable for Uploading.")
             for issue in issues:
                 arcpy.AddWarning(issue)
         else:
-            issues = placescore.valid4sync(parameters[0].valueAsText, translator)
+            issues = placescore.valid4sync(features, translator)
             if issues:
                 arcpy.AddWarning("Feature class is not suitable for future Syncing.")
                 for issue in issues:
@@ -171,7 +172,8 @@ class EnableEditorTracking(object):
         return
 
     def execute(self, parameters, messages):
-        arcpy.EnableEditorTracking_management(parameters[0].valueAsText,
+        features = parameters[0].valueAsText
+        arcpy.EnableEditorTracking_management(features,
                                               last_edit_date_field='EDITDATE', add_fields='ADDFIELDS')
 
 
@@ -255,12 +257,16 @@ class CreatePlacesUpload(object):
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
+        # TODO: check existance of directory in parameter[1]
 
     def execute(self, parameters, messages):
+        features = parameters[0].valueAsText
+        output_file = parameters[1].valueAsText
+        translator = TranslatorUtils.get_translator(parameters[2].valueAsText, parameters[3].valueAsText)
         options = arc2osmcore.DefaultOptions
-        options.sourceFile = parameters[0].valueAsText
-        options.outputFile = parameters[1].valueAsText
-        options.translator = TranslatorUtils.get_translator(parameters[2], parameters[3])
+        options.sourceFile = features
+        options.outputFile = output_file
+        options.translator = translator
         arc2osmcore.makeosmfile(options)
 
 
@@ -303,9 +309,9 @@ class PushUploadToPlaces(object):
 
     def updateMessages(self, parameters):
         if parameters[1].hasValue and parameters[2].hasValue:
-            table_name = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
-            if arcpy.Exists(table_name):
-                parameters[2].setErrorMessage("Output {0:s} already exists".format(table_name))
+            table_path = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
+            if arcpy.Exists(table_path):
+                parameters[2].setErrorMessage("Output {0:s} already exists".format(table_path))
 
     def execute(self, parameters, messages):
         upload_path = parameters[0].valueAsText
@@ -463,22 +469,24 @@ class SeedPlaces(object):
         TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
 
     def updateMessages(self, parameters):
-        TranslatorUtils.update_messages(parameters[0], parameters[1])
+        TranslatorUtils.update_messages(parameters[0].valueAsText, parameters[1].valueAsText)
         if parameters[3].hasValue and parameters[4].hasValue:
-            table_name = os.path.join(parameters[3].valueAsText, parameters[3].valueAsText)
-            if arcpy.Exists(table_name):
-                parameters[2].setErrorMessage("Output {0:s} already exists".format(table_name))
+            table_path = os.path.join(parameters[3].valueAsText, parameters[3].valueAsText)
+            if arcpy.Exists(table_path):
+                parameters[2].setErrorMessage("Output {0:s} already exists".format(table_path))
 
     def execute(self, parameters, messages):
         featureclass = parameters[0].valueAsText
-        options = arc2osmcore.DefaultOptions
-        options.sourceFile = featureclass
-        options.outputFile = None
-        translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
+        translator = TranslatorUtils.get_translator(parameters[1].valueAsText, parameters[2].valueAsText)
+        workspace = parameters[3].valueAsText
+        table_name = parameters[4].valueAsText
         if translator.translation_module is None:
             # Bad Translator.  Primary error was already printed
             arcpy.AddError("Aborting to avoid sending bad data to Places")
             return
+        options = arc2osmcore.DefaultOptions
+        options.sourceFile = featureclass
+        options.outputFile = None
         options.translator = translator
         # TODO - Get option from parameters
         ignore_sync_warnings = False
@@ -505,8 +513,6 @@ class SeedPlaces(object):
                     if error:
                         arcpy.AddError(error)
                     if table:
-                        workspace = parameters[3].valueAsText
-                        table_name = parameters[4].valueAsText
                         table_path = os.path.join(workspace, table_name)
                         ext = os.path.splitext(table_name)[1].lower()
                         if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
