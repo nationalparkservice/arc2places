@@ -125,10 +125,10 @@ class ValidateForPlaces(object):
         return parameters
 
     def updateParameters(self, parameters):
-        TranslatorUtils.update_parameters(parameters[0], parameters[2], parameters[3])
+        TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
 
     def updateMessages(self, parameters):
-        TranslatorUtils.update_messages(parameters[0], parameters[2])
+        TranslatorUtils.update_messages(parameters[1], parameters[2])
 
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
