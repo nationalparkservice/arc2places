@@ -280,16 +280,21 @@ class PushUploadToPlaces(object):
             parameterType="Required")
         upload.filter.list = ["osm"]
 
-        response = arcpy.Parameter(
-            name="response",
+        workspace = arcpy.Parameter(
+            name="workspace",
+            displayName="Workspace for output",
+            direction="Input",
+            datatype="DEWorkspace",
+            parameterType="Required")
+
+        log_table = arcpy.Parameter(
+            name="log_table",
             displayName="Upload Log Table",
             direction="Input",
             datatype="GPString",
             parameterType="Required")
 
-        # TODO: need to add workspace parameter (selection)
-
-        parameters = [upload, response]
+        parameters = [upload, workspace, log_table]
         return parameters
 
     def updateParameters(self, parameters):
