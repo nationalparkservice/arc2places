@@ -459,8 +459,21 @@ class SeedPlaces(object):
             datatype="GPString",
             parameterType="Required")
 
-        # TODO - Add option to upload without future syncing (ignore sync warnings)
-        # TODO - Add option to add Places IDs to feature class.
+        ignore_sync_warnings = arcpy.Parameter(
+            name="ignore_sync_warnings",
+            displayName="Ignore warnings about future syncing",
+            direction="Input",
+            datatype="GPBoolean",
+            parameterType="Required")
+        ignore_sync_warnings.value = False
+
+        addIds = arcpy.Parameter(
+            name="addIds",
+            displayName="Add Places IDs to Input Feature",
+            direction="Input",
+            datatype="GPBoolean",
+            parameterType="Required")
+        addIds.value = False
 
         parameters = [feature, translator, alt_translator, workspace, log_table]
         return parameters
@@ -480,6 +493,8 @@ class SeedPlaces(object):
         translator = TranslatorUtils.get_translator(parameters[1].valueAsText, parameters[2].valueAsText)
         workspace = parameters[3].valueAsText
         table_name = parameters[4].valueAsText
+        ignore_sync_warnings = parameters[4].value
+        addIds = parameters[4].value
         if translator.translation_module is None:
             # Bad Translator.  Primary error was already printed
             arcpy.AddError("Aborting to avoid sending bad data to Places")
@@ -488,10 +503,6 @@ class SeedPlaces(object):
         options.sourceFile = featureclass
         options.outputFile = None
         options.translator = translator
-        # TODO - Get option from parameters
-        ignore_sync_warnings = False
-        # TODO - Get option from parameters
-        addIds = False
 
         issues = placescore.valid4upload(featureclass, places, translator)
         if issues:
