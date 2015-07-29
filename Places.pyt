@@ -26,8 +26,17 @@ class TranslatorUtils(object):
         alt_translator = alt_param.valueAsText
         if std_translator == "Other":
             return Translator.get_translator(alt_translator)
-        # TODO: this is only called in execute, so we can add diagnostic to output log
-        return Translator.get_translator_from_display_name(std_translator)
+        translator = Translator.get_translator_from_display_name(std_translator)
+        # Print diagnostics on the translator
+        if translator.translation_module is None:
+            arcpy.AddError(translator.error)
+        else:
+            arcpy.AddMessage(u"Successfully loaded '{0:s}' translation method ('{1:s}').".format(
+                translator.name, translator.path))
+            for function in translator.function_status:
+                arcpy.AddMessage(u"Using {1:s} method for function '{0:s}'".format(
+                    function, translator.function_status[function]))
+        return translator
 
     @staticmethod
     def update_messages(fc_param, trans_param):
@@ -436,6 +445,10 @@ class SeedPlaces(object):
         options.sourceFile = featureclass
         options.outputFile = None
         translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
+        if translator.translation_module is None:
+            # Bad Translator.  Primary error was already printed
+            arcpy.AddError("Aborting to avoid sending bad data to Places")
+            return
         options.translator = translator
         # TODO - Get option from parameters
         ignore_sync_warnings = False
