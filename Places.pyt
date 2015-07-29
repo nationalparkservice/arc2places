@@ -309,13 +309,18 @@ class PushUploadToPlaces(object):
 
     def execute(self, parameters, messages):
         upload_path = parameters[0].valueAsText
-        table_name = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
+        workspace = parameters[1].valueAsText
+        table_name = parameters[2].valueAsText
+        table_path = os.path.join(workspace, table_name)
         error, table = osm2places.upload_osm_file(upload_path, places)
         if error:
             arcpy.AddError(error)
         if table:
-            # TODO: save the table to response_path
-            pass
+            ext = os.path.splitext(table_name)[1].lower()
+            if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
+                table.export_csv(table_path)
+            else:
+                table.export_arcgis(workspace, table_name)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal

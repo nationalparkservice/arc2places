@@ -75,6 +75,7 @@ def upload_osm_file(filepath, server, csv_path=None, options=None):
     :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
     :param options: A set of attributes that provide additional control for this method
     :return: Either an error or an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
+    :rtype : (basestring, DataTable)
     """
     with open(filepath, 'rb') as fr:
         return upload_osm_data(fr.read(), server, csv_path, options)
