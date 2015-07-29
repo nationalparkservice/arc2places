@@ -32,22 +32,67 @@ def arc_build_osm_change_xml(features, synctable, translator, server, options=No
         return u"Editor tracking must be enabled on the feature class.", None
 
     """
+    Example input data
+    feature table: (id, status, edit date)
+        A, public, t0
+        B, not public, t0
+        C, public, t0
+        D, public, t0
+        E, not public, t0
+        F, public, t0
+        G, not public, t0
+    sync table: (action, gis id, place id, upload timestamp)
+        create, A, 1, t1
+        create, C, 2, t1
+        create, D, 3, t1
+        create, F, 4, t1
+    updated feature table: (id, status, editdate)
+        A, not public, t2
+        B, public, t2
+        C, public, t2
+        D, -- deleted --
+        E, not public, t2
+        F, public, t0
+        G, not public, t0
+        H, public, t2
+        I, not public, t2
+    Change set for places:
+        Create: [B, H]
+        Delete: [1, 3]
+        Update: [(C,2)]
+    Update sync table
+        create, A, 1, t1
+        create, C, 2, t1
+        create, D, 3, t1
+        create, F, 4, t1
+        create, B, 5, t3
+        create, H, 6, t3
+        delete, A, 1, t3
+        delete, D, 1, t3
+        update, C, 2, t3
+    """
+
+    """
     editdate_fieldname = arcpy.Describe(fc).editedAtFieldName
     lastupdate = select top 1 from synctable order by editdate_fieldname DESC
 
     # new features
-    featureset = select * from dataset join with synctable
-                 on DS.geometyryid = synctable.geometryid
+    featureset = select * from dataset left join synctable
+                 on dataset.geometyryid = synctable.geometryid
                  where synctable.geometryid is null
+                 # returns (B,E,G,H,I) from above example
                  # arc2osm will filter out features that should not be added because they are not public
+                 # returns (B,H)
     # TODO: fix arc2osmcode to return xml tree and take a searchcursor (or list of ids)
     xml = arc2osmcore.process(feature_set, translator, options)
 
     # find the deleted features
     delete_xml = Et.Element('delete')
     [features_for_places] = translator.filter_data_set(dataset)  # removes features that were public and are now not
-    [(element_type, places_id)] = select placesid from synctable join [features_for_places]
+                                                                 # returns (B,C,F,H)
+    [(element_type, places_id)] = select placesid from synctable left join [features_for_places]
                                   on geometryid where dataset.geometryid is null
+                                  # returns (1,3)
     if [(element_type, places_id)]:
         delete_xml = create delete node
         for element_type, places_id in [(element_type, places_id)]:
@@ -64,9 +109,17 @@ def arc_build_osm_change_xml(features, synctable, translator, server, options=No
 
     # updates:
       select *, s.placeid from dataset join synctable as s where editdate_fieldname > lastupdate
-      for each feature get the existing data from places (http://10.147.153.193/api/0.6/node/xxx)
-      and merge it with the feature run through the translator to create an osm change update record (looks the same as an insert record)
-      with a new version number
+      # returns [(A,1), (C,2)]
+      # use arc2osm to create a set of OSM creates (same format is used for the update)
+      # arc2osm will filter out features that should not be added because they are not public
+      # returns [(C,2)]
+      # for each feature get the existing data from places (http://10.147.153.193/api/0.6/{{element_type}}/{{places_id}}/full)
+      # (optional) need to add any attributes in places that are not in eGIS (or they will get removed)
+      # compare ways/nodes in relationships one by one, and move to 'delete' any elements in places but not in GIS, need to check if used in other relationships
+      # compare vertices in ways one by one, and move to 'delete' any elements in places but not in GIS, need to check if used in other ways/relationships
+      #                                              and (optionally) remove any from update if there is no change
+      #      maybe do not remove the sub element from the way/relationship, but keep in places - it should probably be removed if it is unused and uninteresting (maybe happens in a places cleanup)
+      # update the version number place holder from arc2osm with the correct version number from places
     """
 
 
