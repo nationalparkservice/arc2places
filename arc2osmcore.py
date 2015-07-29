@@ -46,6 +46,7 @@ from Translator import Translator
 
 # TODO: Use logger to accomodate arcpy and stdout messaging
 # TODO: refactor to make ogr/arc replacable
+# TODO: refactor to allow modular calls with from update process
 
 
 def parsedata(options):

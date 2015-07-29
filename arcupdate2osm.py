@@ -4,141 +4,180 @@
 import xml.etree.ElementTree as Et
 import optparse
 import os
-import utils
 import sys
-import urllib2
+# import urllib2
 import arcpy
-
-# Before accessing resources you will need to obtain a few credentials from
-# your provider (i.e. OSM) and authorization from the user for whom you wish
-# to retrieve resources for.
-from secrets import *
+from OsmApiServer import OsmApiServer
+from Translator import Translator
+from Logger import Logger
 
 
-def find_synctable(fc):
-    return None, ""
-
-
-def build_changes(fc, outfile, options):
-    if options.verbose:
-        utils.info(u"Preparing to convert '{0:s}' to '{1:s}'."
-                   .format(fc, outfile))
-
-    if not options.synctable:
-        options.synctable = find_synctable(fc)
-    if not options.synctable:
-        return (u"Sync table not specified and default table does not exist.",
-                None)
-    if not arcpy.Exists(options.synctable):
-        return u"Sync table {0:s} not found.".format(options.synctable), None
-    if not arcpy.Describe(fc).editorTrackingEnabled:
+def arc_build_osm_change_xml(features, synctable, translator, server, options=None):
+    # returns error, xml
+    if not isinstance(features, basestring):
+        raise TypeError('features is the wrong type; a basestring is expected')
+    if not isinstance(synctable, basestring):
+        raise TypeError('synctable is the wrong type; a basestring is expected')
+    if not isinstance(translator, Translator):
+        raise TypeError('translator is the wrong type; a Translator is expected')
+    if not isinstance(server, OsmApiServer):
+        raise TypeError('server is the wrong type; an OsmApiServer is expected')
+    if not arcpy.Exists(features):
+        raise ValueError("features '{0:s}' does not exist".format(features))
+    if not arcpy.Exists(synctable):
+        raise ValueError("synctable '{0:s}' does not exist".format(synctable))
+    if options and options.verbose and options.logger:
+        options.logger.info(u"Searching '{0:s}' for changes from '{0:s}'.".format(features, synctable))
+    if not arcpy.Describe(features).editorTrackingEnabled:
         return u"Editor tracking must be enabled on the feature class.", None
-    editdate_fieldname = arcpy.Describe(fc).editedAtFieldName
-    
+
     """
-    get lastupdate with select top 1 from synctable order by editdate_fieldname DESC
-    find the new features:
-      select * from dataset join with synctable on DS.geometyryid = synctable.geometryid is null where synctable.geometryid is null
-      run these features through the translator to ceated the insert records same as the initial seeding operation
-      
-    find the deleted features
-      select placesid from synctable join dataset on geometryid where dataset.geometryid is null
-      for each feature, get the data from places:  http://10.147.153.193/api/0.6/node/xxx (or way)
-      extract the data needed to create an osm change delete record
-      
-    for the updates:
+    editdate_fieldname = arcpy.Describe(fc).editedAtFieldName
+    lastupdate = select top 1 from synctable order by editdate_fieldname DESC
+
+    # new features
+    featureset = select * from dataset join with synctable
+                 on DS.geometyryid = synctable.geometryid
+                 where synctable.geometryid is null
+                 # arc2osm will filter out features that should not be added because they are not public
+    # TODO: fix arc2osmcode to return xml tree and take a searchcursor (or list of ids)
+    xml = arc2osmcore.process(feature_set, translator, options)
+
+    # find the deleted features
+    delete_xml = Et.Element('delete')
+    [features_for_places] = translator.filter_data_set(dataset)  # removes features that were public and are now not
+    [(element_type, places_id)] = select placesid from synctable join [features_for_places]
+                                  on geometryid where dataset.geometryid is null
+    if [(element_type, places_id)]:
+        delete_xml = create delete node
+        for element_type, places_id in [(element_type, places_id)]:
+           element_xml = places.get_element_xml('http://10.147.153.193/api/0.6/{{element_type}}/{{places_id}}/full')
+                # removes ways from relation if they are in other relations
+                #   if get /api/0.6/way/#id/relations > 1
+                # removes nodes if they are in other ways or relations (maybe only check first/last nodes):
+                #   if get http://10.147.153.193/api/0.6/node/{node}/ways > 1
+                #
+                # alternative (less load on server) support DELETE /api/0.6/[node|way|relation]/#id
+                #   nice to remove version from payload, and skip sub-elements which are in use or interesting
+    delete_xml.append(element_xml)
+    xml.append(delete_xml)
+
+    # updates:
       select *, s.placeid from dataset join synctable as s where editdate_fieldname > lastupdate
       for each feature get the existing data from places (http://10.147.153.193/api/0.6/node/xxx)
       and merge it with the feature run through the translator to create an osm change update record (looks the same as an insert record)
       with a new version number
     """
 
-        # options.translations = loadtranslations(options)
-
-    
-    error, data = None, ""  # output_xml(options) # FIXME
-    if outfile:
-        with open(outfile, 'wb') as fw:
-            fw.write(data)
-        if options.verbose:
-            utils.info(u"Wrote {0:d} elements to file '{1:s}'"
-                       .format(1, outfile))  # FIXME
-    else:
-        if options.verbose:
-            utils.info(u"Returning {0:d} converted elements"
-                       .format(1))  # FIXME
-        return error, data
-
 
 class DefaultOptions:
     debug = False
     verbose = False
-    translator = 'generic'
-    synctable = None
+    logger = None
 
 
 def test():
+    logger = Logger()
     opts = DefaultOptions()
     opts.verbose = True
+    opts.debug = True
+    opts.logger = logger
 
-    featureclass = './tests/test_parking_pids.csv'
-    osmchangefile = './tests/test_Parking.osm'
-
-    error = build_changes(featureclass, osmchangefile, opts)
+    featureclass = './tests/test.gdb/PARKINGLOTS_py'
+    logtable = './tests/test_parking_log.csv'
+    osmchangefile = './tests/test_Parking_update.osm'
+    translator = Translator.get_translator('parkinglots')
+    api_server = OsmApiServer('places')
+    api_server.logger = logger
+    api_server.turn_verbose_on()
+    error, xml = arc_build_osm_change_xml(featureclass, logtable, translator, api_server, opts)
     if error:
         print error
     else:
+        data = Et.tostring(xml, encoding='utf-8')
+        with open(osmchangefile, 'wb') as fw:
+            fw.write(data)
         print "Done."
 
 
 def cmdline():
     # Setup program usage
-    usage = """%prog [Options] SRC DST
+    usage = """%prog [Options] SRC LOG DST
     or:    %prog --help
 
-    Creates a file called DST from changes in SRC.
+    Creates a file called DST from changes in SRC compared to LOG.
     SRC is an ArcGIS feature class
+    LOG is an ArcGIS table that describes the features sent to places
     DST is a OSM change file
-    to the id numbers assigned in Places."""
+    """
 
     parser = optparse.OptionParser(usage=usage)
 
     parser.add_option("-t", "--translator", dest="translator", type=str, help=(
         "Name of translator to convert ArcGIS features to OSM Tags. " +
-        "Defaults to Generic."), default='Generic')
-    parser.add_option("-s", "--synctable", dest="synctable", type=str, help=(
-        "Name of table with the IDs and dates of features written to Places "
-        "for this feature class." +
-        "Defaults to table called {SRC}_places_sync."), default=None)
-    parser.set_defaults(verbose=False)
+        "Defaults to Generic."), default='generic')
+    parser.add_option("-s", "--server", dest="server", type=str, help=(
+        "Name of server to connect to. I.e. 'places', 'osm', 'osm-dev', 'local'." +
+        "Defaults to 'places'.  Name must be defined in the secrets file."), default='places')
     parser.add_option("-v", "--verbose", dest="verbose", action="store_true",
                       help="Write processing step details to stdout.")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
                       help="Write debugging details to stdout.")
-    parser.set_defaults(verbose=False)
+    parser.add_option("--changeset-id", dest="changesetId", type=int,
+                      help="Sentinal ID number for the changeset.  Only used " +
+                           "when an osmChange file is being created. " +
+                           "Defaults to -1.", default=-1)
+
+    parser.set_defaults(verbose=False, debug=False)
 
     # Parse and process arguments
     (options, args) = parser.parse_args()
 
-    if len(args) < 2:
-        parser.error(u"You must specify a source and destination")
-    elif len(args) > 2:
+    if len(args) < 3:
+        parser.error(u"You must specify a source, log and destination")
+    elif len(args) > 3:
         parser.error(u"You have specified too many arguments.")
 
     # Input and output file
     featureclass = args[0]
-    osmchangefile = args[1]
-    if not os.path.exists(featureclass):
-        parser.error(u"The input file does not exist.")
+    logtable = args[1]
+    osmchangefile = args[2]
     if os.path.exists(osmchangefile):
         parser.error(u"The destination file exist.")
-    error = build_changes(featureclass, osmchangefile, options)
+    # Translator
+    translator = Translator.get_translator(options.translator)
+    # API Server
+    if options.server:
+        api_server = OsmApiServer(options.server)
+    else:
+        api_server = OsmApiServer('places')
+    online = api_server.is_online()
+    if api_server.error:
+        print api_server.error
+        sys.exit(1)
+    if not online:
+        print "Server is not online right now, try again later."
+        sys.exit(1)
+    if not api_server.is_version_supported():
+        print "Server does not support version " + api_server.version + " of the OSM"
+        sys.exit(1)
+    if options.verbose:
+        api_server.logger = Logger()
+        api_server.turn_verbose_on()
+    # Build Change XML
+    # TODO: do exception checking
+    error, xml = arc_build_osm_change_xml(featureclass, logtable, translator, api_server, options)
+    # Output results
     if error:
         print error
     else:
+        # TODO: do exception checking
+        data = Et.tostring(xml, encoding='utf-8')
+        with open(osmchangefile, 'wb') as fw:
+            fw.write(data)
         print "Done."
 
 
 if __name__ == '__main__':
     test()
-    #cmdline()
+    # cmdline()
