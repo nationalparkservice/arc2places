@@ -1,18 +1,5 @@
 import arcpy
 import utils
-# from OsmApiServer import Places
-
-
-# TODO Move to a separate module (separate sibling classes for arc and ogr)
-class Translator:
-    def __init__(self, name):
-        self.name = name
-
-    # TODO - refactor code in arc2osmcore to here
-    # TODO - refactor code in places.pyt to here
-
-    def filter_function(self,):
-        pass
 
 
 def get_feature_info(featureclass, translator=None):
@@ -249,7 +236,7 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
         if dst_type == 'string':
             arcpy.CalculateField_management(table_view,
                                             dst, 'str(!' + src + '!)')
-    # TODO - could fail if table_view if fatureclass is not writable
+    # TODO - could fail if table_view/featureclass is not writable
     finally:
         arcpy.Delete_management(table_view)
     return True
