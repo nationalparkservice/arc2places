@@ -132,7 +132,7 @@ class ValidateForPlaces(object):
 
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
-        translator = TranslatorUtils.get_translator(parameters[1].valueAsText, parameters[2].valueAsText)
+        translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
         issues = placescore.valid4upload(features, places, translator)
         if issues:
             arcpy.AddWarning("Feature class is not suitable for Uploading.")
@@ -269,7 +269,7 @@ class CreatePlacesUpload(object):
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
         output_file = parameters[1].valueAsText
-        translator = TranslatorUtils.get_translator(parameters[2].valueAsText, parameters[3].valueAsText)
+        translator = TranslatorUtils.get_translator(parameters[2], parameters[3])
         options = arc2osmcore.DefaultOptions
         options.sourceFile = features
         options.outputFile = output_file
@@ -497,7 +497,7 @@ class SeedPlaces(object):
 
     def execute(self, parameters, messages):
         featureclass = parameters[0].valueAsText
-        translator = TranslatorUtils.get_translator(parameters[1].valueAsText, parameters[2].valueAsText)
+        translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
         workspace = parameters[3].valueAsText
         table_name = parameters[4].valueAsText
         ignore_sync_warnings = parameters[4].value
