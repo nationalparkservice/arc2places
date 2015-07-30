@@ -91,11 +91,23 @@ def upload_osm_data(data, server, csv_path=None, options=None):
     :param options: A set of attributes that provide additional control for this method
     :return: Either an error or an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
     """
-    cid = server.create_changeset()
+    # TODO: get comment from caller, generate something better like: Initial load from 'xxx' feature class
+    cid = server.create_changeset('arc2places', 'upload of OsmChange file')
     if cid:
         timestamp = datetime.datetime.now()
         resp = server.upload_changeset(cid, fixchangefile(cid, data))
-        if resp:
+        upload_error = server.error
+        server.close_changeset(cid)
+        close_error = server.error
+        error = ''
+        if upload_error:
+            error += "Server did not accept the upload request. " + upload_error
+        if close_error:
+            error += '\nserver could not close the change request. ' + close_error
+        if error and resp:
+            error += '\nServer Response:\n' + resp
+        if resp and not error:
+            print '\n', resp, '\n'
             error, upload_log = make_upload_log(resp, data, timestamp, cid, server.username, options)
             if upload_log:
                 if csv_path:
@@ -105,12 +117,6 @@ def upload_osm_data(data, server, csv_path=None, options=None):
                 else:
                     return None, upload_log
             return "Failed to relate Places and GIS date. " + error, None
-        upload_error = server.error
-        server.close_changeset(cid)
-        close_error = server.error
-        error = "Server did not accept the upload request. " + upload_error
-        if close_error:
-            error += '\nserver cold not close change request. ' + close_error
         return error, None
     return "Unable to open a changeset, check the network, and your permissions. " + server.error, None
 
@@ -123,8 +129,8 @@ def test():
     api_server.turn_verbose_on()
     api_server.logger = Logger()
     api_server._debug = True
-    error, table = upload_osm_file('./tests/test_trail_routes.osm', api_server,
-                                   './tests/test_trail_routes_pids.csv', Options)
+    error, table = upload_osm_file('./tests/test_POI.osm', api_server,
+                                   './tests/test_poi_sync.csv', Options)
     if error:
         print error
     else:
@@ -195,5 +201,5 @@ def cmdline():
 
 
 if __name__ == '__main__':
-    # test()
-    cmdline()
+    test()
+    # cmdline()
