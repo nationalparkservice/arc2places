@@ -29,8 +29,9 @@ class TranslatorUtils(object):
         std_translator = std_param.valueAsText
         alt_translator = alt_param.valueAsText
         if std_translator == "Other":
-            return Translator.get_translator(alt_translator)
-        translator = Translator.get_translator_from_display_name(std_translator)
+            translator = Translator.get_translator(alt_translator)
+        else:
+            translator = Translator.get_translator_from_display_name(std_translator)
         # Print diagnostics on the translator
         if translator.translation_module is None:
             arcpy.AddError(translator.error)
