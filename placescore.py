@@ -10,8 +10,32 @@ def get_feature_info(featureclass, translator=None):
     :return: List of (oid, List of vertex_count_per_part) tuples, one for each feature.
     vertex_count_per_part, is the number of vertices in a single part of the feature
     """
-    # FIXME: Crashes Here - Implement
-    results = translator.filter_features(featureclass)
+    results = []
+    # The default format for the shape is a (x,y) tuple for the centroid, I need the full geometry with 'SHAPE@'
+    fieldnames = ['SHAPE@', 'OID@'] + [f.name for f in arcpy.ListFields(featureclass)]
+    is_point = arcpy.Describe(featureclass).shapeType == 'Point'
+    shape_field_index = 0
+    oid_field_index = 1
+    with arcpy.da.SearchCursor(featureclass, fieldnames) as cursor:
+        for arcfeature in cursor:
+            # print arcfeature
+            if translator:
+                feature = translator.filter_feature(arcfeature, fieldnames, None)
+            else:
+                feature = arcfeature
+            if feature:
+                oid = feature[oid_field_index]
+                if is_point:
+                    results.append((oid, [1]))
+                else:
+                    shape = feature[shape_field_index]
+                    # print oid, shape
+                    part_list = []
+                    for i in range(shape.partCount):
+                        vertex_array = shape.getPart(i)
+                        part_list.append(len(vertex_array))
+                    results.append((oid, part_list))
+    # print results
     return results
 
 
@@ -240,3 +264,28 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
     finally:
         arcpy.Delete_management(table_view)
     return True
+
+
+def test():
+    import OsmApiServer
+    from Translator import Translator
+    server = OsmApiServer.Places()
+    sde = 'Database Connections/akr_facility_on_inpakrovmais_as_domainuser.sde'
+    test_list = [('./tests/test.gdb/roads_ln', 'roads'),
+                 ('./tests/test.gdb/trails_ln', 'trails'),
+                 ('./tests/test.gdb/multipoints', 'generic'),
+                 ('./tests/test.gdb/parkinglots_py', 'parkinglots'),
+                 ('./tests/test.gdb/poi_pt', 'poi'),
+                 ('./tests/test.gdb/trails_ln', 'none'),
+                 # (sde + '/akr_facility.GIS.TRAILS_ln', 'trails'), # crashes python due to ArcGIS bug
+                 (sde + '/akr_facility.GIS.ROADS_ln', 'roads')
+                 ]
+    for src, tname in test_list:
+        print '**** Testing', src, 'with', tname
+        translator = Translator.get_translator(tname)
+        print valid4upload(src, server, translator)
+        # print valid4sync(src, translator)
+
+
+if __name__ == '__main__':
+    test()
