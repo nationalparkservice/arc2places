@@ -211,7 +211,7 @@ def valid4sync(featureclass, translator=None):
     return issues
 
 
-def add_uniqueId_field(featureclass, field_name):
+def add_uniqueid_field(featureclass, field_name):
 
     """
     Adds a 50 char text field to the feature_class and fills it with guid values.
@@ -224,7 +224,6 @@ def add_uniqueId_field(featureclass, field_name):
     :return: No return value
 
     """
-    import uuid
     arcpy.AddField_management(featureclass, field_name, "TEXT", field_length=38)
     expression = "CalcGUID()"
     codeblock = """def CalcGUID():
@@ -352,7 +351,7 @@ def test():
             translator = None
         else:
             translator = Translator.get_translator(tname)
-        # print valid4upload(src, server, translator)
+        print valid4upload(src, server, translator)
         print valid4sync(src, translator)
 
 

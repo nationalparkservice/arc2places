@@ -273,7 +273,7 @@ class AddUniqueId(object):
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
         guid_field = parameters[1].valueAsText
-        placescore.add_uniqueId_field(features, guid_field)
+        placescore.add_uniqueid_field(features, guid_field)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
