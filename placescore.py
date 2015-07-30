@@ -108,8 +108,10 @@ def valid4upload(featureclass, places, translator=None):
         issue = 'Multipart polylines are not supported. OIDs: '
         issue += ','.join([str(oid) for oid in multiparts])
         issues.append(issue)
-    if max_elements < feature_count + vertex_count + relation_count:
-        issues.append('Feature class is too large. Limit is ' + str(max_elements) + ' features plus vertices.')
+    total = feature_count + vertex_count + relation_count
+    if max_elements < total:
+        issues.append('Feature class is too large ({0} features plus vertices). '
+                      'Limit is {1}.'.format(total, max_elements))
 
     return issues
 
