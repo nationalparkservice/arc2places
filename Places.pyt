@@ -250,20 +250,30 @@ class AddUniqueId(object):
             parameterType="Required")
         feature.filter.list = ["Polygon", "Polyline", "Point"]
 
-        # TODO - add column name option, default to GEOMETRYID
+        guid_field = arcpy.Parameter(
+            name="guid_name",
+            displayName="Name of Globally Unique Identifier Field",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Required")
+        guid_field.value = "GEOMETRYID"
 
-        parameters = [feature]
+        parameters = [feature, guid_field]
         return parameters
 
     def updateParameters(self, parameters):
         return
 
     def updateMessages(self, parameters):
+        if parameters[0].value and parameters[1].value:
+            if parameters[1].value in [f.name for f in arcpy.Describe(parameters[0].value).fields]:
+                parameters[1].setErrorMessage("Field name already exists")
         return
 
     def execute(self, parameters, messages):
-        # TODO: Implement
-        arcpy.AddWarning("Tool not Implemented.")
+        features = parameters[0].valueAsText
+        guid_field = parameters[1].valueAsText
+        placescore.add_uniqueId_field(features, guid_field)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal

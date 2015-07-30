@@ -211,34 +211,28 @@ def valid4sync(featureclass, translator=None):
     return issues
 
 
-# TODO: rename and implement add/populate GEOMETRYID
-def init4places(featureclass, quiet=False):
+def add_uniqueId_field(featureclass, field_name):
 
     """
-    Sets up a Geodatabase feature class for syncing with Places.
+    Adds a 50 char text field to the feature_class and fills it with guid values.
 
-    Adds a PlacesID column if it doesn't exist,
-    turn on archiving if not already on.
+    When called by toolbox, the input parameters are validate.  Other callers should check for exceptions
 
-    :rtype : bool
-    :param featureclass: The ArcGIS feature class to validate
-    :param quiet: Turns off all messages
-    :return: True if successful, False otherwise
+    :rtype : None
+    :param featureclass: The ArcGIS feature class to get the new field
+    :param field_name: The field name to add.  Must not exist.
+    :return: No return value
 
     """
-
-    if not featureclass:
-        if not quiet:
-            utils.error("No feature class provided.")
-        return False
-
-    if not arcpy.Exists(featureclass):
-        if not quiet:
-            utils.error("Feature class not found.")
-        return False
-
-    # FIXME: Implement
-    return True
+    import uuid
+    arcpy.AddField_management(featureclass, field_name, "TEXT", field_length=38)
+    expression = "CalcGUID()"
+    codeblock = """
+                def CalcGUID():
+                    import uuid
+                    return '{' + str(uuid.uuid4()).upper() + '}'
+                """
+    arcpy.CalculateField_management(featureclass, field_name, expression, "PYTHON_9.3", codeblock)
 
 
 def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
