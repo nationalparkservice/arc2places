@@ -4,15 +4,24 @@ from config_generic import *
 
 # noinspection PyPep8Naming,PyUnusedLocal
 def filterFeature(feature, fieldnames, reproject):
-    restriction = tools.feature_value('RESTRICT', altnames,
-                                      feature, fieldnames)
-    distribute = tools.feature_value('DISTRIBUTE', altnames,
-                                     feature, fieldnames)
-    if (distribute is None or distribute == 'Public') and \
-       (restriction is None or restriction == 'Unrestricted'):
-        return feature
+    # Places override
+    inplaces = tools.feature_value('INPLACES', altnames, feature, fieldnames)
+    if inplaces is not None:
+        if inplaces == 'Yes':
+            return feature
+        else:
+            return None
     else:
-        return None
+        restriction = tools.feature_value('RESTRICT', altnames,
+                                          feature, fieldnames)
+        is_unrestricted = restriction is None or restriction == 'Unrestricted'
+        distribute = tools.feature_value('DISTRIBUTE', altnames,
+                                         feature, fieldnames)
+        is_distributable = distribute is None or distribute == 'Public'
+        if is_unrestricted and is_distributable:
+            return feature
+        else:
+            return None
 
 
 # noinspection PyPep8Naming
