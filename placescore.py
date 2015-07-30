@@ -52,7 +52,7 @@ def valid4upload(featureclass, places, translator=None):
     if info.featureType != 'Simple':
         issues.append('Feature Type ' + info.featureType + ' is not supported. Must be Simple.')
 
-    sr = info.spatialRefernce
+    sr = info.spatialReference
     if not sr or sr.type not in ['Geographic', 'Projected']:
         issues.append('Feature Class must have a Geographic or Projected spatial reference system.')
 
