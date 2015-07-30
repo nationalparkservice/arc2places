@@ -128,7 +128,7 @@ class ValidateForPlaces(object):
         TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
 
     def updateMessages(self, parameters):
-        TranslatorUtils.update_messages(parameters[1], parameters[2])
+        TranslatorUtils.update_messages(parameters[0], parameters[1])
 
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
@@ -489,7 +489,7 @@ class SeedPlaces(object):
         TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
 
     def updateMessages(self, parameters):
-        TranslatorUtils.update_messages(parameters[0].valueAsText, parameters[1].valueAsText)
+        TranslatorUtils.update_messages(parameters[0], parameters[1])
         if parameters[3].value and parameters[4].value:
             table_path = os.path.join(parameters[3].valueAsText, parameters[3].valueAsText)
             if arcpy.Exists(table_path):
