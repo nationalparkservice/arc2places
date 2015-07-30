@@ -227,11 +227,9 @@ def add_uniqueId_field(featureclass, field_name):
     import uuid
     arcpy.AddField_management(featureclass, field_name, "TEXT", field_length=38)
     expression = "CalcGUID()"
-    codeblock = """
-                def CalcGUID():
-                    import uuid
-                    return '{' + str(uuid.uuid4()).upper() + '}'
-                """
+    codeblock = """def CalcGUID():
+    import uuid
+    return '{' + str(uuid.uuid4()).upper() + '}'"""
     arcpy.CalculateField_management(featureclass, field_name, expression, "PYTHON_9.3", codeblock)
 
 
