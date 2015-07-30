@@ -11,13 +11,17 @@ def get_feature_info(featureclass, translator=None):
     vertex_count_per_part, is the number of vertices in a single part of the feature
     """
     results = []
-    # The default format for the shape is a (x,y) tuple for the centroid, I need the full geometry with 'SHAPE@'
-    fieldnames = ['SHAPE@', 'OID@'] + [f.name for f in arcpy.ListFields(featureclass)]
+    # The default shape format with da.cursor is centroid, I need the full geometry with 'SHAPE@'
+    shape_field_name = arcpy.Describe(featureclass).shapeFieldname
+    oid_field_name = arcpy.Describe(featureclass).OIDFieldName
+    fieldnames = [f.name for f in arcpy.ListFields(featureclass)]
     is_point = arcpy.Describe(featureclass).shapeType == 'Point'
-    shape_field_index = 0
-    oid_field_index = 1
-    with arcpy.da.SearchCursor(featureclass, fieldnames) as cursor:
-        for arcfeature in cursor:
+    shape_field_index = fieldnames.index(shape_field_name)
+    oid_field_index = fieldnames.index(oid_field_name)
+    cursor = arcpy.SearchCursor(featureclass, fields=";".join(fieldnames))
+    if cursor:
+        for row in cursor:
+            arcfeature = [row.getValue(fn) for fn in fieldnames]
             # print arcfeature
             if translator:
                 feature = translator.filter_feature(arcfeature, fieldnames, None)
@@ -279,7 +283,7 @@ def test():
                  ('./tests/test.gdb/parkinglots_py', 'parkinglots'),
                  ('./tests/test.gdb/poi_pt', 'poi'),
                  ('./tests/test.gdb/trails_ln', 'none'),
-                 # (sde + '/akr_facility.GIS.TRAILS_ln', 'trails'), # crashes python due to ArcGIS bug
+                 (sde + '/akr_facility.GIS.TRAILS_ln', 'trails'),  # crashes python due to ArcGIS bug in da.cursor
                  (sde + '/akr_facility.GIS.ROADS_ln', 'roads')
                  ]
     for src, tname in test_list:
