@@ -39,8 +39,41 @@ def get_feature_info(featureclass, translator=None):
                         vertex_array = shape.getPart(i)
                         part_list.append(len(vertex_array))
                     results.append((oid, part_list))
+        del cursor
     # print results
     return results
+
+
+def get_duplicates(featureclass, primary_key, translator=None):
+    duplicates = {}
+    shape_field_name = arcpy.Describe(featureclass).shapeFieldname
+    fieldnames = [f.name for f in arcpy.ListFields(featureclass) if f != shape_field_name]
+    primary_key_field_index = fieldnames.index(primary_key)
+    cursor = arcpy.SearchCursor(featureclass, fields=";".join(fieldnames))
+    # find primary key value frequency (filtered by translator)
+    field_count = {}
+    if cursor:
+        for row in cursor:
+            arcfeature = [row.getValue(fn) for fn in fieldnames]
+            # print arcfeature
+            if translator:
+                feature = translator.filter_feature(arcfeature, fieldnames, None)
+            else:
+                feature = arcfeature
+            if feature:
+                key = feature[primary_key_field_index]
+                if key is None:
+                    key = '<Null>'
+                if key in field_count:
+                    field_count[key] += 1
+                else:
+                    field_count[key] = 1
+        del cursor
+    for key, value in field_count.iteritems():
+        if 1 < value:
+            duplicates[key] = value
+    # print duplicates
+    return duplicates
 
 
 # TODO - Maybe this should be a method on the Translator (different versions for arc and ogr)
@@ -139,9 +172,43 @@ def valid4sync(featureclass, translator=None):
              returns list of issues (strings) that preculde syncing.
              method will try to return as many issues as possible.
     """
+    if not featureclass:
+        return ['no feature class']
 
-    # TODO - Implement
-    return [featureclass, translator]
+    if not arcpy.Exists(featureclass):
+        return ['feature class not found']
+
+    info = arcpy.Describe(featureclass)
+
+    if info.datasetType != 'FeatureClass':
+        return ['Dataset type ' + info.datasetType + ' is not supported. Must be a FeatureClass.']
+
+    issues = []
+
+    if not info.editorTrackingEnabled:
+        issues.append('Editor Tracking must be turned on for the feature class')
+    else:
+        if not info.editorTrackingEnabled:
+            issues.append("Editor Tracking must have an 'Edit Date' field defined for the feature class")
+
+    if translator is None:
+        issues.append("Cannot validate the 'nps:source_id'.  You must provide a translator.")
+        return issues
+
+    primary_keys = translator.fields_for_tag('nps:source_id')
+    field_names = [f.name for f in arcpy.ListFields(featureclass)]
+    existing_keys = [k for k in primary_keys if k in field_names]
+    if len(existing_keys) < 1:
+        issues.append("There is no field that maps to the 'nps:source_id' tag")
+    if 1 < len(existing_keys):
+        issues.append("There are multiple fields {0:s} that map to the 'nps:source_id' tag".format(existing_keys))
+    if len(existing_keys) == 1:
+        primary_key = existing_keys[0]
+        duplicates = get_duplicates(featureclass, primary_key, translator)
+        if duplicates:
+            issues.append("Primary key: {0:s} has duplicate values: {1:s}".format(primary_key, duplicates))
+
+    return issues
 
 
 # TODO: rename and implement add/populate GEOMETRYID
@@ -283,14 +350,18 @@ def test():
                  ('./tests/test.gdb/parkinglots_py', 'parkinglots'),
                  ('./tests/test.gdb/poi_pt', 'poi'),
                  ('./tests/test.gdb/trails_ln', 'none'),
+                 ('./tests/test.gdb/trails_ln', None),
                  (sde + '/akr_facility.GIS.TRAILS_ln', 'trails'),  # crashes python due to ArcGIS bug in da.cursor
                  (sde + '/akr_facility.GIS.ROADS_ln', 'roads')
                  ]
     for src, tname in test_list:
         print '**** Testing', src, 'with', tname
-        translator = Translator.get_translator(tname)
-        print valid4upload(src, server, translator)
-        # print valid4sync(src, translator)
+        if tname is None:
+            translator = None
+        else:
+            translator = Translator.get_translator(tname)
+        # print valid4upload(src, server, translator)
+        print valid4sync(src, translator)
 
 
 if __name__ == '__main__':
