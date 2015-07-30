@@ -151,22 +151,60 @@ class ValidateForPlaces(object):
 class EnableEditorTracking(object):
     def __init__(self):
         self.label = "2) Enable Editor Tracking"
-        self.description = ("Adds a PlacesID column and turns on archiving. "
+        self.description = ("Enables editor tracking. "
                             "Feature class must be in a Geodatabase.")
         self.category = "Seed Places Step by Step"
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
             name="feature",
-            displayName="Feature Class",
+            displayName="Input Dataset",
             direction="Input",
             datatype="GPFeatureLayer",
             parameterType="Required")
         feature.filter.list = ["Polygon", "Polyline", "Point"]
 
-        # TODO - Add parameters for call to arcpy.EnableEditorTracking_management()
+        creator = arcpy.Parameter(
+            name="creator",
+            displayName="Creator Field",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Optional")
+        creator.value = "CREATEUSER"
 
-        parameters = [feature]
+        create_date = arcpy.Parameter(
+            name="create_date",
+            displayName="Creation Date Field",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Optional")
+        create_date.value = "CREATEDATE"
+
+        editor = arcpy.Parameter(
+            name="editor",
+            displayName="Last Editor Field",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Optional")
+        editor.value = "EDITUSER"
+
+        edit_date = arcpy.Parameter(
+            name="edit_date",
+            displayName="Last Edit Date Field",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Optional")
+        edit_date.value = "EDITDATE"
+
+        addfields = arcpy.Parameter(
+            name="addfields",
+            displayName="Add fields if they don't exist",
+            direction="Input",
+            datatype="GPBoolean",
+            parameterType="Required")
+        addfields.value = False
+
+        parameters = [feature, creator, create_date, editor, edit_date, addfields]
         return parameters
 
     def updateParameters(self, parameters):
@@ -177,8 +215,21 @@ class EnableEditorTracking(object):
 
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
+        creator = parameters[1].valueAsText
+        create_date = parameters[2].valueAsText
+        editor = parameters[3].valueAsText
+        edit_date = parameters[4].valueAsText
+        add_fields = parameters[5].valueAsText
+        if add_fields:
+            add_fields_text = 'ADD_FIELDS'
+        else:
+            add_fields_text = 'NO_ADD_FIELDS'
         arcpy.EnableEditorTracking_management(features,
-                                              last_edit_date_field='EDITDATE', add_fields='ADDFIELDS')
+                                              creator_field=creator,
+                                              creation_date_field=create_date,
+                                              last_editor_field=editor,
+                                              last_edit_date_field=edit_date,
+                                              add_fields=add_fields_text)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
