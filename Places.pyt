@@ -260,7 +260,7 @@ class CreatePlacesUpload(object):
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
-        if parameters[1].hasValue:
+        if parameters[1].value:
             path = parameters[1].valueAsText
             dir_path = os.path.dirname(path)
             if not os.path.exists(dir_path):
@@ -315,7 +315,7 @@ class PushUploadToPlaces(object):
         return
 
     def updateMessages(self, parameters):
-        if parameters[1].hasValue and parameters[2].hasValue:
+        if parameters[1].value and parameters[2].value:
             table_path = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
             if arcpy.Exists(table_path):
                 parameters[2].setErrorMessage("Output {0:s} already exists".format(table_path))
@@ -490,7 +490,7 @@ class SeedPlaces(object):
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0].valueAsText, parameters[1].valueAsText)
-        if parameters[3].hasValue and parameters[4].hasValue:
+        if parameters[3].value and parameters[4].value:
             table_path = os.path.join(parameters[3].valueAsText, parameters[3].valueAsText)
             if arcpy.Exists(table_path):
                 parameters[2].setErrorMessage("Output {0:s} already exists".format(table_path))
