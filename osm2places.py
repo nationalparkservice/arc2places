@@ -11,7 +11,9 @@ from Logger import Logger
 from DataTable import DataTable
 
 
+# TODO: replace options with logger.
 def make_upload_log(diff_result, uploaddata, date, cid, user, options=None):
+    # FIXME: this will crash if options does not have these attributes, and they are not the right type
     if options and options.verbose and options.logger:
         options.logger.info("Process response")
     placesids = {}
@@ -128,6 +130,7 @@ def test():
     api_server = Places()
     api_server.turn_verbose_on()
     api_server.logger = Logger()
+    Options.logger = api_server.logger
     api_server._debug = True
     error, table = upload_osm_file('./tests/test_POI.osm', api_server,
                                    './tests/test_poi_sync.csv', Options)
