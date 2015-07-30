@@ -29,21 +29,18 @@ class ArcpyLogger(Logger):
         else:
             Logger.debug(self, text)
 
-    @staticmethod
     def error(self, text):
         if self.arcpy:
             self.arcpy.AddError(text)
         else:
             Logger.info(self, text)
 
-    @staticmethod
     def info(self, text):
         if self.arcpy:
             self.arcpy.AddMessage(text)
         else:
             Logger.info(self, text)
 
-    @staticmethod
     def warn(self, text):
         if self.arcpy:
             self.arcpy.AddWarning(text)
