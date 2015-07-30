@@ -34,7 +34,7 @@ class TranslatorUtils(object):
             translator = Translator.get_translator_from_display_name(std_translator)
         # Print diagnostics on the translator
         if translator.translation_module is None:
-            arcpy.AddError(translator.error)
+            arcpy.AddWarning(translator.error)
         else:
             arcpy.AddMessage(u"Successfully loaded '{0:s}' translation method ('{1:s}').".format(
                 translator.name, translator.path))
@@ -136,7 +136,7 @@ class ValidateForPlaces(object):
         translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
         issues = placescore.valid4upload(features, places, translator)
         if issues:
-            arcpy.AddWarning("Feature class is not suitable for Uploading.")
+            arcpy.AddWarning("Feature class is not suitable for uploading.")
             for issue in issues:
                 arcpy.AddWarning(issue)
         else:
@@ -145,6 +145,8 @@ class ValidateForPlaces(object):
                 arcpy.AddWarning("Feature class is not suitable for future Syncing.")
                 for issue in issues:
                     arcpy.AddWarning(issue)
+            else:
+                arcpy.AddMessage("\nFeature class is suitable for uploading and syncing.\n")
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
