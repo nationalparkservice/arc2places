@@ -12,7 +12,7 @@ def filterFeature(feature, fieldnames, reproject):
         else:
             return None
     else:
-        restriction = tools.feature_value('RESTRICT', altnames,
+        restriction = tools.feature_value('RESTRICTION', altnames,
                                           feature, fieldnames)
         is_unrestricted = restriction is None or restriction == 'Unrestricted'
         distribute = tools.feature_value('DISTRIBUTE', altnames,
