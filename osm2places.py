@@ -43,7 +43,7 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, options=None):
                     break
             if has_tags:
                 tempid = grandchild.attrib['id']
-                gisids[tempid] = (source_id, action)
+                gisids[tempid] = (action, source_id)
     data = DataTable()
     data.fieldnames = ['date', 'user', 'changeset', 'action', 'element', 'places_id', 'version_id', 'source_id']
     data.fieldtypes = ['DATE', 'TEXT', 'LONG', 'TEXT', 'TEXT', 'TEXT', 'LONG', 'TEXT']
