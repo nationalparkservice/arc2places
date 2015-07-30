@@ -237,7 +237,7 @@ class OsmApiServer:
             return 'User Error', 0, 'No user given'
 
         if self._verbose and self.logger:
-            self.logger.info("Looking up id for user" + self.username)
+            self.logger.info("Looking up id for user " + self.username)
 
         req = 'http://insidemaps.nps.gov/user/lookup?query=' + self.username
         res = requests.get(req)
