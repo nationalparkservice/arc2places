@@ -10,7 +10,7 @@ def get_feature_info(featureclass, translator=None):
     :return: List of (oid, List of vertex_count_per_part) tuples, one for each feature.
     vertex_count_per_part, is the number of vertices in a single part of the feature
     """
-    # TODO - Implement
+    # FIXME: Crashes Here - Implement
     results = translator.filter_features(featureclass)
     return results
 
