@@ -54,6 +54,7 @@ class Translator:
         self._filter_feature_function = self._get_filter_feature_function()
         self._filter_feature_post_function = self._get_filter_feature_post_function()
         self._transform_pre_output_function = self._get_transform_pre_output_function()
+        self._fields_for_tag_function = self._get_fields_for_tag_function()
 
     def filter_tags(self, tags):
         return self._filter_tags_function(tags)
@@ -66,6 +67,9 @@ class Translator:
 
     def transform_pre_output(self, geometries, features):
         return self._transform_pre_output_function(geometries, features)
+
+    def fields_for_tag(self, tag_name):
+        return self._fields_for_tag_function(tag_name)
 
     def _get_filter_tags_function(self):
         default = lambda x: x
@@ -109,6 +113,15 @@ class Translator:
         if func is None:
             func = default
             self.function_status['transform_pre_output'] = 'Default'
+        return func
+
+    def _get_fields_for_tag_function(self):
+        default = lambda x: [x]
+        self.function_status['fields_for_tag'] = 'Custom'
+        func = get_function(self.translation_module, 'fields_for_tag', 1)
+        if func is None:
+            func = default
+            self.function_status['fields_for_tag'] = 'Default'
         return func
 
     @staticmethod
@@ -216,7 +229,8 @@ def test1():
 
 def test2():
     for translator in [Translator.get_translator('poi'),
-                       Translator.get_translator('poix'),
+                       Translator.get_translator('buildings'),
+                       Translator.get_translator('generic'),
                        Translator.get_translator('poix'),
                        Translator.get_translator_from_display_name('Parking Lots'),
                        Translator.get_translator(None),
@@ -231,6 +245,7 @@ def test2():
             print translator.function_status
         print translator.filter_tags({'ALTNAME': 'Regan'})
         print translator.filter_tags({'POITYPE': 'Lake'})
+        print translator.fields_for_tag('nps:source_id')
 
 if __name__ == '__main__':
     test1()

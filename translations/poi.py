@@ -3,6 +3,13 @@ import tools
 from config_poi import *
 
 
+def fields_for_tag(tag_name):
+    fields = tools.fields_for_tag(tag_name, fieldmap, altnames)
+    if fields is None:
+        fields = generic.fields_for_tag(tag_name)
+    return fields
+
+
 # noinspection PyPep8Naming
 def filterFeature(feature, fieldnames, reproject):
     return generic.filterFeature(feature, fieldnames, reproject)

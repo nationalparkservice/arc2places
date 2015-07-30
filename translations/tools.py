@@ -67,3 +67,16 @@ def feature_value(name, altnames, feature, fieldnames,
         else:
             value = None
     return value
+
+
+def fields_for_tag(tag_name, namemap, altnames):
+    primary_name = None
+    for name in namemap:
+        if namemap[name] == tag_name:
+            primary_name = name
+            break
+    if primary_name is None:
+        return None
+    if primary_name in altnames:
+        return [primary_name] + altnames[primary_name]
+    return [primary_name]
