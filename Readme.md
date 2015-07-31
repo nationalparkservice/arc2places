@@ -38,10 +38,9 @@ It includes place holders for planned tools for two way syncing between ArcGIS d
 This is the primary interface for the typical NPS ArcGIS user.
 
 The toolbox provides both step by step tools, as well as a *do it all in one step* tool.
-Until you are familiar with how the tool works, and the suitability of your datasets,
-the step by step tools are recommended.
-It is also recomended that you test your datasets against the test version of the Places database
-before doing your production upload.
+The step by step tools are recommended until you are familiar with how the tool works and the suitability of your datasets.
+You should also test your datasets against the test version of the Places database before doing your production upload.
+Testing the toolbox is easier if you turn off *Background Processing* in the Geoprocessing Options.
 
 The ArcToolbox tools relies on the structure and files in the repo, so be sure to move it
 as a unit.
