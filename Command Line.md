@@ -2,8 +2,8 @@
 
 **This document is out of date and needs major work.**
 
-The tools in this project are written for NPS Employees, who are primary ArcGIS ArcToolbox users,
-so that is the focus of this project.  However command line tools are also useful, easier to test,
+The tools in this project are written for NPS Employees, who are primary ArcGIS ArcToolbox users.
+However command line tools are also useful, easier to test,
 and potentially portable to other users.
 
 Ultimately, I would like to create a modular library that is
