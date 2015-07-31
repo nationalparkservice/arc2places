@@ -17,6 +17,10 @@ The translation files can declare one or more of the five well known translation
 If a well known function is defined it will be used as decribed below.
 The functions must take the appropriate arguments, and return the expected data type.
 
+The bulk of our (NPS) translations are fairly straight forward, and can be described in
+configuration files (*_config.py) which are easier to maintain than ad hoc python code.
+The python code allows for additional customization on a feature type basis.
+**TODO describe the configuration files**
 
 Translation Functions
 =====================

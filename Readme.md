@@ -8,11 +8,11 @@ This kernel of this project was derived from Paul Norman's
 [ogr2osm](https://github.com/pnorman/ogr2osm) tool which was derived from
 the UVM tool of the same name.
 
-Other documents that describe the
-[workflows](https://github.com/nationalparkservice/arc2places/blob/master/Workflow.md)
+Other documents describe the
+[workflow](https://github.com/nationalparkservice/arc2places/blob/master/Workflow.md)
 supported by the
-[Tools](https://github.com/nationalparkservice/arc2places/blob/master/Tools.md)
-provided by this project
+[tools](https://github.com/nationalparkservice/arc2places/blob/master/Tools.md)
+in this project.
 
 ## Instalation
 More details coming soon.  For now...
@@ -25,7 +25,7 @@ More details coming soon.  For now...
 
 3. Use Pip to install dependencies:
 
-```pip install install requests_oauthlib
+    * ```pip install requests_oauthlib```
 
 4. Create the secrets.py file. Currently, the tool only write to Places and relies on tokens that are
 in the secrets.py file not included in the repo.
@@ -33,7 +33,7 @@ Contact [Regan](mailto:regan_sarwas@nps.gov) for assistance (NPS employees only)
 
 
 ## Places Toolbox
-Places.pyt is an ArcGIS Python Toolbox with tools for seeding ArcGIS data to Places.
+**Places.pyt** is an ArcGIS Python Toolbox with tools for seeding ArcGIS data to Places.
 It includes place holders for planned tools for two way syncing between ArcGIS data and Places.
 This is the primary interface for the typical NPS ArcGIS user.
 
