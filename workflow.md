@@ -3,6 +3,7 @@ Workflows:
 
 The following workflows are probable.  I do not know what workflow any unit will use.
 I doubt all units will want the same workflow. There may be workflows I have not imagined.
+I am providing tools to support workflow #3, with the goal of also supporting workflow #6
 
 1) Places Master
 ----------------
@@ -52,8 +53,6 @@ I doubt all units will want the same workflow. There may be workflows I have not
 * Process starts with Workflow #1, 2, or 3, but edits occur independently in both ArcGIS and Places.
 * ArcGIS and Places diverge.
 * They are maintained independently and are never reconciled.[^4]
-
-I am providing tools to support workflow #3, with the goal of also supporting workflow #6
 
 [^1]: A unit is a park, region or some other organization responsible for *unit data* within the *unit area*
 
