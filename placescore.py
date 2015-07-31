@@ -317,13 +317,13 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
         arcpy.AddJoin_management(table_view, id_name, linkfile, id_name_link)
         if dst_type == 'double':
             arcpy.CalculateField_management(table_view,
-                                            dst, 'float(!' + src + '!)')
+                                            dst, 'float(!' + src + '!)', 'PYTHON_9.3')
         if dst_type == 'integer':
             arcpy.CalculateField_management(table_view,
-                                            dst, 'int(!' + src + '!)')
+                                            dst, 'int(!' + src + '!)', 'PYTHON_9.3')
         if dst_type == 'string':
             arcpy.CalculateField_management(table_view,
-                                            dst, 'str(!' + src + '!)')
+                                            dst, 'str(!' + src + '!)', 'PYTHON_9.3')
     # TODO - could fail if table_view/featureclass is not writable
     finally:
         arcpy.Delete_management(table_view)

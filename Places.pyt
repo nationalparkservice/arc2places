@@ -405,7 +405,7 @@ class IntegratePlacesIds(object):
     def __init__(self):
         self.label = "6) Add Places Ids to EGIS"
         self.description = ("Populates the PlacesId in an EGIS dataset using "
-                            "a CSV link table of Places Ids and EGIS Ids.")
+                            "upload log table which links Places Ids to EGIS Ids.")
         self.category = "Seed Places Step by Step"
 
     def getParameterInfo(self):
@@ -417,13 +417,12 @@ class IntegratePlacesIds(object):
             parameterType="Required")
         feature.filter.list = ["Polygon", "Polyline", "Point"]
 
-        idfile = arcpy.Parameter(
-            name="idfile",
-            displayName="Places ID File (CSV)",
+        table = arcpy.Parameter(
+            name="table",
+            displayName="Upload Log Table",
             direction="Input",
-            datatype="DEFile",
+            datatype="DETable",
             parameterType="Required")
-        idfile.filter.list = ["csv"]
 
         gisid = arcpy.Parameter(
             name="gisid",
@@ -448,25 +447,25 @@ class IntegratePlacesIds(object):
 
         gisidcsv = arcpy.Parameter(
             name="gisidcsv",
-            displayName="EGIS ID Field in CSV",
+            displayName="EGIS ID Field in Upload Log",
             direction="Input",
             datatype="Field",
             parameterType="Required",
             category="Field Names",)
-        gisidcsv.parameterDependencies = [idfile.name]
-        gisidcsv.value = 'GEOMETRYID'
+        gisidcsv.parameterDependencies = [table.name]
+        gisidcsv.value = 'source_id'
 
         placesidcsv = arcpy.Parameter(
             name="placesidcsv",
-            displayName="Places ID Field in CSV",
+            displayName="Places ID Field in Upload Log",
             direction="Input",
             datatype="Field",
             parameterType="Required",
             category="Field Names",)
-        placesidcsv.parameterDependencies = [idfile.name]
-        placesidcsv.value = 'PLACESID'
+        placesidcsv.parameterDependencies = [table.name]
+        placesidcsv.value = 'places_id'
 
-        parameters = [feature, idfile, gisid, placesid, gisidcsv, placesidcsv]
+        parameters = [feature, table, gisid, placesid, gisidcsv, placesidcsv]
         return parameters
 
     def updateParameters(self, parameters):
