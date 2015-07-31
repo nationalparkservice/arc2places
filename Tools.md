@@ -47,6 +47,7 @@ Another Tool to turn on editor tracking and define/create the *last edit date* c
 
 ## Seed Places
 Verifies, translates and uploads ArcGIS data into the Places database.
+It will create new features in Places for the features in your ArcGIS dataset.
 
 ### Status
 * Testing
@@ -63,6 +64,9 @@ Verifies, translates and uploads ArcGIS data into the Places database.
 ### Notes
 * This should only be done once, but this is not enforced
 * User should first compare GIS data to Place data to avoid duplication.
+* This may create duplicate features in Places if there are already similar features in your unit.
+Contact the [NPMap Team](http://www.nps.gov/npmap/team/) if you need toreplace or update the existing
+data for your unit.
 * Output (upload log) is required for syncing (Get Places Edits and Update Place described below)
 * If you plan to use the GIS dataset in the future to update Place, you will need to enable editor tracking now
 
