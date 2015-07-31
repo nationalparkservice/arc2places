@@ -376,8 +376,14 @@ class PushUploadToPlaces(object):
         return parameters
 
     def updateParameters(self, parameters):
-        # TODO: create a default name for log_table - {feature}_places_sync
-        return
+        if parameters[0].value and not parameters[2].altered:
+            base_name = os.path.basename(parameters[0].valueAsText)
+            base_name = os.path.splitext(base_name)[0]
+            table_name = base_name + '_upload_log'
+            if parameters[1].value:
+                if arcpy.Describe(parameters[1].valueAsText).workspaceType == 'FileSystem':
+                    table_name += '.csv'
+            parameters[2].value = table_name
 
     def updateMessages(self, parameters):
         if parameters[1].value and parameters[2].value:
@@ -551,7 +557,10 @@ class SeedPlaces(object):
 
     def updateParameters(self, parameters):
         TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
-        # TODO: create a default name for log table - {feature}_places_sync
+        if parameters[0].value and not parameters[4].altered:
+            base_name = os.path.basename(parameters[0].valueAsText)
+            table_name = base_name + '_upload_log'
+            parameters[4].value = table_name
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[1])
