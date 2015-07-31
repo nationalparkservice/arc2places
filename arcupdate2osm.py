@@ -140,7 +140,7 @@ def test():
     logtable = './tests/test_parking_log.csv'
     osmchangefile = './tests/test_Parking_update.osm'
     translator = Translator.get_translator('parkinglots')
-    api_server = OsmApiServer('places')
+    api_server = OsmApiServer('test')
     api_server.logger = logger
     api_server.turn_verbose_on()
     error, xml = arc_build_osm_change_xml(featureclass, logtable, translator, api_server, opts)

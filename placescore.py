@@ -333,7 +333,7 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
 def test():
     import OsmApiServer
     from Translator import Translator
-    server = OsmApiServer.Places()
+    server = OsmApiServer.OsmApiServer('test')
     sde = 'Database Connections/akr_facility_on_inpakrovmais_as_domainuser.sde'
     test_list = [('./tests/test.gdb/roads_ln', 'roads'),
                  ('./tests/test.gdb/trails_ln', 'trails'),

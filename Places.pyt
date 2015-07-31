@@ -3,14 +3,16 @@ import arcpy
 import arc2osmcore
 import placescore
 import osm2places
-from OsmApiServer import Places
+from OsmApiServer import OsmApiServer, Places
 from Logger import ArcpyLogger
 from Translator import Translator
 
 places = Places()
 places.logger = ArcpyLogger()
 places.turn_verbose_on()
-
+test_places = OsmApiServer('test')
+test_places.logger = ArcpyLogger()
+test_places.turn_verbose_on()
 
 # TODO: make sure that any output file paths have invalid characters removed
 
@@ -372,7 +374,15 @@ class PushUploadToPlaces(object):
             datatype="GPString",
             parameterType="Required")
 
-        parameters = [upload, workspace, log_table]
+        testing = arcpy.Parameter(
+            name="testing",
+            displayName="Upload to the testing version of Places",
+            direction="Input",
+            datatype="GPBoolean",
+            parameterType="Required")
+        testing.value = True
+
+        parameters = [upload, workspace, log_table, testing]
         return parameters
 
     def updateParameters(self, parameters):
@@ -395,8 +405,13 @@ class PushUploadToPlaces(object):
         upload_path = parameters[0].valueAsText
         workspace = parameters[1].valueAsText
         table_name = parameters[2].valueAsText
+        testing = parameters[3].value
+        if testing:
+            server = test_places
+        else:
+            server = places
         table_path = os.path.join(workspace, table_name)
-        error, table = osm2places.upload_osm_file(upload_path, places)
+        error, table = osm2places.upload_osm_file(upload_path, server)
         if error:
             arcpy.AddError(error)
         if table:
@@ -552,7 +567,15 @@ class SeedPlaces(object):
             parameterType="Required")
         addIds.value = False
 
-        parameters = [feature, translator, alt_translator, workspace, log_table, ignore_sync_warnings, addIds]
+        testing = arcpy.Parameter(
+            name="testing",
+            displayName="Upload to the testing version of Places",
+            direction="Input",
+            datatype="GPBoolean",
+            parameterType="Required")
+        addIds.value = True
+
+        parameters = [feature, translator, alt_translator, workspace, log_table, ignore_sync_warnings, addIds, testing]
         return parameters
 
     def updateParameters(self, parameters):
@@ -576,6 +599,11 @@ class SeedPlaces(object):
         table_name = parameters[4].valueAsText
         ignore_sync_warnings = parameters[5].value
         addIds = parameters[6].value
+        testing = parameters[6].value
+        if testing:
+            server = test_places
+        else:
+            server = places
         if translator.translation_module is None:
             # Bad Translator.  Primary error was already printed
             arcpy.AddError("Aborting to avoid sending bad data to Places")
@@ -585,7 +613,7 @@ class SeedPlaces(object):
         options.outputFile = None
         options.translator = translator
 
-        issues = placescore.valid4upload(featureclass, places, translator)
+        issues = placescore.valid4upload(featureclass, server, translator)
         if issues:
             arcpy.AddWarning("Feature class is not suitable for Uploading.")
             for issue in issues:
@@ -601,7 +629,7 @@ class SeedPlaces(object):
                 if error:
                     arcpy.AddError(error)
                 else:
-                    error, table = osm2places.upload_osm_data(changefile, places)
+                    error, table = osm2places.upload_osm_data(changefile, server)
                     if error:
                         arcpy.AddError(error)
                     if table:
