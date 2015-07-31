@@ -168,7 +168,7 @@ class OsmApiServer:
             self.logger.debug("Request Secret: " + request_tokens['oauth_token_secret'])
 
         # Authorize User
-        if self.name == 'places':
+        if self.name == 'places' or self.name == 'test':
             if not self._authorize_npsuser(request_tokens):
                 return
         else:

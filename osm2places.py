@@ -109,6 +109,7 @@ def upload_osm_data(data, server, csv_path=None, options=None):
         if error and resp:
             error += '\nServer Response:\n' + resp
         if resp and not error:
+            # TODO: only print when debugging
             print '\n', resp, '\n'
             error, upload_log = make_upload_log(resp, data, timestamp, cid, server.username, options)
             if upload_log:
@@ -116,6 +117,8 @@ def upload_osm_data(data, server, csv_path=None, options=None):
                     error = upload_log.export_csv(csv_path)
                     if error:
                         return "Failed to save CSV. " + error, None
+                    else:
+                        return None, upload_log
                 else:
                     return None, upload_log
             return "Failed to relate Places and GIS date. " + error, None
@@ -127,13 +130,13 @@ def test():
     # noinspection PyClassHasNoInit
     class Options:
         verbose = True
-    api_server = Places()
+    api_server = OsmApiServer('test')
     api_server.turn_verbose_on()
     api_server.logger = Logger()
     Options.logger = api_server.logger
     api_server._debug = True
-    error, table = upload_osm_file('./tests/test_POI.osm', api_server,
-                                   './tests/test_poi_sync.csv', Options)
+    error, table = upload_osm_file('./tests/test_roads.osm', api_server,
+                                   './tests/test_roads_sync.csv', Options)
     if error:
         print error
     else:
