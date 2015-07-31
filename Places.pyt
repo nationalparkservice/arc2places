@@ -603,7 +603,7 @@ class SeedPlaces(object):
                         else:
                             table.export_arcgis(workspace, table_name)
                         if addIds:
-                            placescore.add_places_ids(featureclass, table)
+                            placescore.add_places_ids(featureclass, table_path)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
