@@ -3,7 +3,8 @@ Workflows:
 
 The following workflows are probable.  I do not know what workflow any unit will use.
 I doubt all units will want the same workflow. There may be workflows I have not imagined.
-I am providing tools to support workflow #3, with the goal of also supporting workflow #6
+I am providing tools to support workflow #3, with the goal of also supporting workflow #6.
+Details on the tools can be found [here](https://github.com/nationalparkservice/arc2places/blob/master/Tools.md)
 
 1) Places Master
 ----------------

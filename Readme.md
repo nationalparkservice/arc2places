@@ -4,6 +4,10 @@ This project provides tools for uploading National Park Service GIS data
 from ESRI data sources to the [NP Places system](http://www.nps.gov/npmap/tools/places/)
 which is based on the OSM data model.
 
+This document need major revisions.  More current information can be found in other
+documents that describe the various [workflows](https://github.com/nationalparkservice/arc2places/blob/master/Workflow.md)
+and [tools](https://github.com/nationalparkservice/arc2places/blob/master/Tools.md) 
+
 This kernel of this project was derived from Paul Norman's
 [ogr2osm](https://github.com/pnorman/ogr2osm) tool which was derived from
 the UVM tool of the same name.

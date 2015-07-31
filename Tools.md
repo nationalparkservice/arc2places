@@ -1,12 +1,14 @@
 # Tools
 These are the tools that are avaialble to help maintain ArcGIS data in NP Places
 
+
+
 ## Validate ArcGIS Dataset
 Ensures that a dataset is suitable for upload to Places.
 It also checks, but does not require, if the dataset is suitable for future syncing.
 
 ### Status
-**Testing**
+* Testing
 
 ### Inputs
 * ArcGIS dataset
@@ -25,12 +27,14 @@ It also checks, but does not require, if the dataset is suitable for future sync
 * Check that field that translates to *nps:source_id* is fully populated and unique
 * Feature class must have editor tracking turned on and a *last edit date* column defined (geodatabases only)
 
+
+
 ## Prepare ArcGIS Dataset for Syncing
 Tool to Add/populate a unique id column (in the eGIS standard suitable for places).
 Another Tool to turn on editor tracking and define/create the *last edit date* column (in conformance with the eGIS standard).
 
 ### Status
-**Testing**
+* Testing
 
 ### Inputs
 * ArcGIS dataset
@@ -39,11 +43,13 @@ Another Tool to turn on editor tracking and define/create the *last edit date* c
 ### Outputs
 * Modified ArcGIS dataset
 
+
+
 ## Seed Places
 Verifies, translates and uploads ArcGIS data into the Places database.
 
 ### Status
-**Testing**
+* Testing
 
 ### Inputs
 * ArcGIS dataset
@@ -60,12 +66,14 @@ Verifies, translates and uploads ArcGIS data into the Places database.
 * Output (upload log) is required for syncing (Get Places Edits and Update Place described below)
 * If you plan to use the GIS dataset in the future to update Place, you will need to enable editor tracking now
 
+
+
 ## Get Places Edits
 Find changes in Places within the unit since last upload,
 and applies the inverse translation to the source dataset (creating a new version or a modified copy)
 
 ### Status
-**Design**
+* Design
 
 ### Inputs
 * Places url/account
@@ -81,13 +89,15 @@ and applies the inverse translation to the source dataset (creating a new versio
 * If there is no upload log, then get all exiting Places data for the unit.
 * The date could be max date from the upload log, but this may miss some changes.
 
+
+
 ## Reconcile Places Edits
 Add Places edits to GIS and revert/correct Places edits to match GIS.  This is largely a manual process
 where each change needs to be concidered and accepted/rejected.
 I would like to create some tools to help manage the reconcile process.
 
 ### Status
-**Under consideration**
+* Under consideration
 
 ### Inputs
 * Master ArcGIS dataset
@@ -111,11 +121,13 @@ I would like to create some tools to help manage the reconcile process.
 * TODO: Figure out the format of the GISP - I Can't capture deletes in a new GIS feature class,
 applying changes to a copy of the GIS feature class is a problem since it has likely changed since the upload.
 
+
+
 ## Incremental Update of Places
 Find changes in GIS since last upload, and send them to Places and update the upload log.
 
 ### Status
-**Under development**
+* Under development
 
 ### Inputs
 * ArcGIS dataset (with editor tracking)
