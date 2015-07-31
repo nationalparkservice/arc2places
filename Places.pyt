@@ -376,6 +376,7 @@ class PushUploadToPlaces(object):
         return parameters
 
     def updateParameters(self, parameters):
+        # TODO: create a default name for log_table - {feature}_places_sync
         return
 
     def updateMessages(self, parameters):
@@ -545,26 +546,27 @@ class SeedPlaces(object):
             parameterType="Required")
         addIds.value = False
 
-        parameters = [feature, translator, alt_translator, workspace, log_table]
+        parameters = [feature, translator, alt_translator, workspace, log_table, ignore_sync_warnings, addIds]
         return parameters
 
     def updateParameters(self, parameters):
         TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
+        # TODO: create a default name for log table - {feature}_places_sync
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[1])
         if parameters[3].value and parameters[4].value:
-            table_path = os.path.join(parameters[3].valueAsText, parameters[3].valueAsText)
+            table_path = os.path.join(parameters[3].valueAsText, parameters[4].valueAsText)
             if arcpy.Exists(table_path):
-                parameters[2].setErrorMessage("Output {0:s} already exists".format(table_path))
+                parameters[4].setErrorMessage("Output {0:s} already exists".format(table_path))
 
     def execute(self, parameters, messages):
         featureclass = parameters[0].valueAsText
         translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
         workspace = parameters[3].valueAsText
         table_name = parameters[4].valueAsText
-        ignore_sync_warnings = parameters[4].value
-        addIds = parameters[4].value
+        ignore_sync_warnings = parameters[5].value
+        addIds = parameters[6].value
         if translator.translation_module is None:
             # Bad Translator.  Primary error was already printed
             arcpy.AddError("Aborting to avoid sending bad data to Places")

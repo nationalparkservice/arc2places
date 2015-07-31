@@ -233,13 +233,13 @@ def add_uniqueid_field(featureclass, field_name):
 
 
 def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
-                   places_name='PLACESID', id_name_link='GEOMETRYID',
-                   places_name_link='PLACESID', quiet=False):
+                   places_name='PLACESID', id_name_link='source_id',
+                   places_name_link='places_id', quiet=False):
 
     """
     Populates the PlacesId in an EGIS dataset.
 
-    Populates the places_name column in featureclass using the CSV linkfile
+    Populates the places_name column in featureclass using the upload_log table
     returned after uploading an OsmChange file.
 
     :rtype : bool
