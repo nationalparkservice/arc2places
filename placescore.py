@@ -1,6 +1,8 @@
 import arcpy
 import utils
 
+# TODO: entire module is dependent on arcpy, develop ogr version
+# TODO: develop command line versions of functions called by toolbox.
 
 def get_feature_info(featureclass, translator=None):
     """
@@ -76,7 +78,6 @@ def get_duplicates(featureclass, primary_key, translator=None):
     return duplicates
 
 
-# TODO - Maybe this should be a method on the Translator (different versions for arc and ogr)
 # Public - called by ValidateForPlaces, SeedPlaces in Places.pyt; test() in self
 def valid4upload(featureclass, places, translator=None):
     """
@@ -84,7 +85,7 @@ def valid4upload(featureclass, places, translator=None):
 
     Returns as many issues as possible. Only checks the features that pass the filter in the translator.
     Requires arcpy and ArcGIS 10.x ArcView or better license
-    Checks for Upload:
+    Checks for Upload (requirements by code in arc2osm.py and API Server):
     * Geometry: polys, lines, point, no multipoints, patches, etc
     * Must have a spatial reference system
     * Do feature, vertex, and max vertex/feature counts, and verify below api capabilities
@@ -161,7 +162,7 @@ def valid4sync(featureclass, translator=None):
     Returns as many issues as possible. Only checks the features that pass the filter in the translator.
     Requires arcpy and ArcGIS 10.x ArcView or better license.
     Assumes but does not check that featureclass is suitable for Upload
-    Additional checks for Syncing:
+    Additional checks for Syncing (requirements by code in arcupdate2osm.py):
     * Checks that column that translates to 'nps:source_id' is fully populated and unique.
     * Checks that editor tracking is turned on and the last_edit_date_field is defined (must be a geodatabase)
 
