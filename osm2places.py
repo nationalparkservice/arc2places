@@ -137,7 +137,7 @@ def test():
     api_server = OsmApiServer('test')
     api_server.turn_verbose_on()
     api_server.logger = Logger()
-    api_server._debug = True
+    api_server.logger.start_debug()
     error, table = upload_osm_file('./tests/test_roads.osm', api_server,
                                    './tests/test_roads_sync.csv', api_server.logger)
     if error:
