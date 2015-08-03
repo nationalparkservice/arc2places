@@ -11,11 +11,11 @@ from Logger import Logger
 from DataTable import DataTable
 
 
-# TODO: replace options with logger.
-def make_upload_log(diff_result, uploaddata, date, cid, user, options=None):
-    # FIXME: this will crash if options does not have these attributes, and they are not the right type
-    if options and options.verbose and options.logger:
-        options.logger.info("Process response")
+def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
+    try:
+        logger.info("Create link table from upload data and response")
+    except AttributeError:
+        pass
     placesids = {}
     try:
         root = Et.fromstring(diff_result)
@@ -56,8 +56,10 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, options=None):
         row = [date, user, cid, load[0], diff[1], diff[0], diff[2], load[1]]
         data.rows.append(row)
         # resp += placesids[tempid] + "," + gisids[tempid] + "\n"
-    if options and options.verbose and options.logger:
-        options.logger.info("Processed response")
+    try:
+        logger.info("Created link table.")
+    except AttributeError:
+        pass
     return None, data
 
 
@@ -69,31 +71,30 @@ def fixchangefile(cid, data):
 
 # TODO: decide on error handeling protocol (exceptions, Eithers, or (Error,Data))
 # Public - called by PushUploadToPlaces in Places.pyt; test(), cmdline() in self;
-def upload_osm_file(filepath, server, csv_path=None, options=None):
+def upload_osm_file(filepath, server, csv_path=None, logger=None):
     """
     Uploads an OsmChange file to an OSM API server and returns an upload log
 
     :param filepath: A filesystem path to an OsmChange file
     :param server: An OsmApiServer object (needed for places connection info)
     :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
-    :param options: A set of attributes that provide additional control for this method
+    :param logger: A Logger object for info/warning/debug/error output
     :return: Either an error string or an DataTable object that can be saved as a CSV file or an ArcGIS table dataset
     :rtype : (basestring, DataTable)
     """
     with open(filepath, 'rb') as fr:
-        return upload_osm_data(fr.read(), server, csv_path, options)
+        return upload_osm_data(fr.read(), server, csv_path, logger)
 
 
 # Public - called by SeedPlaces in Places.pyt; upload_osm_file() in self;
-# TODO: specific attributes that options expects
-def upload_osm_data(data, server, csv_path=None, options=None):
+def upload_osm_data(data, server, csv_path=None, logger=None):
     """
     Uploads contents of an OsmChange file to an OSM API server and returns an upload log
 
     :param data: basestring (or open(name, 'rb').read()) containing the contents of the change file to upload
     :param server: An OsmApiServer object (needed for connection info)
     :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
-    :param options: A set of attributes that provide additional control for this method
+    :param logger: A Logger object for info/warning/debug/error output
     :return: Either an error string or an DataTable object that can be saved as a CSV file or an ArcGIS table dataset
     :rtype : (basestring, DataTable)
     """
@@ -113,9 +114,11 @@ def upload_osm_data(data, server, csv_path=None, options=None):
         if error and resp:
             error += '\nServer Response:\n' + resp
         if resp and not error:
-            # TODO: only print when debugging
-            print '\n', resp, '\n'
-            error, upload_log = make_upload_log(resp, data, timestamp, cid, server.username, options)
+            try:
+                logger.debug('\n' + resp + '\n')
+            except AttributeError:
+                pass
+            error, upload_log = make_upload_log(resp, data, timestamp, cid, server.username, logger)
             if upload_log:
                 if csv_path:
                     error = upload_log.export_csv(csv_path)
@@ -131,16 +134,12 @@ def upload_osm_data(data, server, csv_path=None, options=None):
 
 
 def test():
-    # noinspection PyClassHasNoInit
-    class Options:
-        verbose = True
     api_server = OsmApiServer('test')
     api_server.turn_verbose_on()
     api_server.logger = Logger()
-    Options.logger = api_server.logger
     api_server._debug = True
     error, table = upload_osm_file('./tests/test_roads.osm', api_server,
-                                   './tests/test_roads_sync.csv', Options)
+                                   './tests/test_roads_sync.csv', api_server.logger)
     if error:
         print error
     else:
@@ -203,7 +202,7 @@ def cmdline():
         api_server.turn_verbose_on()
     if options.username:
         api_server.username = options.username
-    error = upload_osm_file(srcfile, api_server, dstfile, options)
+    error = upload_osm_file(srcfile, api_server, dstfile, api_server.logger)
     if error:
         print error
     else:
