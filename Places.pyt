@@ -15,7 +15,7 @@ test_places.logger = ArcpyLogger()
 test_places.turn_verbose_on()
 
 # TODO: make sure that any output file paths have invalid characters removed
-
+# outfc = arcpy.ValidateTableName(fc, workspace)
 
 class TranslatorUtils(object):
     """
