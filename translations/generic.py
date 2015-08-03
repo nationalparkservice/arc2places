@@ -5,6 +5,7 @@ from config_generic import *
 def fields_for_tag(tag_name):
     return tools.fields_for_tag(tag_name, fieldmap, altnames)
 
+
 # noinspection PyPep8Naming,PyUnusedLocal
 def filterFeature(feature, fieldnames, reproject):
     # Places override

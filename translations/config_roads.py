@@ -63,7 +63,7 @@ valuemap = {
             'highway': 'road',
             '4wd_only': 'yes'
         },
-        'Service':  {
+        'Service': {
             'highway': 'service',
             'access': 'private'
         },
@@ -77,7 +77,7 @@ valuemap = {
             'access': 'no',
             'highway': 'proposed'  # conflict with RDCLASS
         },
-        'Planned':  {
+        'Planned': {
             'access': 'no',
             'highway': 'proposed'  # conflict with RDCLASS
         }
