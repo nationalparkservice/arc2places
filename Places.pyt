@@ -498,12 +498,15 @@ class IntegratePlacesIds(object):
         return
 
     def execute(self, parameters, messages):
-        placescore.add_places_ids(parameters[0].valueAsText,
-                                  parameters[1].valueAsText,
-                                  parameters[2].valueAsText,
-                                  parameters[3].valueAsText,
-                                  parameters[4].valueAsText,
-                                  parameters[5].valueAsText)
+        try:
+            placescore.populate_related_field(parameters[0].valueAsText,
+                                              parameters[1].valueAsText,
+                                              parameters[2].valueAsText,
+                                              parameters[3].valueAsText,
+                                              parameters[4].valueAsText,
+                                              parameters[5].valueAsText)
+        except (TypeError, ValueError, arcpy.ExecuteError) as e:
+            arcpy.AddError(str(e))
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
@@ -641,7 +644,14 @@ class SeedPlaces(object):
                         else:
                             table.export_arcgis(workspace, table_name)
                         if addIds:
-                            placescore.add_places_ids(featureclass, table_path)
+                            try:
+                                placescore.populate_related_field(featureclass, table_path,
+                                                                  primary_key_field_name='GEOMETRYID',
+                                                                  destination_field_name='PLACESID',
+                                                                  foreign_key_field_name='source_id',
+                                                                  source_field_name='places_id')
+                            except (TypeError, ValueError, arcpy.ExecuteError) as e:
+                                arcpy.AddError(str(e))
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal

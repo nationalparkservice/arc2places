@@ -216,7 +216,7 @@ def add_uniqueid_field(featureclass, field_name):
     Adds a 50 char text field to the featureclass and fills it with guid values.
 
     When called by toolbox, the input parameters have been validated.
-    Other callers should check for exceptions returned by arcpy.
+    Other callers should check for arcpy.ExecuteError
 
     :param featureclass: The ArcGIS feature class to get the new field
     :param field_name: The field name to add.  Must not exist.
@@ -231,16 +231,18 @@ def add_uniqueid_field(featureclass, field_name):
     arcpy.CalculateField_management(featureclass, field_name, expression, "PYTHON_9.3", codeblock)
 
 
-# TODO: Replace quiet parameter with logger object
 # Public - called by IntegratePlacesIds, SeedPlaces in Places.pyt
-def add_places_ids(featureclass, linkfile, primary_key_field_name='GEOMETRYID',
-                   destination_field_name='PLACESID', foreign_key_field_name='source_id',
-                   source_field_name='places_id', quiet=False):
+def populate_related_field(featureclass, linkfile, primary_key_field_name,
+                           destination_field_name, foreign_key_field_name, source_field_name):
     """
     Adds values from a source table to the related records in the destination table.
 
-    Populates the places_name column in featureclass using the upload_log table
-    returned after uploading an OsmChange file.
+    Populates the destination_field_name column in featureclass using the source_field_name in linkfile
+
+    Raises TypeError if parameters are the wrong type
+    Raises ValueError if the parameters do not have valid values
+    Raises arcpy.ExecuteError if feature class is not writable
+    Raises arcpy.ExecuteError if the value in src field cannot be converted to dst type
 
     :param featureclass: The ArcGIS feature class to update
     :param linkfile: an ArcGIS dataset path to a table with Places Ids and EGIS Ids
@@ -248,64 +250,50 @@ def add_places_ids(featureclass, linkfile, primary_key_field_name='GEOMETRYID',
     :param destination_field_name:  The name of the destination (Places ID) column in the feature class
     :param foreign_key_field_name: The name of the foreign key (EGIS ID) column in the link table
     :param source_field_name:  The name of the source (Places ID) column in the link table
-    :param quiet: Turns off all messages
-    :return: True if successful, False otherwise
-    :rtype : bool
+    :return: Nothing
+    :rtype : None
     """
 
-    if not featureclass:
-        if not quiet:
-            utils.error("No feature class provided.")
-        return False
+    if not isinstance(featureclass, basestring):
+        raise TypeError("featureclass must be of type string")
 
     if not arcpy.Exists(featureclass):
-        if not quiet:
-            utils.error("Feature class not found.")
-        return False
+        raise ValueError("featureclass not found.")
 
-    # TODO - check that both datasets have table properties (use arcpy.Describe)
+    if not hasattr(arcpy.Describe(featureclass), 'fields'):
+        raise ValueError("featureclass does not have table properties")
 
-    if not linkfile:
-        if not quiet:
-            utils.error("No link file provided.")
-        return False
+    if not isinstance(linkfile, basestring):
+        raise TypeError("linkfile must be of type string")
 
     if not arcpy.Exists(linkfile):
-        if not quiet:
-            utils.error("Link file not found.")
-        return False
+        raise ValueError("linkfile not found.")
+
+    if not hasattr(arcpy.Describe(featureclass), 'fields'):
+        raise ValueError("linkfile does not have table properties")
 
     if not utils.hasfield(featureclass, primary_key_field_name):
-        if not quiet:
-            utils.error("Field '{0:s}' not found in feature class."
-                        .format(primary_key_field_name))
-        return False
+        raise ValueError("Field '{0:s}' not found in featureclass."
+                         .format(primary_key_field_name))
 
     if not utils.hasfield(featureclass, destination_field_name):
-        if not quiet:
-            utils.error("Field '{0:s}' not found in feature class."
-                        .format(destination_field_name))
-        return False
+        raise ValueError("Field '{0:s}' not found in featureclass."
+                         .format(destination_field_name))
 
     if not utils.hasfield(linkfile, foreign_key_field_name):
-        if not quiet:
-            utils.error("Field '{0:s}' not found in Link table."
-                        .format(foreign_key_field_name))
-        return False
+        raise ValueError("Field '{0:s}' not found in linkfile."
+                         .format(foreign_key_field_name))
 
     if not utils.hasfield(linkfile, source_field_name):
-        if not quiet:
-            utils.error("Field '{0:s}' not found in Link table."
-                        .format(source_field_name))
-        return False
+        raise ValueError("Field '{0:s}' not found in linkfile."
+                         .format(source_field_name))
 
     # We will have a dst_type, because we verified the field exists
     dst_type = utils.fieldtype(featureclass, destination_field_name)
     if dst_type not in ['double', 'integer', 'string']:
-        if not quiet:
-            utils.error("Field '{0:s}' in feature class is not a valid type."
-                        .format(destination_field_name))
-        return False
+        raise ValueError("Field '{0:s}' in featureclass is of type '{1:s}, "
+                         "must be one of 'double', 'integer', or 'string'."
+                         .format(destination_field_name, dst_type))
 
     table_view = arcpy.MakeTableView_management(featureclass, "view")
     view_name = arcpy.Describe(table_view).basename
@@ -323,7 +311,6 @@ def add_places_ids(featureclass, linkfile, primary_key_field_name='GEOMETRYID',
         if dst_type == 'string':
             arcpy.CalculateField_management(table_view,
                                             dst, 'str(!' + src + '!)', 'PYTHON_9.3')
-    # TODO - could fail if table_view/featureclass is not writable
     finally:
         arcpy.Delete_management(table_view)
     return True
