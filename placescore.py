@@ -77,26 +77,26 @@ def get_duplicates(featureclass, primary_key, translator=None):
 
 
 # TODO - Maybe this should be a method on the Translator (different versions for arc and ogr)
+# Public - called by ValidateForPlaces, SeedPlaces in Places.pyt; test() in self
 def valid4upload(featureclass, places, translator=None):
-
     """
     Checks if a feature class is suitable for uploading to Places.
 
+    Returns as many issues as possible. Only checks the features that pass the filter in the translator.
     Requires arcpy and ArcGIS 10.x ArcView or better license
+    Checks for Upload:
+    * Geometry: polys, lines, point, no multipoints, patches, etc
+    * Must have a spatial reference system
+    * Do feature, vertex, and max vertex/feature counts, and verify below api capabilities
+    * No multilines (multipolys are ok)
 
-        Checks for Upload:
-        * Geometry: polys, lines, point, no multipoints, patches, etc
-        * Must have a spatial reference system
-        * Do feature, vertex, and max vertex/feature counts, and verify below api capabilities
-        * No multilines (multipolys are ok)
-
-    :rtype : List (of basestring)
     :param featureclass: The ArcGIS feature class to validate
     :param places: A Places object (needed for places connection info)
     :param translator: a Translator object (used to filter the featureclass)
     :return: empty list (or None) if there are not issues (ok to upload)
              returns list of issues (strings) that preculde upload.
              method will try to return as many issues as possible.
+    :rtype : List (of basestring)
     """
     if not featureclass:
         return ['no feature class']
@@ -153,24 +153,23 @@ def valid4upload(featureclass, places, translator=None):
     return issues
 
 
+# Public - called by ValidateForPlaces, SeedPlaces in Places.pyt; test() in self
 def valid4sync(featureclass, translator=None):
-
     """
     Checks if a feature class is suitable for syncing with Places.
 
-    Requires arcpy and ArcGIS 10.x ArcView or better license
+    Returns as many issues as possible. Only checks the features that pass the filter in the translator.
+    Requires arcpy and ArcGIS 10.x ArcView or better license.
+    Assumes but does not check that featureclass is suitable for Upload
+    Additional checks for Syncing:
+    * Checks that column that translates to 'nps:source_id' is fully populated and unique.
+    * Checks that editor tracking is turned on and the last_edit_date_field is defined (must be a geodatabase)
 
-        Assumes but does not check that feature is suitable for Upload
-        Additional checks for Syncing:
-        * Check that geometryid is fully populated and unique (otherwise sync will not work)
-        * must support editor tracking (geodatabase)
-
-    :rtype : List (of basestring)
     :param featureclass: The ArcGIS feature class to validate
     :param translator: a Translator object (used to filter the featureclass)
-    :return: An empty list if there are no issues (suitable for syncing)
-             returns list of issues (strings) that preculde syncing.
-             method will try to return as many issues as possible.
+    :return: An empty list if there are no issues (suitable for syncing).
+             Returns list of issues (strings) that preculde syncing.
+    :rtype : List (of basestring)
     """
     if not featureclass:
         return ['no feature class']
@@ -211,18 +210,18 @@ def valid4sync(featureclass, translator=None):
     return issues
 
 
+# Public - called by AddUniqueId in Places.pyt
 def add_uniqueid_field(featureclass, field_name):
-
     """
-    Adds a 50 char text field to the feature_class and fills it with guid values.
+    Adds a 50 char text field to the featureclass and fills it with guid values.
 
-    When called by toolbox, the input parameters are validate.  Other callers should check for exceptions
+    When called by toolbox, the input parameters have been validated.
+    Other callers should check for exceptions returned by arcpy.
 
-    :rtype : None
     :param featureclass: The ArcGIS feature class to get the new field
     :param field_name: The field name to add.  Must not exist.
     :return: No return value
-
+    :rtype : None
     """
     arcpy.AddField_management(featureclass, field_name, "TEXT", field_length=38)
     expression = "CalcGUID()"
@@ -232,26 +231,26 @@ def add_uniqueid_field(featureclass, field_name):
     arcpy.CalculateField_management(featureclass, field_name, expression, "PYTHON_9.3", codeblock)
 
 
-def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
-                   places_name='PLACESID', id_name_link='source_id',
-                   places_name_link='places_id', quiet=False):
-
+# TODO: Replace quiet parameter with logger object
+# Public - called by IntegratePlacesIds, SeedPlaces in Places.pyt
+def add_places_ids(featureclass, linkfile, primary_key_field_name='GEOMETRYID',
+                   destination_field_name='PLACESID', foreign_key_field_name='source_id',
+                   source_field_name='places_id', quiet=False):
     """
-    Populates the PlacesId in an EGIS dataset.
+    Adds values from a source table to the related records in the destination table.
 
     Populates the places_name column in featureclass using the upload_log table
     returned after uploading an OsmChange file.
 
-    :rtype : bool
-    :param featureclass: The ArcGIS feature class to validate
-    :param linkfile: an ArcGIS dataset path to a table with Places Ids linked to EGIS Ids
-    :param id_name: The name of the EGIS ID column in the feature class
-    :param places_name:  The name of the Places ID column in the feature class
-    :param id_name_link: The name of the EGIS ID column in the CSV file
-    :param places_name_link:  The name of the Places ID column in the CSV
+    :param featureclass: The ArcGIS feature class to update
+    :param linkfile: an ArcGIS dataset path to a table with Places Ids and EGIS Ids
+    :param primary_key_field_name: The name of the primary key (EGIS ID) column in the feature class
+    :param destination_field_name:  The name of the destination (Places ID) column in the feature class
+    :param foreign_key_field_name: The name of the foreign key (EGIS ID) column in the link table
+    :param source_field_name:  The name of the source (Places ID) column in the link table
     :param quiet: Turns off all messages
     :return: True if successful, False otherwise
-
+    :rtype : bool
     """
 
     if not featureclass:
@@ -276,45 +275,45 @@ def add_places_ids(featureclass, linkfile, id_name='GEOMETRYID',
             utils.error("Link file not found.")
         return False
 
-    if not utils.hasfield(featureclass, id_name):
+    if not utils.hasfield(featureclass, primary_key_field_name):
         if not quiet:
             utils.error("Field '{0:s}' not found in feature class."
-                        .format(id_name))
+                        .format(primary_key_field_name))
         return False
 
-    if not utils.hasfield(featureclass, places_name):
+    if not utils.hasfield(featureclass, destination_field_name):
         if not quiet:
             utils.error("Field '{0:s}' not found in feature class."
-                        .format(places_name))
+                        .format(destination_field_name))
         return False
 
-    if not utils.hasfield(linkfile, id_name_link):
+    if not utils.hasfield(linkfile, foreign_key_field_name):
         if not quiet:
-            utils.error("Field '{0:s}' not found in Link file."
-                        .format(id_name_link))
+            utils.error("Field '{0:s}' not found in Link table."
+                        .format(foreign_key_field_name))
         return False
 
-    if not utils.hasfield(linkfile, places_name_link):
+    if not utils.hasfield(linkfile, source_field_name):
         if not quiet:
-            utils.error("Field '{0:s}' not found in Link file."
-                        .format(places_name_link))
+            utils.error("Field '{0:s}' not found in Link table."
+                        .format(source_field_name))
         return False
 
     # We will have a dst_type, because we verified the field exists
-    dst_type = utils.fieldtype(featureclass, places_name)
+    dst_type = utils.fieldtype(featureclass, destination_field_name)
     if dst_type not in ['double', 'integer', 'string']:
         if not quiet:
             utils.error("Field '{0:s}' in feature class is not a valid type."
-                        .format(places_name))
+                        .format(destination_field_name))
         return False
 
     table_view = arcpy.MakeTableView_management(featureclass, "view")
     view_name = arcpy.Describe(table_view).basename
     join_name = arcpy.Describe(linkfile).basename
-    dst = view_name + "." + places_name
-    src = join_name + "." + places_name_link
+    dst = view_name + "." + destination_field_name
+    src = join_name + "." + source_field_name
     try:
-        arcpy.AddJoin_management(table_view, id_name, linkfile, id_name_link)
+        arcpy.AddJoin_management(table_view, primary_key_field_name, linkfile, foreign_key_field_name)
         if dst_type == 'double':
             arcpy.CalculateField_management(table_view,
                                             dst, 'float(!' + src + '!)', 'PYTHON_9.3')

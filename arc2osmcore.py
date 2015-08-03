@@ -415,7 +415,16 @@ def output_xml(options):
     return "Unable to generate XML", None
 
 
+# TODO: This is a horrible public interface.  Make more specific
+# Public - called by CreatePlacesUpload, SeedPlaces in Places.pyt; main() in arc2osm.py; test() in self
 def makeosmfile(options):
+    """
+    Save or return (as an xml string) an OsmChange File.
+
+    :rtype : None, or (error string, None) or (None, xml_string) on success
+    :param options: a DefaultOptions() object with the input and control parameters
+    :return: (basestring, basestring)
+    """
     Geometry.elementIdCounter = options.id
     if options.verbose:
         utils.info(u"Preparing to convert '{0:s}' to '{1:s}'."
@@ -455,8 +464,12 @@ def makeosmfile(options):
         return error, data
 
 
+# Public - called by CreatePlacesUpload, SeedPlaces in Places.pyt; test() in self;
 # noinspection PyClassHasNoInit
 class DefaultOptions:
+    """
+    Defines the attributes expected by the sole input parameter to makeosmfile()
+    """
     sourceFile = None
     outputFile = None
     translator = Translator.get_translator(None)

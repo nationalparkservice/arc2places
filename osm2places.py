@@ -68,30 +68,34 @@ def fixchangefile(cid, data):
 
 
 # TODO: decide on error handeling protocol (exceptions, Eithers, or (Error,Data))
+# Public - called by PushUploadToPlaces in Places.pyt; test(), cmdline() in self;
 def upload_osm_file(filepath, server, csv_path=None, options=None):
     """
     Uploads an OsmChange file to an OSM API server and returns an upload log
 
-    :param filepath: A filesystem path to an OSM Change file
-    :param server: An Osm_api_server object (needed for places connection info)
+    :param filepath: A filesystem path to an OsmChange file
+    :param server: An OsmApiServer object (needed for places connection info)
     :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
     :param options: A set of attributes that provide additional control for this method
-    :return: Either an error or an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
+    :return: Either an error string or an DataTable object that can be saved as a CSV file or an ArcGIS table dataset
     :rtype : (basestring, DataTable)
     """
     with open(filepath, 'rb') as fr:
         return upload_osm_data(fr.read(), server, csv_path, options)
 
 
+# Public - called by SeedPlaces in Places.pyt; upload_osm_file() in self;
+# TODO: specific attributes that options expects
 def upload_osm_data(data, server, csv_path=None, options=None):
     """
     Uploads contents of an OsmChange file to an OSM API server and returns an upload log
 
-    :param data: unicode (or bytes as from open(name, 'rb').read()) containing the change file contents to upload
-    :param server: An Osm_api_server object (needed for connection info)
+    :param data: basestring (or open(name, 'rb').read()) containing the contents of the change file to upload
+    :param server: An OsmApiServer object (needed for connection info)
     :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
     :param options: A set of attributes that provide additional control for this method
-    :return: Either an error or an Upload_log object that can be saved as a CSV file or an ArcGIS table dataset
+    :return: Either an error string or an DataTable object that can be saved as a CSV file or an ArcGIS table dataset
+    :rtype : (basestring, DataTable)
     """
     # TODO: get comment from caller, generate something better like: Initial load from 'xxx' feature class
     cid = server.create_changeset('arc2places', 'upload of OsmChange file')

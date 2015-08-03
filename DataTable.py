@@ -12,7 +12,17 @@ class DataTable:
         self.fieldtypes = None
         self.rows = []
 
+    # Public - PushUploadToPlaces, SeedPlaces in Places.pyt, upload_osm_data() in osm2places; test() in self
     def export_csv(self, filepath, header=True):
+        """
+        Exports the data table to a CSV file.
+        May throw IOError exceptions opening/writing file.
+
+        :param filepath: A path (string) to the new file.
+        :param header: flag (bool) to turn on adding a header line at the start of the file.
+        :return: Method has no return value.
+        :rtype : None
+        """
         with open(filepath, 'wb') as f:
             self.export_csv_fd(f, header)
 
@@ -24,7 +34,18 @@ class DataTable:
         for row in self.rows:
             csv_writer.writerow(row)
 
+    # Public - PushUploadToPlaces, SeedPlaces in Places.pyt; test() in self
     def export_arcgis(self, workspace, table_name):
+        """
+        Exports the data table to an ArcGIS dataset path.
+        Does nothing if ArcGIS (arcpy) is not available.
+        May throw arcpy exceptions.
+
+        :param workspace: A path (string) to an ArcGIS workspace
+        :param table_name: The name (string) of the table to create in the ArcGIS workspace.
+        :return: Method has no return value.
+        :rtype : None
+        """
         try:
             import arcpy
         except ImportError:
