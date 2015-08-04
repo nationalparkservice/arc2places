@@ -3,7 +3,6 @@ import utils
 
 # TODO: entire module is dependent on arcpy, develop ogr version
 # TODO: develop command line versions of functions called by toolbox.
-# TODO: Add tests for add_uniqueid_field() and populate_related_field()
 
 
 def get_feature_info(featureclass, translator=None):
@@ -319,7 +318,7 @@ def populate_related_field(featureclass, linkfile, primary_key_field_name,
     return True
 
 
-def test():
+def validation_test():
     import OsmApiServer
     from Translator import Translator
     server = OsmApiServer.OsmApiServer('test')
@@ -344,5 +343,23 @@ def test():
         print valid4sync(src, translator)
 
 
+def add_id_test():
+    featureclass = './tests/test.gdb/roads_ln'
+    field_name = 'GEOMETRYID2'
+    add_uniqueid_field(featureclass, field_name)
+
+
+def link_test():
+    featureclass = './tests/test.gdb/roads_ln'
+    table_path = './tests/test_roads_sync.csv'
+    populate_related_field(featureclass, table_path,
+                           primary_key_field_name='GEOMETRYID',
+                           destination_field_name='PLACESID',
+                           foreign_key_field_name='source_id',
+                           source_field_name='places_id')
+
+
 if __name__ == '__main__':
-    test()
+    validation_test()
+    add_id_test()
+    link_test()
