@@ -141,7 +141,7 @@ def valid4upload(featureclass, places, translator=None):
         else:
             big_features = []
     if big_features:
-        issue = 'Some features have too many (' + max_waynodes + '+) vertices. OIDs: '
+        issue = 'Some features have too many (>{0}) vertices. OIDs: '.format(max_waynodes)
         issue += ','.join([str(oid) for oid in big_features])
         issues.append(issue)
     if multiparts and info.shapeType == 'Polyline':
