@@ -296,9 +296,16 @@ class CreatePlacesUpload(object):
             parameterType="Required")
         feature.filter.list = ["Polygon", "Polyline", "Point"]
 
+        folder = arcpy.Parameter(
+            name="folder",
+            displayName="Output Folder",
+            direction="Input",
+            datatype="DEFolder",
+            parameterType="Required")
+
         output = arcpy.Parameter(
             name="output",
-            displayName="Output File",
+            displayName="File Name",
             direction="Input",
             datatype="GPString",
             parameterType="Required")
@@ -319,27 +326,30 @@ class CreatePlacesUpload(object):
             parameterType="Required",
             enabled=False)
 
-        parameters = [feature, output, translator, alt_translator]
+        parameters = [feature, output, translator, alt_translator, folder]
         return parameters
 
     def updateParameters(self, parameters):
         TranslatorUtils.update_parameters(parameters[0], parameters[2], parameters[3])
+        if parameters[0].value and not parameters[4].altered:
+            basename = os.path.splitext(os.path.basename(parameters[0].valueAsText))[0]
+            parameters[4].value = basename + os.path.extsep + 'osm'
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
-        if parameters[1].value:
-            path = parameters[1].valueAsText
-            dir_path = os.path.dirname(path)
-            if not os.path.exists(dir_path):
-                parameters[1].AddError("Path {0:s} is not valid".format(dir_path))
+        if parameters[1].value and parameters[4].value:
+            path = os.path.join(parameters[1].valueAsText, parameters[4].valueAsText)
+            if os.path.exists(path):
+                parameters[4].AddError("File {0:s} already exists.".format(path))
 
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
         output_file = parameters[1].valueAsText
         translator = TranslatorUtils.get_translator(parameters[2], parameters[3])
+        folder = parameters[4].valueAsText
         options = arc2osmcore.DefaultOptions
         options.sourceFile = features
-        options.outputFile = output_file
+        options.outputFile = os.path.join(folder, output_file)
         options.translator = translator
         arc2osmcore.makeosmfile(options)
 
