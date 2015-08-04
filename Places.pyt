@@ -412,9 +412,10 @@ class PushUploadToPlaces(object):
         else:
             server = places
         table_path = os.path.join(workspace, table_name)
+        description = 'Upload of {0:s}.'.format(upload_path)
         table = None
         try:
-            table = osm2places.upload_osm_file(upload_path, server)
+            table = osm2places.upload_osm_file(upload_path, server, description)
         except osm2places.UploadError as e:
             arcpy.AddError(e)
         if table:
@@ -635,9 +636,10 @@ class SeedPlaces(object):
                 if error:
                     arcpy.AddError(error)
                 else:
+                    description = 'Initial upload of {0:s} translated with {1:s}'.format(featureclass, translator.name)
                     table = None
                     try:
-                        table = osm2places.upload_osm_data(changefile, server)
+                        table = osm2places.upload_osm_data(changefile, server, description)
                     except osm2places.UploadError as e:
                         arcpy.AddError(e)
                     if table:

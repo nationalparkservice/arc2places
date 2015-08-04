@@ -72,7 +72,7 @@ def fixchangefile(cid, data):
 
 
 # Public - called by PushUploadToPlaces in Places.pyt; test(), cmdline() in self;
-def upload_osm_file(filepath, server, csv_path=None, logger=None):
+def upload_osm_file(filepath, server, comment=None, csv_path=None, logger=None):
     """
     Uploads an OsmChange file to an OSM API server and returns the upload details as a DataTable
 
@@ -82,17 +82,18 @@ def upload_osm_file(filepath, server, csv_path=None, logger=None):
 
     :param filepath: A filesystem path to an OsmChange file
     :param server: An OsmApiServer object (needed for places connection info)
+    :param comment: A string describing the contents of the changeset
     :param csv_path: A filesystem path to save the DataTable response as a CSV file
     :param logger: A Logger object for info/warning/debug/error output
     :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset
     :rtype : DataTable
     """
     with open(filepath, 'rb') as fr:
-        return upload_osm_data(fr.read(), server, csv_path, logger)
+        return upload_osm_data(fr.read(), server, comment, csv_path, logger)
 
 
 # Public - called by SeedPlaces in Places.pyt; upload_osm_file() in self;
-def upload_osm_data(data, server, csv_path=None, logger=None):
+def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
     """
     Uploads contents of an OsmChange file to an OSM API server and returns the upload details as a DataTable
 
@@ -101,13 +102,13 @@ def upload_osm_data(data, server, csv_path=None, logger=None):
 
     :param data: basestring (or open(name, 'rb').read()) containing the contents of the change file to upload
     :param server: An OsmApiServer object (needed for connection info)
+    :param comment: A string describing the contents of the changeset
     :param csv_path: A filesystem path to save the DataTable response as a CSV file
     :param logger: A Logger object for info/warning/debug/error output
     :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset
     :rtype : DataTable
     """
-    # TODO: get comment from caller, generate something better like: Initial load from 'xxx' feature class
-    cid = server.create_changeset('arc2places', 'upload of OsmChange file')
+    cid = server.create_changeset('arc2places', comment)
     if not cid:
         raise UploadError("Unable to open a changeset. Check the network, "
                           "and your permissions.\n\tDetails: " + server.error)
@@ -141,7 +142,7 @@ def test():
     api_server.turn_verbose_on()
     api_server.logger = Logger()
     api_server.logger.start_debug()
-    upload_osm_file('./tests/test_roads.osm', api_server,
+    upload_osm_file('./tests/test_roads.osm', api_server, 'Testing upload OSM file function'
                     './tests/test_roads_sync.csv', api_server.logger)
 
 
@@ -164,6 +165,8 @@ def cmdline():
     parser.add_option("-s", "--server", dest="server", type=str, help=(
         "Name of server to connect to. I.e. 'places', 'osm', 'osm-dev', 'local'." +
         "Defaults to 'places'.  Name must be defined in the secrets file."), default='places')
+    parser.add_option("-c", "--comment", dest="comment", type=str, help=(
+                      "A description of the contents of the changeset."), default=None)
     parser.add_option("-v", "--verbose", dest="verbose", action="store_true")
     parser.set_defaults(verbose=False)
 
@@ -201,7 +204,7 @@ def cmdline():
         api_server.turn_verbose_on()
     if options.username:
         api_server.username = options.username
-    upload_osm_file(srcfile, api_server, dstfile, api_server.logger)
+    upload_osm_file(srcfile, api_server, options.comment, dstfile, api_server.logger)
 
 
 if __name__ == '__main__':
