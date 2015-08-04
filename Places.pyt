@@ -352,6 +352,7 @@ class CreatePlacesUpload(object):
         options.sourceFile = features
         options.outputFile = os.path.join(folder, output_file)
         options.translator = translator
+        options.logger = ArcpyLogger()
         arc2osmcore.makeosmfile(options)
 
 
@@ -638,6 +639,7 @@ class SeedPlaces(object):
         options.sourceFile = featureclass
         options.outputFile = None
         options.translator = translator
+        options.logger = ArcpyLogger()
 
         issues = placescore.valid4upload(featureclass, server, translator)
         if issues:

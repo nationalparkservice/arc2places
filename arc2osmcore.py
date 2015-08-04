@@ -40,11 +40,10 @@ Based very heavily on code released under the following terms:
 import sys
 import arcpy
 
-import utils
 from geom import *
 from Translator import Translator
+from Logger import Logger
 
-# TODO: Use logger to accomodate arcpy and stdout messaging
 # TODO: refactor to make ogr/arc replacable
 # TODO: refactor to allow modular calls with from update process
 
@@ -52,8 +51,7 @@ from Translator import Translator
 def parsedata(options):
     src = options.sourceFile
     if not arcpy.Exists(src):
-        utils.die(u"Data source '{0:s}' is not recognized by ArcGIS"
-                  .format(src))
+        raise ValueError(u"Data source '{0:s}' is not recognized by ArcGIS".format(src))
     shapefield = arcpy.Describe(src).shapeFieldName
     fieldnames = ['Shape@'] + \
                  [f.name for f in arcpy.ListFields(src) if
@@ -104,8 +102,10 @@ def getfeaturetags(arcfeature, fieldnames, options):
             else:
                 tags[fieldnames[i].upper()] = str(arcfeature[i])
     newtags = options.translator.filter_tags(tags)
-    if options.debugTags:
-        utils.info("Tags: " + str(newtags))
+    try:
+        options.logger.debug("Tags: " + str(newtags))
+    except AttributeError:
+        pass
     return newtags
 
 
@@ -128,7 +128,10 @@ def parsegeometry(arcgeometries, options):
                 or geometrytype == 'polygon':
             returngeometries.extend(parsecollection(arcgeometry, options))
         else:
-            utils.warn("unhandled geometry, type: " + geometrytype)
+            try:
+                options.logger.warn("Unhandled geometry, type: " + geometrytype)
+            except AttributeError:
+                pass
             returngeometries.append(None)
 
     return returngeometries
@@ -250,13 +253,17 @@ def mergepoints(options):
     version of the node)
     :return: Nothing, the list of nodes is in the global state
     """
-    if options.verbose:
-        utils.info("Merging points")
+    try:
+        options.logger.info("Merging points")
+    except AttributeError:
+        pass
     points = [geom for geom in Geometry.geometries if type(geom) == Point]
 
     # Make list of Points at each location
-    if options.verbose:
-        utils.info("Merging points - Making lists")
+    try:
+        options.logger.info("Merging points - Making lists")
+    except AttributeError:
+        pass
     pointcoords = {}  # lists of points for each rounded location
     # TODO make faster by keeping separate dict of dup points (key by (rx,ry))
     for i in points:
@@ -268,7 +275,10 @@ def mergepoints(options):
             pointcoords[(rx, ry)] = [i]
 
     # Use list to get rid of extras
-    utils.info("Merging points - Reducing lists")
+    try:
+        options.logger.info("Merging points - Reducing lists")
+    except AttributeError:
+        pass
     for (location, pointsatloc) in pointcoords.items():
         if len(pointsatloc) > 1:
             for point in pointsatloc[1:]:
@@ -285,8 +295,10 @@ def mergepoints(options):
 # collapses close adjacent locations into one vertex.
 # This method can be skipped if we are not interested in generalizing lines
 def mergewaypoints(options):
-    if options.verbose:
-        utils.info("Merging duplicate points in ways")
+    try:
+        options.logger.info("Merging duplicate points in ways")
+    except AttributeError:
+        pass
     ways = [geom for geom in Geometry.geometries if type(geom) == Way]
 
     # Remove duplicate points from ways,
@@ -320,12 +332,16 @@ def output_xml(options):
     '''
     try:
         from lxml import eTree
-        if options.verbose:
-            utils.info("Outputting XML with lxml.etree")
+        try:
+            options.logger.info("Outputting XML with lxml.etree")
+        except AttributeError:
+            pass
     except ImportError:
         import xml.etree.ElementTree as eTree
-        if options.verbose:
-            utils.info("Outputting XML with ElementTree")
+        try:
+            options.logger.info("Outputting XML with ElementTree")
+        except AttributeError:
+            pass
 
     # First, set up a few data structures for optimization purposes
     nodes = [geom for geom in Geometry.geometries if type(geom) == Point]
@@ -426,22 +442,31 @@ def makeosmfile(options):
     :return: (basestring, basestring)
     """
     Geometry.elementIdCounter = options.id
-    if options.verbose:
-        utils.info(u"Preparing to convert '{0:s}' to '{1:s}'."
-                   .format(options.sourceFile, options.outputFile))
+    try:
+        options.logger.info(u"Preparing to convert '{0:s}' to '{1:s}'."
+                            .format(options.sourceFile, options.outputFile))
+    except AttributeError:
+        pass
     if not options.translator:
-        if options.verbose:
-            utils.info(u"Loading translator '{0:s}'.".format(options.translationMethod))
+        try:
+            options.logger.info(u"Loading translator '{0:s}'.".format(options.translationMethod))
+        except AttributeError:
+            pass
         translator = Translator.get_translator(options.translationMethod)
         if translator.translation_module is None:
-            utils.error('Error: ' + translator.error)
+            try:
+                options.logger.error(translator.error)
+            except AttributeError:
+                pass
         else:
-            if options.verbose:
-                utils.info(u"Successfully loaded '{0:s}' translation method ('{1:s}').".format(
-                    translator.name, translator.path))
+            try:
+                options.logger.info(u"Successfully loaded '{0:s}' translation method ('{1:s}').".format(
+                                    translator.name, translator.path))
                 for function in translator.function_status:
-                    utils.info(u"{1:s} method for function '{0:s}'".format(
-                        function, translator.function_status[function]))
+                    options.logger.info(u"{1:s} method for function '{0:s}'".format(
+                                        function, translator.function_status[function]))
+            except AttributeError:
+                pass
         options.translator = translator
     parsedata(options)
     if options.mergeNodes:
@@ -454,13 +479,16 @@ def makeosmfile(options):
     if options.outputFile:
         with open(options.outputFile, 'wb') as fw:
             fw.write(data)
-        if options.verbose:
-            utils.info(u"Wrote {0:d} elements to file '{1:s}'"
-                       .format(Geometry.elementIdCounter, options.outputFile))
+        try:
+            options.logger.info(u"Wrote {0:d} elements to file '{1:s}'"
+                                .format(Geometry.elementIdCounter, options.outputFile))
+        except AttributeError:
+            pass
     else:
-        if options.verbose:
-            utils.info(u"Returning {0:d} converted elements"
-                       .format(Geometry.elementIdCounter))
+        try:
+            options.logger.info(u"Returning {0:d} converted elements".format(Geometry.elementIdCounter))
+        except AttributeError:
+            pass
         return error, data
 
 
@@ -473,8 +501,7 @@ class DefaultOptions:
     sourceFile = None
     outputFile = None
     translator = Translator.get_translator(None)
-    verbose = False
-    debugTags = False
+    logger = None
     forceOverwrite = True
     mergeNodes = False
     mergeWayNodes = False
@@ -489,6 +516,8 @@ class DefaultOptions:
 
 if __name__ == '__main__':
     opts = DefaultOptions()
+    opts.logger = Logger()
+    opts.logger.start_debug()
     opts.sourceFile = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
     opts.outputFile = r"C:\tmp\places\test_parking.osm"
     opts.translator = Translator.get_translator("parkinglots")
