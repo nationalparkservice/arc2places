@@ -36,6 +36,7 @@ Based very heavily on code released under the following terms:
 ###############################################################################
 """
 
+# TODO: optparse is deprecated, replace with argparse
 import optparse
 import os
 
