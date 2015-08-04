@@ -1,3 +1,4 @@
+import os
 import arcpy
 import utils
 
@@ -300,12 +301,23 @@ def populate_related_field(featureclass, linkfile, primary_key_field_name,
                          .format(destination_field_name, dst_type))
 
     table_view = arcpy.MakeTableView_management(featureclass, "view")
+    # arcpy.AddJoin_management: In the resulting table view, the fields from the input layer or table view
+    #   will be prefixed with the input's name and a period (.)
+    #   For coverage feature classes and INFO tables, the table and field name separator is a colon (:)
+    #   instead of a period.
+    # Note that: input's name is inconsistent:
+    #   describe('name.shp').basename = 'name'; os.path.basename('name.shp') = 'name.shp'; 'name' is used
+    #   describe('name.csv').basename = 'name'; os.path.basename('name.csv') = 'name.csv'; 'name.csv' is used
+    #   result is the same for a featureclass/table in a geodatabase
     view_name = arcpy.Describe(table_view).basename
-    join_name = arcpy.Describe(linkfile).basename
+    join_name = os.path.basename(linkfile)
     dst = view_name + "." + destination_field_name
     src = join_name + "." + source_field_name
     try:
         arcpy.AddJoin_management(table_view, primary_key_field_name, linkfile, foreign_key_field_name)
+        # print 'view_name', arcpy.Describe(table_view).basename, os.path.basename(featureclass)
+        # print 'join_name', arcpy.Describe(linkfile).basename, os.path.basename(linkfile)
+        # print 'fields in table_view', [f.name for f in arcpy.ListFields(table_view)]
         if dst_type == 'double':
             arcpy.CalculateField_management(table_view,
                                             dst, 'float(!' + src + '!)', 'PYTHON_9.3')
@@ -352,7 +364,8 @@ def add_id_test():
 
 
 def link_test():
-    featureclass = './tests/test.gdb/roads_ln'
+    # featureclass = './tests/test.gdb/roads_ln'
+    featureclass = './tests/roads.shp'
     table_path = './tests/test_roads_sync.csv'
     populate_related_field(featureclass, table_path,
                            primary_key_field_name='GEOMETRYID',
