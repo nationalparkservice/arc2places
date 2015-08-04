@@ -314,7 +314,7 @@ def populate_related_field(featureclass, linkfile, primary_key_field_name,
     dst = view_name + "." + destination_field_name
     src = join_name + "." + source_field_name
     try:
-        arcpy.AddJoin_management(table_view, primary_key_field_name, linkfile, foreign_key_field_name)
+        arcpy.AddJoin_management(table_view, primary_key_field_name, linkfile, foreign_key_field_name, 'KEEP_COMMON')
         # print 'view_name', arcpy.Describe(table_view).basename, os.path.basename(featureclass)
         # print 'join_name', arcpy.Describe(linkfile).basename, os.path.basename(linkfile)
         # print 'fields in table_view', [f.name for f in arcpy.ListFields(table_view)]
@@ -364,9 +364,10 @@ def add_id_test():
 
 
 def link_test():
-    # featureclass = './tests/test.gdb/roads_ln'
-    featureclass = './tests/roads.shp'
-    table_path = './tests/test_roads_sync.csv'
+    featureclass = './tests/test.gdb/roads_ln'
+    table_path = './tests/test.gdb/test_roads_sync'
+    # featureclass = './tests/roads.shp'
+    # table_path = './tests/test_roads_sync.csv'
     populate_related_field(featureclass, table_path,
                            primary_key_field_name='GEOMETRYID',
                            destination_field_name='PLACESID',
