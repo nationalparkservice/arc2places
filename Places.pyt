@@ -14,9 +14,6 @@ test_places = OsmApiServer('test')
 test_places.logger = ArcpyLogger()
 test_places.turn_verbose_on()
 
-# TODO: make sure that any output file paths have invalid characters removed
-# outfc = arcpy.ValidateTableName(fc, workspace)
-
 
 class TranslatorUtils(object):
     """
@@ -334,6 +331,10 @@ class CreatePlacesUpload(object):
         if parameters[0].value and not parameters[4].altered:
             basename = os.path.splitext(os.path.basename(parameters[0].valueAsText))[0]
             parameters[4].value = basename + os.path.extsep + 'osm'
+        # Ensure the table name is appropriate for the workspace
+        if parameters[1].value and parameters[2].value:
+            parameters[2].value = arcpy.ValidateTableName(parameters[2].valueAsText,
+                                                          parameters[1].valueAsText)
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
@@ -405,6 +406,10 @@ class PushUploadToPlaces(object):
                 if arcpy.Describe(parameters[1].valueAsText).workspaceType == 'FileSystem':
                     table_name += '.csv'
             parameters[2].value = table_name
+        # Ensure the table name is appropriate for the workspace
+        if parameters[1].value and parameters[2].value:
+            parameters[2].value = arcpy.ValidateTableName(parameters[2].valueAsText,
+                                                          parameters[1].valueAsText)
 
     def updateMessages(self, parameters):
         if parameters[1].value and parameters[2].value:
@@ -601,6 +606,10 @@ class SeedPlaces(object):
             base_name = os.path.basename(parameters[0].valueAsText)
             table_name = base_name + '_upload_log'
             parameters[4].value = table_name
+        # Ensure the table name is appropriate for the workspace
+        if parameters[3].value and parameters[4].value:
+            parameters[4].value = arcpy.ValidateTableName(parameters[4].valueAsText,
+                                                          parameters[3].valueAsText)
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[1])
