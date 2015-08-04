@@ -412,9 +412,11 @@ class PushUploadToPlaces(object):
         else:
             server = places
         table_path = os.path.join(workspace, table_name)
-        error, table = osm2places.upload_osm_file(upload_path, server)
-        if error:
-            arcpy.AddError(error)
+        table = None
+        try:
+            table = osm2places.upload_osm_file(upload_path, server)
+        except osm2places.UploadError as e:
+            arcpy.AddError(e)
         if table:
             ext = os.path.splitext(table_name)[1].lower()
             if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
@@ -633,9 +635,11 @@ class SeedPlaces(object):
                 if error:
                     arcpy.AddError(error)
                 else:
-                    error, table = osm2places.upload_osm_data(changefile, server)
-                    if error:
-                        arcpy.AddError(error)
+                    table = None
+                    try:
+                        table = osm2places.upload_osm_data(changefile, server)
+                    except osm2places.UploadError as e:
+                        arcpy.AddError(e)
                     if table:
                         table_path = os.path.join(workspace, table_name)
                         ext = os.path.splitext(table_name)[1].lower()

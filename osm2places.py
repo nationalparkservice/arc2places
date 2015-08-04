@@ -11,6 +11,10 @@ from Logger import Logger
 from DataTable import DataTable
 
 
+class UploadError(BaseException):
+    pass
+
+
 def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     try:
         logger.info("Create link table from upload data and response")
@@ -20,9 +24,9 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     try:
         root = Et.fromstring(diff_result)
     except Et.ParseError:
-        return "Result from server is not valid XML", None
+        raise UploadError("Response from server is not valid XML.\nResponse:\n" + diff_result)
     if root.tag != "diffResult":
-        return "Response from Server is not a diffResult", None
+        raise UploadError("Response from server is not a diffResult\nResponse:\n" + diff_result)
     for child in root:
         version = None
         if 'new_version' in child.attrib:
@@ -49,18 +53,16 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     data = DataTable()
     data.fieldnames = ['date', 'user', 'changeset', 'action', 'element', 'places_id', 'version_id', 'source_id']
     data.fieldtypes = ['DATE', 'TEXT', 'LONG', 'TEXT', 'TEXT', 'TEXT', 'LONG', 'TEXT']
-    # resp = "PlaceId,GEOMETRYID\n"
     for tempid in gisids:
         load = gisids[tempid]
         diff = placesids[tempid]
         row = [date, user, cid, load[0], diff[1], diff[0], diff[2], load[1]]
         data.rows.append(row)
-        # resp += placesids[tempid] + "," + gisids[tempid] + "\n"
     try:
         logger.info("Created link table.")
     except AttributeError:
         pass
-    return None, data
+    return data
 
 
 def fixchangefile(cid, data):
@@ -69,18 +71,21 @@ def fixchangefile(cid, data):
     return data.replace(i, o)
 
 
-# TODO: decide on error handeling protocol (exceptions, Eithers, or (Error,Data))
 # Public - called by PushUploadToPlaces in Places.pyt; test(), cmdline() in self;
 def upload_osm_file(filepath, server, csv_path=None, logger=None):
     """
-    Uploads an OsmChange file to an OSM API server and returns an upload log
+    Uploads an OsmChange file to an OSM API server and returns the upload details as a DataTable
+
+    Raises IOError if filepath cannot be opened/read
+    Raises UploadError if there are any problems communicating with the server
+    Raises IOError if there are problems writing to csv_path
 
     :param filepath: A filesystem path to an OsmChange file
     :param server: An OsmApiServer object (needed for places connection info)
-    :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
+    :param csv_path: A filesystem path to save the DataTable response as a CSV file
     :param logger: A Logger object for info/warning/debug/error output
-    :return: Either an error string or an DataTable object that can be saved as a CSV file or an ArcGIS table dataset
-    :rtype : (basestring, DataTable)
+    :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset
+    :rtype : DataTable
     """
     with open(filepath, 'rb') as fr:
         return upload_osm_data(fr.read(), server, csv_path, logger)
@@ -89,48 +94,46 @@ def upload_osm_file(filepath, server, csv_path=None, logger=None):
 # Public - called by SeedPlaces in Places.pyt; upload_osm_file() in self;
 def upload_osm_data(data, server, csv_path=None, logger=None):
     """
-    Uploads contents of an OsmChange file to an OSM API server and returns an upload log
+    Uploads contents of an OsmChange file to an OSM API server and returns the upload details as a DataTable
+
+    Raises UploadError if there are any problems communicating with the server
+    Raises IOError if there are problems writing to csv_path
 
     :param data: basestring (or open(name, 'rb').read()) containing the contents of the change file to upload
     :param server: An OsmApiServer object (needed for connection info)
-    :param csv_path: A filesystem path to save the Upload_Log response as a CSV file
+    :param csv_path: A filesystem path to save the DataTable response as a CSV file
     :param logger: A Logger object for info/warning/debug/error output
-    :return: Either an error string or an DataTable object that can be saved as a CSV file or an ArcGIS table dataset
-    :rtype : (basestring, DataTable)
+    :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset
+    :rtype : DataTable
     """
     # TODO: get comment from caller, generate something better like: Initial load from 'xxx' feature class
     cid = server.create_changeset('arc2places', 'upload of OsmChange file')
-    if cid:
-        timestamp = datetime.datetime.now()
-        resp = server.upload_changeset(cid, fixchangefile(cid, data))
-        upload_error = server.error
-        server.close_changeset(cid)
-        close_error = server.error
-        error = ''
-        if upload_error:
-            error += "Server did not accept the upload request. " + upload_error
-        if close_error:
-            error += '\nserver could not close the change request. ' + close_error
-        if error and resp:
-            error += '\nServer Response:\n' + resp
-        if resp and not error:
-            try:
-                logger.debug('\n' + resp + '\n')
-            except AttributeError:
-                pass
-            error, upload_log = make_upload_log(resp, data, timestamp, cid, server.username, logger)
-            if upload_log:
-                if csv_path:
-                    error = upload_log.export_csv(csv_path)
-                    if error:
-                        return "Failed to save CSV. " + error, None
-                    else:
-                        return None, upload_log
-                else:
-                    return None, upload_log
-            return "Failed to relate Places and GIS date. " + error, None
-        return error, None
-    return "Unable to open a changeset, check the network, and your permissions. " + server.error, None
+    if not cid:
+        raise UploadError("Unable to open a changeset. Check the network, "
+                          "and your permissions.\n\tDetails: " + server.error)
+    timestamp = datetime.datetime.now()
+    resp = server.upload_changeset(cid, fixchangefile(cid, data))
+    upload_error = server.error
+    server.close_changeset(cid)
+    if upload_error:
+        # Errors uploading the changeset are fatal
+        # Ignore any error we got trying to close the changeset
+        raise UploadError("Server did not accept the upload request.\n\tDetails: " + upload_error)
+    if server.error:
+        # Errors closing the changeset are non-fatal
+        try:
+            logger.warn('Server could not close the change request.\n\tDetails: ' + server.error)
+        except AttributeError:
+            pass
+    try:
+        logger.debug('\n' + resp + '\n')
+    except AttributeError:
+        pass
+    upload_log = make_upload_log(resp, data, timestamp, cid, server.username, logger)
+    if csv_path:
+        upload_log.export_csv(csv_path)
+
+    return upload_log
 
 
 def test():
@@ -138,12 +141,8 @@ def test():
     api_server.turn_verbose_on()
     api_server.logger = Logger()
     api_server.logger.start_debug()
-    error, table = upload_osm_file('./tests/test_roads.osm', api_server,
-                                   './tests/test_roads_sync.csv', api_server.logger)
-    if error:
-        print error
-    else:
-        print "Done."
+    upload_osm_file('./tests/test_roads.osm', api_server,
+                    './tests/test_roads_sync.csv', api_server.logger)
 
 
 def cmdline():
@@ -202,11 +201,7 @@ def cmdline():
         api_server.turn_verbose_on()
     if options.username:
         api_server.username = options.username
-    error = upload_osm_file(srcfile, api_server, dstfile, api_server.logger)
-    if error:
-        print error
-    else:
-        print "Done."
+    upload_osm_file(srcfile, api_server, dstfile, api_server.logger)
 
 
 if __name__ == '__main__':
