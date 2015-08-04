@@ -142,8 +142,8 @@ def test():
     api_server.turn_verbose_on()
     api_server.logger = Logger()
     api_server.logger.start_debug()
-    upload_osm_file('./tests/test_roads.osm', api_server, 'Testing upload OSM file function'
-                    './tests/test_roads_sync.csv', api_server.logger)
+    upload_osm_file('./testdata/test_roads.osm', api_server, 'Testing upload OSM file function'
+                    './testdata/test_roads_sync.csv', api_server.logger)
 
 
 def cmdline():

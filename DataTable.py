@@ -67,8 +67,8 @@ def test():
     data.fieldtypes = ['LONG', 'TEXT']
     for row in [[1, 'a'], [2, 'b'], [3, 'c']]:
         data.rows.append(row)
-    data.export_csv(r'c:\tmp\test.csv')
-    data.export_arcgis(r'c:\tmp\test.gdb', 'simpletable2')
+    data.export_csv(r'./testdata/simpletable.csv')
+    data.export_arcgis('./testdata/test.gdb', 'simpletable')
     sde = os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde")
     data.export_arcgis(sde, 'simpletable')
 

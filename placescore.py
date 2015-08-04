@@ -364,10 +364,10 @@ def add_id_test():
 
 
 def link_test():
-    featureclass = './tests/test.gdb/roads_ln'
-    table_path = './tests/test.gdb/test_roads_sync'
-    # featureclass = './tests/roads.shp'
-    # table_path = './tests/test_roads_sync.csv'
+    featureclass = './testdata/test.gdb/roads_ln'
+    table_path = './testdata/test.gdb/test_roads_sync'
+    # featureclass = './testdata/roads.shp'
+    # table_path = './testdata/test_roads_sync.csv'
     populate_related_field(featureclass, table_path,
                            primary_key_field_name='GEOMETRYID',
                            destination_field_name='PLACESID',

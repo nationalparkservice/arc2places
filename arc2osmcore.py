@@ -514,11 +514,15 @@ class DefaultOptions:
     translations = None
 
 
-if __name__ == '__main__':
+def test():
     opts = DefaultOptions()
     opts.logger = Logger()
     opts.logger.start_debug()
-    opts.sourceFile = r"C:\tmp\places\test.gdb\PARKINGLOTS_py"
-    opts.outputFile = r"C:\tmp\places\test_parking.osm"
+    opts.sourceFile = "./testdata/test.gdb/PARKINGLOTS_py"
+    opts.outputFile = "./testdata/test_parking.osm"
     opts.translator = Translator.get_translator("parkinglots")
     makeosmfile(opts)
+
+
+if __name__ == '__main__':
+    test()
