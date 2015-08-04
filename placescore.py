@@ -225,6 +225,8 @@ def add_uniqueid_field(featureclass, field_name):
     :return: No return value
     :rtype : None
     """
+    if field_name in [f.name for f in arcpy.Describe(featureclass).fields]:
+        raise ValueError("Field '{0:s}' already exists in {1:s}".format(field_name, featureclass))
     arcpy.AddField_management(featureclass, field_name, "TEXT", field_length=38)
     expression = "CalcGUID()"
     codeblock = """def CalcGUID():
