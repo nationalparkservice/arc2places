@@ -12,7 +12,7 @@ try:
 except ImportError:
     OAuth1Session = None
     print("requests_oauthlib is needed.  Add it to your system with:")
-    if os == 'nt':
+    if os.name == 'nt':
         pydir = os.path.dirname(sys.executable)
         print(pydir + r'\Scripts\pip.exe install requests_oauthlib')
         if not os.path.exists(pydir + r'\Scripts\pip.exe'):
