@@ -3,6 +3,10 @@ import arcpy
 import arc2osmcore
 import placescore
 import osm2places
+
+# TODO: conditionally import OsmApiServer as it generates an ImportError if secret.py is missing,
+# or sys.exit() if requests_oauthlib is missing which cause the toolbox to not load.
+
 from OsmApiServer import OsmApiServer, Places
 from Logger import ArcpyLogger
 from Translator import Translator
