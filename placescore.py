@@ -3,6 +3,8 @@ import utils
 
 # TODO: entire module is dependent on arcpy, develop ogr version
 # TODO: develop command line versions of functions called by toolbox.
+# TODO: Add tests for add_uniqueid_field() and populate_related_field()
+
 
 def get_feature_info(featureclass, translator=None):
     """
