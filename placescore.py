@@ -337,13 +337,13 @@ def validation_test():
     from Translator import Translator
     server = OsmApiServer.OsmApiServer('test')
     sde = 'Database Connections/akr_facility_on_inpakrovmais_as_domainuser.sde'
-    test_list = [('./tests/test.gdb/roads_ln', 'roads'),
-                 ('./tests/test.gdb/trails_ln', 'trails'),
-                 ('./tests/test.gdb/multipoints', 'generic'),
-                 ('./tests/test.gdb/parkinglots_py', 'parkinglots'),
-                 ('./tests/test.gdb/poi_pt', 'poi'),
-                 ('./tests/test.gdb/trails_ln', 'none'),
-                 ('./tests/test.gdb/trails_ln', None),
+    test_list = [('./testdata/test.gdb/roads_ln', 'roads'),
+                 ('./testdata/test.gdb/trails_ln', 'trails'),
+                 ('./testdata/test.gdb/multipoints', 'generic'),
+                 ('./testdata/test.gdb/parkinglots_py', 'parkinglots'),
+                 ('./testdata/test.gdb/poi_pt', 'poi'),
+                 ('./testdata/test.gdb/trails_ln', 'none'),
+                 ('./testdata/test.gdb/trails_ln', None),
                  (sde + '/akr_facility.GIS.TRAILS_ln', 'trails'),  # crashes python due to ArcGIS bug in da.cursor
                  (sde + '/akr_facility.GIS.ROADS_ln', 'roads')
                  ]
@@ -358,7 +358,7 @@ def validation_test():
 
 
 def add_id_test():
-    featureclass = './tests/test.gdb/roads_ln'
+    featureclass = './testdata/test.gdb/roads_ln'
     field_name = 'GEOMETRYID2'
     add_uniqueid_field(featureclass, field_name)
 
