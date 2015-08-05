@@ -3,6 +3,10 @@ import sys
 import os
 import subprocess
 
+"""
+Installs pip and prerequisites for arc2places
+"""
+
 if os.name != 'nt':
     print('This script only works on Windows')
     sys.exit()

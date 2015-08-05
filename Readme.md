@@ -68,3 +68,17 @@ The translation files are based on the Park Service EGIS Data Standards and the
 [Places Tracing Guide](http://www.nps.gov/npmap/tools/places/tracing-guide/).
 They are fairly simple configuration files allowing them to be adapted to different
 database schemas if necessary.
+
+## Building
+To build the installation bundle for the website:
+1 get latest version of 'getpip.py' from https://bootstrap.pypa.io/get-pip.py
+2 get latest version of arc2places from https://github.com/nationalparkservice/arc2places/tree/master
+3 get latest version of secrets.py from regan_sarwas@nps.gov
+4 Package into a zip file called arc2places.zip:
+  * get-pip.py
+  * secrets.py
+  * arc2places.pyt
+  * *.py
+  * *.pyt.xml
+  * translations folder
+
