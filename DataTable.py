@@ -12,7 +12,7 @@ class DataTable:
         self.fieldtypes = None
         self.rows = []
 
-    # Public - PushUploadToPlaces, SeedPlaces in Places.pyt, upload_osm_data() in osm2places; test() in self
+    # Public - PushUploadToPlaces, SeedPlaces in arc2places.pyt, upload_osm_data() in osm2places; test() in self
     def export_csv(self, filepath, header=True):
         """
         Exports the data table to a CSV file.
@@ -34,7 +34,7 @@ class DataTable:
         for row in self.rows:
             csv_writer.writerow(row)
 
-    # Public - PushUploadToPlaces, SeedPlaces in Places.pyt; test() in self
+    # Public - PushUploadToPlaces, SeedPlaces in arc2places.pyt; test() in self
     def export_arcgis(self, workspace, table_name):
         """
         Exports the data table to an ArcGIS dataset path.

@@ -80,7 +80,7 @@ def get_duplicates(featureclass, primary_key, translator=None):
     return duplicates
 
 
-# Public - called by ValidateForPlaces, SeedPlaces in Places.pyt; test() in self
+# Public - called by ValidateForPlaces, SeedPlaces in arc2places.pyt; test() in self
 def valid4upload(featureclass, places, translator=None):
     """
     Checks if a feature class is suitable for uploading to Places.
@@ -156,7 +156,7 @@ def valid4upload(featureclass, places, translator=None):
     return issues
 
 
-# Public - called by ValidateForPlaces, SeedPlaces in Places.pyt; test() in self
+# Public - called by ValidateForPlaces, SeedPlaces in arc2places.pyt; test() in self
 def valid4sync(featureclass, translator=None):
     """
     Checks if a feature class is suitable for syncing with Places.
@@ -213,7 +213,7 @@ def valid4sync(featureclass, translator=None):
     return issues
 
 
-# Public - called by AddUniqueId in Places.pyt
+# Public - called by AddUniqueId in arc2places.pyt
 def add_uniqueid_field(featureclass, field_name):
     """
     Adds a 50 char text field to the featureclass and fills it with guid values.
@@ -236,7 +236,7 @@ def add_uniqueid_field(featureclass, field_name):
     arcpy.CalculateField_management(featureclass, field_name, expression, "PYTHON_9.3", codeblock)
 
 
-# Public - called by IntegratePlacesIds, SeedPlaces in Places.pyt
+# Public - called by IntegratePlacesIds, SeedPlaces in arc2places.pyt
 def populate_related_field(featureclass, linkfile, primary_key_field_name,
                            destination_field_name, foreign_key_field_name, source_field_name):
     """

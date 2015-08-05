@@ -432,7 +432,7 @@ def output_xml(options):
 
 
 # TODO: This is a horrible public interface.  Make more specific
-# Public - called by CreatePlacesUpload, SeedPlaces in Places.pyt; main() in arc2osm.py; test() in self
+# Public - called by CreatePlacesUpload, SeedPlaces in arc2places.pyt; main() in arc2osm.py; test() in self
 def makeosmfile(options):
     """
     Save or return (as an xml string) an OsmChange File.
@@ -492,7 +492,7 @@ def makeosmfile(options):
         return error, data
 
 
-# Public - called by CreatePlacesUpload, SeedPlaces in Places.pyt; test() in self;
+# Public - called by CreatePlacesUpload, SeedPlaces in arc2places.pyt; test() in self;
 # noinspection PyClassHasNoInit
 class DefaultOptions:
     """

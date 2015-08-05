@@ -71,7 +71,7 @@ def fixchangefile(cid, data):
     return data.replace(i, o)
 
 
-# Public - called by PushUploadToPlaces in Places.pyt; test(), cmdline() in self;
+# Public - called by PushUploadToPlaces in arc2places.pyt; test(), cmdline() in self;
 def upload_osm_file(filepath, server, comment=None, csv_path=None, logger=None):
     """
     Uploads an OsmChange file to an OSM API server and returns the upload details as a DataTable
@@ -92,7 +92,7 @@ def upload_osm_file(filepath, server, comment=None, csv_path=None, logger=None):
         return upload_osm_data(fr.read(), server, comment, csv_path, logger)
 
 
-# Public - called by SeedPlaces in Places.pyt; upload_osm_file() in self;
+# Public - called by SeedPlaces in arc2places.pyt; upload_osm_file() in self;
 def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
     """
     Uploads contents of an OsmChange file to an OSM API server and returns the upload details as a DataTable
