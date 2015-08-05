@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>arc2places</title>
+  <meta name="apple-mobile-web-app-title" content="arc2places">
+  <meta name="application-name" content="arc2places">
+  <meta name="author" content="AKR GIS">
+  <meta name="description"
+        content="An ArcGIS toolbox for uploading and syncing ArcGIS data with the National Park Service's Places system.">
+  <meta name="keywords"
+        content="GIS, Alaska, National Park Service, US Government, Department of Interior, Map, Data, ArcGIS, Places, NPMap">
+  <meta name="msapplication-TileColor" content="#222222">
+  <meta name="msapplication-TileImage" content="http://www.nps.gov/lib/assets/img/windows-8-tile.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="http://www.nps.gov/lib/bootstrap/3.3.2/css/nps-bootstrap.min.css" rel="stylesheet">
+  <link href="assets/css/base.css" rel="stylesheet">
+  <link href="http://www.nps.gov/lib/assets/img/favicon.ico" rel="shortcut icon">
+  <link href="http://www.nps.gov/lib/assets/img/apple-touch-icon-144x144-precomposed.png"
+        rel="apple-touch-icon-precomposed" sizes="144x144">
+  <link href="http://www.nps.gov/lib/assets/img/apple-touch-icon-114x114-precomposed.png"
+        rel="apple-touch-icon-precomposed" sizes="114x114">
+  <link href="http://www.nps.gov/lib/assets/img/apple-touch-icon-72x72-precomposed.png"
+        rel="apple-touch-icon-precomposed" sizes="72x72">
+  <link href="http://www.nps.gov/lib/assets/img/apple-touch-icon-57x57-precomposed.png"
+        rel="apple-touch-icon-precomposed">
+</head>
+<body>
+<a class="sr-only" href="#banner">Skip navigation</a>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button class="navbar-toggle" data-toggle="collapse" data-target="#npmap-navbar-collapse" type="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">arc2places</a>
+    </div>
+    <div class="collapse navbar-collapse" id="npmap-navbar-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="#about">About</a>
+        </li>
+        <li>
+          <a href="#install">Installing</a>
+        </li>
+        <li>
+          <a href="#use">Using</a>
+        </li>
+        <li>
+          <a href="#support">Support</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="banner" id="banner">
+  <div class="container">
+    <h1>arc2places</h1>
+
+    <p>Manage Places data with ArcGIS</p>
+  </div>
+</div>
+
+<div class="main-content">
+  <div class="container">
+    <hr id="about"/>
+    <a href="#about">
+      <h2 class="section-heading">About arc2places</h2>
+    </a>
+
+    <p><strong>arc2places</strong> is a suite of tools for uploading National Park Service GIS data
+      in ESRI data format to the <a href="http://insidemaps.nps.gov/places/">NPS Places system</a>.
+      It was built to support the <a href="http://insidemaps.nps.gov/places/data-call">centennial data call</a>.
+    </p>
+
+    <p>arc2places provides an ArcGIS Toolbox interface for using these tools.
+      This document describes how to <a href="#install">install</a> and <a href="#use">use</a> the arc2places
+      toolbox.
+      Source code and additional information on the arc2places tools can be found on
+      <a href="https://github.com/nationalparkservice/arc2places">GitHub</a>.</p>
+
+    <hr id="install"/>
+    <a href="#install">
+      <h2 class="section-heading">Installing</h2>
+    </a>
+
+    <h3>Assumptions</h3>
+
+    <ul>
+      <li>You have ArcGIS 10.1sp1 or greater installed on your computer, with python installed in the default location.</li>
+      <li>You have administrative permissions on your computer (at least write permission to the python folder).</li>
+      <li>That windows knows how to open python files (*.py) with the python interpreter (typical with ArcGIS install).</li>
+      <li>If you have <a href="https://pip.pypa.io">pip</a> installed, it is a current, working installation.</li>
+      <li>You do not have multiple versions of python installed.</li>
+    </ul>
+
+    <h3>Instructions</h3>
+    <ol>
+      <li>Download <a href="http://akrgis.nps.gov/apps/arc2places/arc2places.zip">arc2places</a>.  If the clicking the
+        link does not download the zip file, then right click on the link and select 'Save link as...'</li>
+      <li>Unzip the download and put it in a location easily accessible to ArcCatalog.</li>
+      <li>Use windows explorer to browse to the exraction location of <em>arc2places.zip</em>.</li>
+      <li>If you are feeling lucky
+        <ul>
+          <li>Double click on <strong>install.py</strong></li>
+        </ul>
+      </li>
+      <li>Otherwise:
+        <ol>
+          <li>Right click on <strong>install.py</strong> and select <em>Edit with IDLE</em>.</li>
+          <li>In the IDLE Editor, select <em>Run -> Run Module</em> from the menu (or press <kbd>F5</kbd>).</li>
+          <li>This should open another window that runs the installation program and displays diagnostic output.</li>
+          <li>If you see error messages in the IDLE window, send them to
+            <a href="mailto:regan_sarwas@nps.gov?subject=arc2places install">regan_sarwas@nps.gov</a>
+            for installation support.</li>
+          <li>Close both IDLE windows</li>
+        </ol>
+      </li>
+      <li>Open ArcCatalog and browse to the extraction location of arc2places</li>
+      <li>Try and expand the arc2places toolbox
+      <ul>
+        <li>If it opens and you see the contents of the toolbox, installation was successful.</li>
+        <li>If there is a red x on the toolbox icon, or it does not expand, then contact
+          <a href="mailto:regan_sarwas@nps.gov?subject=arc2places install">regan_sarwas@nps.gov</a></li>
+      </ul>
+      </li>
+    </ol>
+
+    <hr id="use"/>
+    <a href="#use">
+      <h2 class="section-heading">Using</h2>
+    </a>
+
+    <p>The toolbox can be used in ArcCatalog and ArcMap.
+      The documentation below is based on ArcCatalog.
+      The toolbox has only been tested on ArcGIS 10.3.
+      It should work on ArcGIS 10.1 sp1 or higher.
+      It does not yet work with ArcGIS Pro.</p>
+
+    <h3>Initial Upload</h3>
+
+    <p>Takes the features in an ArcGIS dataset, and sends them to Places if appropriate.</p>
+    <h4>I'm feeling lucky</h4>
+
+    <p>If you are impatient and have confidence in the tool and your data then this is the
+      path for you. It can result in situations which must be repaired by NPMap staff, so use with
+      caution. You are strongly encouraged to start with the step by step upload</p>
+
+    <h4>Step by Step Upload</h4>
+
+    <p>Uploading step by step gives you more information in what is happening in the upload processing,
+      and allows you to respond more easily if something goes wrong.</p>
+
+
+
+    <h3>Update Places</h3>
+
+    <p>Find changes in the eGIS data since the last upload and send them to places.</p>
+    <p><strong>This tool is not available yet.</strong></p>
+
+
+
+    <h3>Update GIS</h3>
+
+    <p>Find changes in the Places data since the last download and integrate them to GIS.</p>
+    <p><strong>This tool is not available yet.</strong></p>
+
+
+
+    <hr id="support"/>
+    <a href="#support">
+      <h2 class="section-heading">Support</h2>
+    </a>
+
+    <p>Support for arc2places is provided by the <a href="mailto:akro_gis_helpdesk@nps.gov?subject=arc2places">Alaska Region GIS Team</a></p>
+
+  </div>
+</div>
+
+
+<div class="footer">
+  <div class="container">
+    <div class="row">
+      <img class="responsive" height="100px" src="assets/img/nps_logo.png">
+    </div>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://www.nps.gov/lib/bootstrap/3.3.2/js/nps-bootstrap.min.js"></script>
+</body>
+</html>
