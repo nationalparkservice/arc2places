@@ -7,14 +7,15 @@ import os
 import sys
 # import urllib2
 import arcpy
+import utils
 from OsmApiServer import OsmApiServer
 from Translator import Translator
 from Logger import Logger
 
 
-def arc_build_osm_change_xml(features, synctable, translator, server, options=None):
-    # returns error, xml
-    if not isinstance(features, basestring):
+def arc_build_osm_change_xml(featureclass, synctable, translator, server, logger=None):
+    # returns xml
+    if not isinstance(featureclass, basestring):
         raise TypeError('features is the wrong type; a basestring is expected')
     if not isinstance(synctable, basestring):
         raise TypeError('synctable is the wrong type; a basestring is expected')
@@ -22,14 +23,57 @@ def arc_build_osm_change_xml(features, synctable, translator, server, options=No
         raise TypeError('translator is the wrong type; a Translator is expected')
     if not isinstance(server, OsmApiServer):
         raise TypeError('server is the wrong type; an OsmApiServer is expected')
-    if not arcpy.Exists(features):
-        raise ValueError("features '{0:s}' does not exist".format(features))
+    if not arcpy.Exists(featureclass):
+        raise ValueError("features '{0:s}' does not exist".format(featureclass))
     if not arcpy.Exists(synctable):
         raise ValueError("synctable '{0:s}' does not exist".format(synctable))
-    if options and options.verbose and options.logger:
-        options.logger.info(u"Searching '{0:s}' for changes from '{0:s}'.".format(features, synctable))
-    if not arcpy.Describe(features).editorTrackingEnabled:
-        return u"Editor tracking must be enabled on the feature class.", None
+    if not hasattr(arcpy.Describe(featureclass), 'fields'):
+        raise ValueError("features '{0:s}' does not have table properties".format(featureclass))
+    if not hasattr(arcpy.Describe(featureclass), 'fields'):
+        raise ValueError("synctable '{0:s}' does not have table properties".format(synctable))
+    # If it has fields, it can support editor tracking
+    if not arcpy.Describe(featureclass).editorTrackingEnabled:
+        raise ValueError("Editor tracking must be enabled on the feature class.")
+    editdate_fieldname = arcpy.Describe(featureclass).editedAtFieldName
+    if not editdate_fieldname:
+        raise ValueError("Editor tracking did not assign a 'last edit date field'.")
+    # Coordinate these field names with make_upload_log() in osm2places
+    synctable_source_id_fieldname = 'source_id'
+    synctable_places_id_fieldname = 'places_id'
+    synctable_element_fieldname = 'element'
+    synctable_date_fieldname = 'date'
+
+    if not utils.hasfield(synctable, synctable_source_id_fieldname):
+        raise ValueError("Field '{0:s}' not found in synctable."
+                         .format(synctable_source_id_fieldname))
+    if not utils.hasfield(synctable, synctable_places_id_fieldname):
+        raise ValueError("Field '{0:s}' not found in synctable."
+                         .format(synctable_places_id_fieldname))
+    if not utils.hasfield(synctable, synctable_element_fieldname):
+        raise ValueError("Field '{0:s}' not found in synctable."
+                         .format(synctable_element_fieldname))
+    if not utils.hasfield(synctable, synctable_date_fieldname):
+        raise ValueError("Field '{0:s}' not found in synctable."
+                         .format(synctable_date_fieldname))
+
+    primary_keys = translator.fields_for_tag('nps:source_id')
+    field_names = [f.name for f in arcpy.ListFields(featureclass)]
+    existing_keys = [k for k in primary_keys if k in field_names]
+    if len(existing_keys) < 1:
+        raise ValueError("There is no field in featureclass {0:s} that maps to "
+                         "the 'nps:source_id' tag".format(featureclass))
+    if 1 < len(existing_keys):
+        raise ValueError("There are multiple fields {0:s} that map to the 'nps:source_id' tag "
+                         "in featureclass {0:s}".format(existing_keys, featureclass))
+    source_id_fieldname = existing_keys[0]
+    if not utils.hasfield(featureclass, source_id_fieldname):
+        raise ValueError("Field '{0:s}' not found in features."
+                         .format(source_id_fieldname))
+
+    try:
+        logger.info(u"Searching '{0:s}' for changes from '{0:s}'.".format(featureclass, synctable))
+    except AttributeError:
+        pass
 
     """
     Example input data
@@ -73,7 +117,6 @@ def arc_build_osm_change_xml(features, synctable, translator, server, options=No
     """
 
     """
-    editdate_fieldname = arcpy.Describe(fc).editedAtFieldName
     lastupdate = select top 1 from synctable order by editdate_fieldname DESC
 
     # new features
@@ -113,41 +156,38 @@ def arc_build_osm_change_xml(features, synctable, translator, server, options=No
       # use arc2osm to create a set of OSM creates (same format is used for the update)
       # arc2osm will filter out features that should not be added because they are not public
       # returns [(C,2)]
-      # for each feature get the existing data from places (http://10.147.153.193/api/0.6/{{element_type}}/{{places_id}}/full)
+      # for each feature get the existing data from places
+      #   (http://10.147.153.193/api/0.6/{{element_type}}/{{places_id}}/full)
       # (optional) need to add any attributes in places that are not in eGIS (or they will get removed)
-      # compare ways/nodes in relationships one by one, and move to 'delete' any elements in places but not in GIS, need to check if used in other relationships
-      # compare vertices in ways one by one, and move to 'delete' any elements in places but not in GIS, need to check if used in other ways/relationships
-      #                                              and (optionally) remove any from update if there is no change
-      #      maybe do not remove the sub element from the way/relationship, but keep in places - it should probably be removed if it is unused and uninteresting (maybe happens in a places cleanup)
+      # compare ways/nodes in relationships one by one, and move to 'delete' any elements in places but
+      #   not in GIS, need to check if used in other relationships
+      # compare vertices in ways one by one, and move to 'delete' any elements in places but not in GIS,
+      #     need to check if used in other ways/relationships
+      #     and (optionally) remove any from update if there is no change
+      #     maybe do not remove the sub element from the way/relationship,
+      #     but keep in places - it should probably be removed if it is unused and uninteresting
+      #     (maybe happens in a places cleanup)
       # update the version number place holder from arc2osm with the correct version number from places
     """
 
 
-class DefaultOptions:
-    debug = False
-    verbose = False
-    logger = None
-
-
 def test():
     logger = Logger()
-    opts = DefaultOptions()
-    opts.verbose = True
-    opts.debug = True
-    opts.logger = logger
-
-    featureclass = './tests/test.gdb/PARKINGLOTS_py'
-    logtable = './tests/test_parking_log.csv'
-    osmchangefile = './tests/test_Parking_update.osm'
+    logger.start_debug()
+    featureclass = './tests/test.gdb/roads_ln'
+    logtable = './tests/test_road_sync.csv'
     translator = Translator.get_translator('parkinglots')
     api_server = OsmApiServer('test')
     api_server.logger = logger
     api_server.turn_verbose_on()
-    error, xml = arc_build_osm_change_xml(featureclass, logtable, translator, api_server, opts)
-    if error:
-        print error
-    else:
+    xml = None
+    try:
+        xml = arc_build_osm_change_xml(featureclass, logtable, translator, api_server, logger)
+    except ValueError as e:
+        print e
+    if xml is not None:
         data = Et.tostring(xml, encoding='utf-8')
+        osmchangefile = './tests/test_road_update.osm'
         with open(osmchangefile, 'wb') as fw:
             fw.write(data)
         print "Done."
@@ -214,16 +254,20 @@ def cmdline():
     if not api_server.is_version_supported():
         print "Server does not support version " + api_server.version + " of the OSM"
         sys.exit(1)
-    if options.verbose:
-        api_server.logger = Logger()
-        api_server.turn_verbose_on()
+    logger = None
+    if options.verbose or options.debug:
+        logger = Logger()
+        if options.debug:
+            logger.start_debug()
+        api_server.logger = logger
     # Build Change XML
-    # TODO: do exception checking
-    error, xml = arc_build_osm_change_xml(featureclass, logtable, translator, api_server, options)
+    xml = None
+    try:
+        xml = arc_build_osm_change_xml(featureclass, logtable, translator, api_server, logger)
+    except (ValueError, TypeError) as e:
+        print e
     # Output results
-    if error:
-        print error
-    else:
+    if xml:
         # TODO: do exception checking
         data = Et.tostring(xml, encoding='utf-8')
         with open(osmchangefile, 'wb') as fw:
