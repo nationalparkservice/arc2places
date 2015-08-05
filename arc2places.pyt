@@ -403,6 +403,11 @@ class PushUploadToPlaces(object):
         return parameters
 
     def updateParameters(self, parameters):
+        # Default output workspace
+        if parameters[0].value and not parameters[1].altered:
+            dir_name = os.path.dirname(parameters[0].valueAsText)
+            parameters[1].value = dir_name
+        # Default table name
         if parameters[0].value and not parameters[2].altered:
             base_name = os.path.basename(parameters[0].valueAsText)
             base_name = os.path.splitext(base_name)[0]
@@ -600,13 +605,18 @@ class SeedPlaces(object):
             direction="Input",
             datatype="GPBoolean",
             parameterType="Required")
-        addIds.value = True
+        testing.value = True
 
         parameters = [feature, translator, alt_translator, workspace, log_table, ignore_sync_warnings, addIds, testing]
         return parameters
 
     def updateParameters(self, parameters):
         TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
+        # Default output workspace
+        if parameters[0].value and not parameters[3].altered:
+            dir_name = os.path.dirname(parameters[0].valueAsText)
+            parameters[3].value = dir_name
+        # Default table name
         if parameters[0].value and not parameters[4].altered:
             base_name = os.path.basename(parameters[0].valueAsText)
             table_name = base_name + '_upload_log'
