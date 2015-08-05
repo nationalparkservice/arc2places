@@ -3,19 +3,24 @@
 This project provides tools for uploading National Park Service GIS data
 from ESRI data sources to the [NP Places system](http://www.nps.gov/npmap/tools/places/)
 which is based on the OSM data model.
+It was built to support the [centennial data call](http://insidemaps.nps.gov/places/data-call/)(NPS-only)
 
 This kernel of this project was derived from Paul Norman's
 [ogr2osm](https://github.com/pnorman/ogr2osm) tool which was derived from
 the UVM tool of the same name.
 
 Other documents describe the
-[workflow](https://github.com/nationalparkservice/arc2places/blob/master/Workflow.md)
+[workflow](https://github.com/nationalparkservice/arc2places/blob/master/workflow.md)
 supported by the
 [tools](https://github.com/nationalparkservice/arc2places/blob/master/Tools.md)
 in this project.
 
-## Instalation
-More details coming soon.  For now...
+## Installation
+
+National Park Service Employees using ArcGIS Desktop can find installation help
+at http://akrgis.nps.gov/arc2places/ (NPS-only)
+
+Others can try the following:
 
 1. Clone or download this repository
 2. Install Pip
@@ -60,6 +65,6 @@ for additional details.
 All tools rely on the [translation files](https://github.com/nationalparkservice/arc2places/tree/master/translations)
 for the logic mapping ESRI data sources to Place tagging schemes.
 The translation files are based on the Park Service EGIS Data Standards and the
-[Places Tracing Guide](http://nationalparkservice.github.io/places-tracing-guide/).
+[Places Tracing Guide](http://www.nps.gov/npmap/tools/places/tracing-guide/).
 They are fairly simple configuration files allowing them to be adapted to different
 database schemas if necessary.
