@@ -420,6 +420,10 @@ class PushUploadToPlaces(object):
         if parameters[1].value and parameters[2].value:
             parameters[2].value = arcpy.ValidateTableName(parameters[2].valueAsText,
                                                           parameters[1].valueAsText)
+            # undo conversion from '.csv' to '_csv'
+            if (arcpy.Describe(parameters[1].valueAsText).workspaceType == 'FileSystem'
+                    and parameters[2].valueAsText[-4:]) == '_csv':
+                parameters[2].value = parameters[2].valueAsText[:-4] + '.csv'
 
     def updateMessages(self, parameters):
         if parameters[1].value and parameters[2].value:
@@ -620,11 +624,18 @@ class SeedPlaces(object):
         if parameters[0].value and not parameters[4].altered:
             base_name = os.path.basename(parameters[0].valueAsText)
             table_name = base_name + '_upload_log'
+            if parameters[3].value:
+                if arcpy.Describe(parameters[3].valueAsText).workspaceType == 'FileSystem':
+                    table_name += '.csv'
             parameters[4].value = table_name
         # Ensure the table name is appropriate for the workspace
         if parameters[3].value and parameters[4].value:
             parameters[4].value = arcpy.ValidateTableName(parameters[4].valueAsText,
                                                           parameters[3].valueAsText)
+            # undo conversion from '.csv' to '_csv'
+            if (arcpy.Describe(parameters[3].valueAsText).workspaceType == 'FileSystem'
+                    and parameters[4].valueAsText[-4:]) == '_csv':
+                parameters[4].value = parameters[4].valueAsText[:-4] + '.csv'
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[1])
