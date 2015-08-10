@@ -340,8 +340,8 @@ class CreatePlacesUpload(object):
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
-        if parameters[1].value and parameters[4].value:
-            path = os.path.join(parameters[1].valueAsText, parameters[4].valueAsText)
+        if parameters[3].value and parameters[4].value:
+            path = os.path.join(parameters[3].valueAsText, parameters[4].valueAsText)
             if os.path.exists(path):
                 parameters[4].setErrorMessage("File {0:s} already exists.".format(path))
 
