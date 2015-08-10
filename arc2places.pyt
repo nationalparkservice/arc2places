@@ -345,7 +345,7 @@ class CreatePlacesUpload(object):
         if parameters[1].value and parameters[4].value:
             path = os.path.join(parameters[1].valueAsText, parameters[4].valueAsText)
             if os.path.exists(path):
-                parameters[4].AddError("File {0:s} already exists.".format(path))
+                parameters[4].setErrorMessage("File {0:s} already exists.".format(path))
 
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
