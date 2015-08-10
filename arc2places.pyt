@@ -310,7 +310,7 @@ class CreatePlacesUpload(object):
             displayName="Alternate Translator",
             direction="Input",
             datatype="GPString",
-            parameterType="Required",
+            parameterType="Optional",
             enabled=False)
 
         folder = arcpy.Parameter(
