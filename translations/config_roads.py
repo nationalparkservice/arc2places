@@ -22,7 +22,7 @@ fieldmap = {
     'RDSTATUS': 'nps:road_status',
     'RDCLASS': 'nps:road_class',
     'MAINTAINER': 'nps:road_maintainer',
-    'LANES': 'lanes',
+    'RDLANES': 'lanes',
     'ROUTEID': 'nps:route_id',
     'RTENUMBER': 'nps:route_number'
 }
