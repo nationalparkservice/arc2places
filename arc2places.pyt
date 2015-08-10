@@ -48,11 +48,13 @@ class TranslatorUtils(object):
         return translator
 
     @staticmethod
-    def update_messages(fc_param, trans_param):
+    def update_messages(fc_param, trans_param, alt_param):
         if fc_param.value and trans_param.value:
             shapetype = arcpy.Describe(fc_param.value).shapeType
             translator = trans_param.value
             if translator == "Other":
+                if not alt_param.value:
+                    alt_param.setErrorMessage("A translation is required.")
                 return  # no shape checking for Other
             if not Translator.isvalidshape(shapetype, translator):
                 fc_param.setWarningMessage(
@@ -133,7 +135,7 @@ class ValidateForPlaces(object):
         TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
 
     def updateMessages(self, parameters):
-        TranslatorUtils.update_messages(parameters[0], parameters[1])
+        TranslatorUtils.update_messages(parameters[0], parameters[1], parameters[2])
 
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
@@ -339,7 +341,7 @@ class CreatePlacesUpload(object):
             parameters[4].value = basename + os.path.extsep + 'osm'
 
     def updateMessages(self, parameters):
-        TranslatorUtils.update_messages(parameters[0], parameters[2])
+        TranslatorUtils.update_messages(parameters[0], parameters[1], parameters[2])
         if parameters[3].value and parameters[4].value:
             path = os.path.join(parameters[3].valueAsText, parameters[4].valueAsText)
             if os.path.exists(path):
@@ -636,7 +638,7 @@ class SeedPlaces(object):
                 parameters[4].value = parameters[4].valueAsText[:-4] + '.csv'
 
     def updateMessages(self, parameters):
-        TranslatorUtils.update_messages(parameters[0], parameters[1])
+        TranslatorUtils.update_messages(parameters[0], parameters[1], parameters[2])
         if parameters[3].value and parameters[4].value:
             table_path = os.path.join(parameters[3].valueAsText, parameters[4].valueAsText)
             if arcpy.Exists(table_path):
