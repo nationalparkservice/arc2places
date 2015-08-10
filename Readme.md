@@ -18,7 +18,7 @@ in this project.
 ## Installation
 
 National Park Service employees using ArcGIS Desktop can find installation help
-at http://akrgis.nps.gov/arc2places/ (NPS-only)
+at http://akrgis.nps.gov/apps/arc2places/ (NPS-only)
 
 Others can try the following:
 
