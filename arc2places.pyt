@@ -351,9 +351,9 @@ class CreatePlacesUpload(object):
 
     def execute(self, parameters, messages):
         features = parameters[0].valueAsText
-        output_file = parameters[1].valueAsText
-        translator = TranslatorUtils.get_translator(parameters[2], parameters[3])
-        folder = parameters[4].valueAsText
+        translator = TranslatorUtils.get_translator(parameters[1], parameters[2])
+        folder = parameters[3].valueAsText
+        output_file = parameters[4].valueAsText
         options = arc2osmcore.DefaultOptions
         options.sourceFile = features
         options.outputFile = os.path.join(folder, output_file)
