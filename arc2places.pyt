@@ -297,20 +297,6 @@ class CreatePlacesUpload(object):
             parameterType="Required")
         feature.filter.list = ["Polygon", "Polyline", "Point"]
 
-        folder = arcpy.Parameter(
-            name="folder",
-            displayName="Output Folder",
-            direction="Input",
-            datatype="DEFolder",
-            parameterType="Required")
-
-        output = arcpy.Parameter(
-            name="output",
-            displayName="File Name",
-            direction="Input",
-            datatype="GPString",
-            parameterType="Required")
-
         translator = arcpy.Parameter(
             name="translator",
             displayName="Standard Translator",
@@ -327,18 +313,34 @@ class CreatePlacesUpload(object):
             parameterType="Required",
             enabled=False)
 
-        parameters = [feature, output, translator, alt_translator, folder]
+        folder = arcpy.Parameter(
+            name="folder",
+            displayName="Output Folder",
+            direction="Input",
+            datatype="DEFolder",
+            parameterType="Required")
+
+        output = arcpy.Parameter(
+            name="output",
+            displayName="File Name",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Required")
+
+        parameters = [feature, translator, alt_translator, folder, output]
         return parameters
 
     def updateParameters(self, parameters):
-        TranslatorUtils.update_parameters(parameters[0], parameters[2], parameters[3])
+        # update feature class <-> translator picklists
+        TranslatorUtils.update_parameters(parameters[0], parameters[1], parameters[2])
+        # create default output file name
         if parameters[0].value and not parameters[4].altered:
             basename = os.path.splitext(os.path.basename(parameters[0].valueAsText))[0]
             parameters[4].value = basename + os.path.extsep + 'osm'
         # Ensure the table name is appropriate for the workspace
-        if parameters[1].value and parameters[2].value:
-            parameters[2].value = arcpy.ValidateTableName(parameters[2].valueAsText,
-                                                          parameters[1].valueAsText)
+        if parameters[3].value and parameters[4].value:
+            parameters[4].value = arcpy.ValidateTableName(parameters[4].valueAsText,
+                                                          parameters[3].valueAsText)
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
