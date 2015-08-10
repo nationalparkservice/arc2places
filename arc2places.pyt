@@ -337,10 +337,6 @@ class CreatePlacesUpload(object):
         if parameters[0].value and not parameters[4].altered:
             basename = os.path.splitext(os.path.basename(parameters[0].valueAsText))[0]
             parameters[4].value = basename + os.path.extsep + 'osm'
-        # Ensure the table name is appropriate for the workspace
-        if parameters[3].value and parameters[4].value:
-            parameters[4].value = arcpy.ValidateTableName(parameters[4].valueAsText,
-                                                          parameters[3].valueAsText)
 
     def updateMessages(self, parameters):
         TranslatorUtils.update_messages(parameters[0], parameters[2])
