@@ -441,7 +441,10 @@ def makeosmfile(options):
     :param options: a DefaultOptions() object with the input and control parameters
     :return: (basestring, basestring)
     """
+    # Set/Reset/Clear the global state (list of geometries and features)
     Geometry.elementIdCounter = options.id
+    Geometry.geometries = []
+    Feature.features = []
     try:
         options.logger.info(u"Preparing to convert '{0:s}' to '{1:s}'."
                             .format(options.sourceFile, options.outputFile))
