@@ -36,9 +36,9 @@ def filterTags(attrs):
 
     # Special Instructions
 
-    # trail use (draft standard)
-    # trail use is a '|' separated list of values (this requires a slightly
-    # modified version of generic.maptags
+    # trail use may be a delimeter separated list of values
+    # these are permitted activities;  FIXME: Are other activities denied or unknown? (currently denied)
+    # (this requires a slightly modified version of generic.maptags)
     usefieldname = 'TRLUSE'
     trailusemap = valuemap[usefieldname]
     value = tools.valueof(usefieldname, altnames, attrs)
@@ -47,11 +47,37 @@ def filterTags(attrs):
             if trailusecode in value:
                 tags.update(trailusemap[trailusecode])
 
-    # trail use (proposed breakout)
-    # trail use is collection of fields with yes/no values
+    # trail use may be a collection of fields with yes/no values
+    # FIXME a missing column or null/unknown value is same as negative value (i.e. it is denied not unspecified)
     for trailusecode, fieldname in trailusefields.items():
         flag = tools.valueof(fieldname, altnames, attrs)
         if flag == 'True' or flag == 'Yes':
             tags.update(trailusemap[trailusecode])
+
+    # highway is not defined and piste:type is not defined, add highway = path
+    if 'highway' not in tags and 'piste:type' not in tags and 'waterway' not in tags:
+        tags['highway'] = 'path'
+
+    # Planned/Proposed trails have their 'highway' value set to 'proposed'.
+    # and thier 'proposed' value set to thier 'highway' value
+    # similar to the OSM standard for roads
+    # http://wiki.openstreetmap.org/wiki/Tag:highway%3Dproposed
+    trail_status = tools.valueof('TRLSTATUS', altnames, attrs)
+    if trail_status == 'Planned' or trail_status == 'Proposed':
+        if 'highway' in tags:
+            tags.update({
+                'highway': 'proposed',
+                'proposed': tags['highway']
+            })
+        if 'piste:type' in tags:
+            tags.update({
+                'piste:type': 'proposed',
+                'proposed': tags['piste:type']
+            })
+        if 'waterway' in tags:
+            tags.update({
+                'waterway': 'proposed',
+                'proposed': tags['waterway']
+            })
 
     return tags

@@ -8,24 +8,35 @@
 
 # default tags for trail *lines* in Places
 defaults = {
-    'highway': 'path',
+    # 'highway': 'path',  # not appropriate for 'piste:type' and 'waterway'; set in trails.py if needed.
+    # 'access': 'no',  # unknown unless explicitly set with value from TRLSTATUS
+    # FIXME: decide if default is unknown or denied (currently denied
+    'foot': 'no',
     'horse': 'no',
     'bicycle': 'no',
-    'motorcycle': 'no',
-    'atv': 'no',
-    'snowmobile': 'no'
+    'motor_vehicles': 'no',
+    'ski': 'no'
+    # 'wheelchair': 'no',  # eGIS standard is slient on this; defer to any value set in Places
 }
 
 # values map one to one from field name to OSM tag
 fieldmap = {
     # GIS_FieldName : Places Tag
     'TRLNAME': 'name',
-    'TRLALTNAMES': 'nps:trail_alt_names',
+    'TRLALTNAME': 'nps:trail_alt_names',
+    'TRLLABEL': 'nps:trail_label',
     'TRLFEATTYPE': 'nps:trail_feat_type',
     'TRLSTATUS': 'nps:trail_status',
     'TRLTYPE': 'nps:trail_type',
+    'TRLTRACK': 'nps:trail_track',
     'TRLCLASS': 'tracktype',
-    'TRLUSE': 'nps:trail_uses'
+    'TRLUSE': 'nps:trail_uses',
+    'TRLISADMIN': 'nps:trail_is_admin',
+    'TRLDESC': 'nps:trail_description',
+    'WHLENGTH': 'nps:trail_wheel_length',
+    'WHLENUOM': 'nps:trail_wheel_length_UOM',
+    # Non-standard (pre-standard) attributes
+    'TRLSURFACE': 'surface'
 }
 
 # alternate GIS field names.
@@ -41,41 +52,81 @@ altnames = {
     'TRLSTATUS': ['STATUS', 'TRAILSTATUS', 'TRL_STATUS', 'TRAIL_STATUS'],
     'TRLSURFACE': ['SURFACE', 'TRAILSURFACE', 'TRL_SURFACE', 'TRAIL_SURFACE'],
     'TRLTYPE': ['TYPE', 'TRAILTYPE', 'TRL_TYPE', 'TRAIL_TYPE'],
+    'TRLTRACK': ['TRACK', 'TRAILTRACK', 'TRL_TRACK', 'TRAIL_TRACK'],
     'TRLCLASS': ['CLASS', 'TRAILCLASS', 'TRL_CLASS', 'TRAIL_CLASS'],
     'TRLUSE': ['USE', 'TRAILUSE', 'TRL_USE', 'TRAIL_USE', 'USES', 'TRAILUSES',
-               'TRLUSES', 'TRL_USES', 'TRAIL_USES']
+               'TRLUSES', 'TRL_USES', 'TRAIL_USES'],
+    'TRLISADMIN': ['ISADMIN', 'TRAILISADMIN', 'TRL_ISADMIN', 'TRAIL_ISADMIN', 'ADMIN', 'ADMINISTRATIVE'],
+    'TRLDESC': ['TRL_DESC', 'TRAIL_DESC', 'TRAILDESC', 'DESCRIPTION', 'TRAIL_DESCRIPTION'],
+    'WHLENGTH': ['WH_LENGTH', 'WHEEL_LENGTH'],
+    'WHLENUOM': ['WH_LEN_UOM', 'WH_LENGTH_UOM', 'WHEEL_LENGTH_UOM']
 }
 
 # GIS field names where different values map to a specific set of Places tags
 valuemap = {
     # GIS_FieldName : {GIS_Value: {tag:value, ... }, ...}
     'TRLFEATTYPE': {
-        'Park Trail Centerline': {
-            'highway': 'path'
+        'NHT': {
+            'informal': 'no'
         },
-        'Sidewalk Centerline': {
+        'NST': {
+            'informal': 'no'
+        },
+        'Park Trail': {
+            'informal': 'no'
+        },
+        'Route Path': {
+            'informal': 'yes'
+        },
+        'Unmaintained Trail': {
+            'informal': 'yes'
+        },
+        'Unofficial Trail': {
+            'informal': 'yes'
+        },
+        'Sidewalk': {
             'highway': 'footway',
             'footway': 'sidewalk'
         }
     },
+    'TRLTYP': {
+        'Snow Trail': {'piste:type': 'yes'},
+        'Water Trail': {'waterway': 'yes'},
+        'Standard Terra Trail': {'highway': 'path'}
+    },
     'TRLCLASS': {
-        'Trail Class 1: Minimally Developed': {'tracktype': 'grade5'},
-        'Trail Class 2: Moderately Developed': {'tracktype': 'grade4'},
-        'Trail Class 3: Developed': {'tracktype': 'grade3'},
-        'Trail Class 4: Highly Developed': {'tracktype': 'grade2'},
-        'Trail Class 5: Fully Developed': {'tracktype': 'grade1'}
+        # '*': {'tracktype': '*'}  # by fieldmap
+        '2110': {'tracktype': 'grade5'},
+        '2120': {'tracktype': 'grade4'},
+        '2130': {'tracktype': 'grade3'},
+        '2140': {'tracktype': 'grade2'},
+        '2150': {'tracktype': 'grade1'}
+    },
+    'TRLSTATUS': {
+        'Existing': {'access': 'yes'},
+        'Temporarily Closed': {'access': 'no'},
+        'Decommissioned': {'access': 'no'},
+        'Proposed': {
+            {'access': 'no'},
+            # 'highway': 'proposed'  # TODO: conflict with 'highway':'*' see trails.py for resolution
+        },
+        'Planned': {
+            {'access': 'no'},
+            # 'highway': 'proposed'  # TODO: conflict with 'highway':'*' see trails.py for resolution
+        }
     },
     'TRLUSE': {
+        # FIXME: undefined result when multiple conflicting tags are allowed (i.e. hike and atv)
         'Hiker/Pedestrian': {
             'highway': 'path',
             'foot': 'yes'
         },
         'Pack and Saddle': {
-            'highway': 'track',
+            'highway': 'path',
             'horse': 'yes'
         },
         'Bicycle': {
-            'highway': 'track',
+            'highway': 'path',
             'bicycle': 'yes'
         },
         'Motorcycle': {
@@ -90,20 +141,22 @@ valuemap = {
             'highway': 'track',
             '4wd_only': 'yes'
         },
+        'Backcountry Ski': {
+            'piste:type': 'skitour',
+            'ski': 'yes'
+        },
         'Cross-Country Ski': {
-            'highway': 'path',
-            'piste:type': 'nordic'
+            'piste:type': 'nordic',
+            'ski': 'yes'
         },
         'Downhill Ski': {
-            'highway': 'path',
-            'piste:type': 'downhill'
+            'piste:type': 'downhill',
+            'ski': 'yes'
         },
         'Dog Sled': {
-            'highway': 'track',
             'piste:type': 'sleigh'
         },
         'Snowshoe': {
-            'highway': 'path',
             'piste:type': 'hike'
         },
         'Snowmobile': {
@@ -111,11 +164,22 @@ valuemap = {
             'snowmobile': 'yes'
         },
         'Motorized Watercraft': {
-            'motorboat': 'yes'
+            'motorboat': 'yes',
+            'waterway': 'yes'
         },
         'Non-Motorized Watercraft': {
-            'canoe': 'yes'
-        }
+            'canoe': 'yes',
+            'waterway': 'yes'
+        },
+        'Human Use (Social)': {
+            'highway': 'path',
+            'foot': 'yes',
+            'informal': 'yes'
+        },
+        'Non-Human Use (Animal)': {
+            'highway': 'path',
+            'informal': 'yes'
+        },
     }
 }
 

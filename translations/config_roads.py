@@ -21,6 +21,7 @@ fieldmap = {
     'RDLABEL': 'nps:road_label',
     'RDSTATUS': 'nps:road_status',
     'RDCLASS': 'nps:road_class',
+    'RDSURFACE': 'surface',
     'MAINTAINER': 'nps:road_maintainer',
     'RDLANES': 'lanes',
     'ROUTEID': 'nps:route_id',
@@ -56,46 +57,41 @@ altnames = {
 valuemap = {
     # GIS_FieldName : {GIS_Value: {tag:value, ... }, ...}
     'RDCLASS': {
+        # '*': {'highway': 'road'}  # by default
         'Primary': {'highway': 'primary'},
         'Secondary': {'highway': 'secondary'},
         'Local': {'highway': 'residential'},
-        '4WD': {
-            'highway': 'road',
-            '4wd_only': 'yes'
-        },
+        '4WD': {'4wd_only': 'yes'},
         'Service': {
             'highway': 'service',
             'access': 'private'
         },
-        'Private': {'highway': 'road'}
+        'Private': {'access': 'private'}
     },
     'RDSTATUS': {
+        # '*': {'access': 'no'}  # by default
         'Existing': {'access': 'yes'},
-        'Decommissioned': {'access': 'no'},
-        'Temporarily Closed': {'access': 'no'},
         'Proposed': {
-            'access': 'no',
-            'highway': 'proposed'  # conflict with RDCLASS
+            'highway': 'proposed'  # conflict with RDCLASS see roads.py for resolution
         },
         'Planned': {
-            'access': 'no',
-            'highway': 'proposed'  # conflict with RDCLASS
+            'highway': 'proposed'  # conflict with RDCLASS see roads.py for resolution
         }
     },
     'RDSURFACE': {
+        # '*': {'surface': 'ground'}  # by fieldmap
         'Asphalt': {'surface': 'asphalt'},
-        'Concrete': {'surface': 'concrete'},
         'Brick/Pavers': {'surface': 'paving_stones'},
         'Cobblestone': {'surface': 'cobblestone'},
+        'Concrete': {'surface': 'concrete'},
         'Gravel': {'surface': 'gravel'},
+        'Paved Other': {'surface': 'paved'},
         'Sand': {'surface': 'sand'},
-        'Native or Dirt': {'surface': 'ground'},
-        'Other, Unpaved': {'surface': 'unpaved'},
-        'Other, Paved': {'surface': 'paved'},
         'Unpaved Other': {'surface': 'unpaved'},
-        'Paved Other': {'surface': 'paved'}
+        'Native or Dirt': {'surface': 'ground'}
     },
     'RDONEWAY': {
+        # '*': {'oneway': 'no'}  # by default
         'With Digitized': {'oneway': 'yes'},
         'Against Digitized': {'oneway': '-1'}
     }
