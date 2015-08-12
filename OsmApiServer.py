@@ -251,6 +251,11 @@ class OsmApiServer:
             displayname = data[0]['firstName'] + ' ' + data[0]['lastName']
         except KeyError:
             return 'User Error', 200, 'Unexpected response from user lookup'
+        if userid is None:
+            msg = ("There is no Places account for 'nps\{0}'.\n"
+                   "Sign in at {0} to create your account.").format(
+                self.username, "https://insidemaps.nps.gov/account/logon/")
+            return msg, None, None
         if self._verbose and self.logger:
             self.logger.info("Found id " + userid)
         return None, userid, displayname
