@@ -445,6 +445,8 @@ def makeosmfile(options):
     Geometry.elementIdCounter = options.id
     Geometry.geometries = []
     Feature.features = []
+    global vertices
+    vertices = {}
     try:
         if options.outputFile is None:
             options.logger.info(u"Preparing to convert '{0:s}'."
