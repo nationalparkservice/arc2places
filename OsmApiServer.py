@@ -320,7 +320,12 @@ class OsmApiServer:
         url = self._baseurl + '/api/' + self.version + '/changeset/' + cid + '/upload'
         if self._verbose and self.logger:
             self.logger.info('Upload to change set ' + cid)
-        resp = self._oauth.post(url, data=change, headers={'Content-Type': 'text/xml'})
+        try:
+            resp = self._oauth.post(url, data=change, headers={'Content-Type': 'text/xml'})
+        except requests.ConnectionError as e:
+            baseerror = "Failed to upload changeset. ConnectionError: {0}"
+            self.error = baseerror.format(e)
+            return None
         if resp.status_code != 200:
             baseerror = "Failed to upload changeset. Status: {0}, Response: {0}"
             self.error = baseerror.format(resp.status_code, resp.text)
