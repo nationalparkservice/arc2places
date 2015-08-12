@@ -446,8 +446,12 @@ def makeosmfile(options):
     Geometry.geometries = []
     Feature.features = []
     try:
-        options.logger.info(u"Preparing to convert '{0:s}' to '{1:s}'."
-                            .format(options.sourceFile, options.outputFile))
+        if options.outputFile is None:
+            options.logger.info(u"Preparing to convert '{0:s}'."
+                                .format(options.sourceFile))
+        else:
+            options.logger.info(u"Preparing to convert '{0:s}' to '{1:s}'."
+                                .format(options.sourceFile, options.outputFile))
     except AttributeError:
         pass
     if not options.translator:
