@@ -54,6 +54,7 @@ class DataTable:
             return
         arcpy.CreateTable_management(workspace, table_name)
         table_path = os.path.join(workspace, table_name)
+        self.fieldnames = [arcpy.ValidateFieldName(f, workspace) for f in self.fieldnames]
         for fname, ftype in zip(self.fieldnames, self.fieldtypes):
             arcpy.AddField_management(table_path, fname, ftype)
         with arcpy.da.InsertCursor(table_path, self.fieldnames) as cursor:
