@@ -605,7 +605,7 @@ class SeedPlaces(object):
 
         testing = arcpy.Parameter(
             name="testing",
-            displayName="Upload to the testing version of Places",
+            displayName="Upload to the TEST version of Places",
             direction="Input",
             datatype="GPBoolean",
             parameterType="Required")
