@@ -488,12 +488,12 @@ def makeosmfile(options):
             fw.write(data)
         try:
             options.logger.info(u"Wrote {0:d} elements to file '{1:s}'"
-                                .format(Geometry.elementIdCounter, options.outputFile))
+                                .format(-1*Geometry.elementIdCounter, options.outputFile))
         except AttributeError:
             pass
     else:
         try:
-            options.logger.info(u"Returning {0:d} converted elements".format(Geometry.elementIdCounter))
+            options.logger.info(u"Returning {0:d} converted elements".format(-1*Geometry.elementIdCounter))
         except AttributeError:
             pass
         return error, data
