@@ -651,7 +651,7 @@ class SeedPlaces(object):
         table_name = parameters[4].valueAsText
         ignore_sync_warnings = parameters[5].value
         addIds = parameters[6].value
-        testing = parameters[6].value
+        testing = parameters[7].value
         if testing:
             server = test_places
         else:
