@@ -23,6 +23,7 @@ class DataTable:
         :return: Method has no return value.
         :rtype : None
         """
+        # FIXME: This will kill an existing table.  In some cases we may want to append (check field match)
         with open(filepath, 'wb') as f:
             self.export_csv_fd(f, header)
 
@@ -52,6 +53,7 @@ class DataTable:
             arcpy = None
         if arcpy is None:
             return
+        # FIXME: will fail if table exists.  In some cases we may want to append to existing (check field match)
         arcpy.CreateTable_management(workspace, table_name)
         table_path = os.path.join(workspace, table_name)
         self.fieldnames = [arcpy.ValidateFieldName(f, workspace) for f in self.fieldnames]
