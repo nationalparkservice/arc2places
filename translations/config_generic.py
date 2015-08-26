@@ -10,6 +10,9 @@
 defaults = {}
 
 # values map one to one from GIS field name to Places tag
+# the GIS field name is guaranteed to be unique (hash table), but not the places tag
+# if the same tag is used in multiple dictionary entries, there is telling which value
+# will be used since the items in a dictionary are unsorted.
 fieldmap = {
     # GIS_FieldName : Places Tag
     # 'PLACESID': 'nps:places_id'  # Ignore - managed by system
@@ -42,6 +45,7 @@ fieldmap = {
 }
 
 # alternate GIS field names.
+# all of these names in the value's list map to the the same tags as the dictionary key
 altnames = {
     # GIS Standard FieldName: List of alternate spellings of field name
     'UNITCODE': ['UNIT_CODE'],
