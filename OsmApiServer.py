@@ -354,7 +354,11 @@ class OsmApiServer:
         if self._verbose and self.logger:
             self.logger.info("Close change set " + cid)
         url = self._baseurl + '/api/' + self.version + '/changeset/' + cid + '/close'
-        resp = self._oauth.put(url)
+        try:
+            resp = self._oauth.put(url)
+        except requests.Timeout:
+            self.error = 'Timeout error closing changeset'
+            return
         if resp.status_code == 404:
             self.error = 'No changeset with the given id could be found'
             return
