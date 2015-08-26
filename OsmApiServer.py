@@ -359,6 +359,9 @@ class OsmApiServer:
         except requests.Timeout:
             self.error = 'Timeout error closing changeset'
             return
+        except Exception as e:
+            self.error = 'Unexpected exception ({0}) closing changeset ({1})'.format(e,url)
+            return
         if resp.status_code == 404:
             self.error = 'No changeset with the given id could be found'
             return
