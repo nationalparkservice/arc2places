@@ -46,6 +46,7 @@ fieldmap = {
 
 # alternate GIS field names.
 # all of these names in the value's list map to the the same tags as the dictionary key
+# only the keys that match the keys in the fieldmap and/or valuemap will be used.
 altnames = {
     # GIS Standard FieldName: List of alternate spellings of field name
     'UNITCODE': ['UNIT_CODE'],
