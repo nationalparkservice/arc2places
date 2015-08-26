@@ -113,26 +113,50 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
         raise UploadError("Unable to open a changeset. Check the network, "
                           "and your permissions.\n\tDetails: " + server.error)
     timestamp = datetime.datetime.now()
+
     resp = server.upload_changeset(cid, fixchangefile(cid, data))
-    upload_error = server.error
-    server.close_changeset(cid)
-    if upload_error:
+
+    if server.error:
         # Errors uploading the changeset are fatal
         # Ignore any error we got trying to close the changeset
-        raise UploadError("Server did not accept the upload request.\n\tDetails: " + upload_error)
-    if server.error:
-        # Errors closing the changeset are non-fatal
+        upload_error = server.error
         try:
-            logger.warn('Server could not close the change request.\n\tDetails: ' + server.error)
-        except AttributeError:
-            pass
+            server.close_changeset(cid)
+        finally:
+            raise UploadError("Server did not accept the upload request.\n\tDetails: " + upload_error)
+    # optional debug output
     try:
         logger.debug('\n' + resp + '\n')
     except AttributeError:
         pass
-    upload_log = make_upload_log(resp, data, timestamp, cid, server.username, logger)
-    if csv_path:
+
+    # if there is no error then first try to create the upload_log before closing the changeset
+    # Closing the changeset may fail (time-out) when it actually succeeds (eventually).
+    try:
+        upload_log = make_upload_log(resp, data, timestamp, cid, server.username, logger)
+    except UploadError as e:
+        # response isn't valid
+        raise e
+    except Exception as e:
+        # response is valid, but there was and unexpected (programming?) error,
+        # TODO: save response as text, and report the file name to the user
+        raise e
+    if csv_path and upload_log:
         upload_log.export_csv(csv_path)
+
+    # close the changeset; Errors closing the changeset are non-fatal
+    try:
+        server.close_changeset(cid)
+    except Exception as e:
+        try:
+            logger.warn('Server could not close the change request.\n\tDetails: {0}'.format(e))
+        except AttributeError:
+            pass
+    if server.error:
+        try:
+            logger.warn('Server could not close the change request.\n\tDetails: ' + server.error)
+        except AttributeError:
+            pass
 
     return upload_log
 
