@@ -273,6 +273,9 @@ class OsmApiServer:
         if not self._oauth:
             self._connect()
         if not self._oauth:
+            # self.error should be set by self._connect()
+            if not self.error:
+                self.error = 'Unexpected failure authenticating {0} on {1}'.format(self.username, self.name)
             return None
         if not application:
             self.error = 'No application name provided for the changeset'
