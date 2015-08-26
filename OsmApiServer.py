@@ -291,6 +291,10 @@ class OsmApiServer:
         except requests.exceptions.ConnectionError:
             self.error = "Unable to Connect to " + self._baseurl
             return None
+        except Exception as e:
+            baseerror = "Unexpected exception:\n{0}\nPUTing:\n{1}\nto {2}"
+            self.error = baseerror.format(e, osm_changeset_payload, url)
+            return None
         if resp.status_code == 400:
             self.error = 'There are errors parsing the XML'
             return None
@@ -326,6 +330,10 @@ class OsmApiServer:
             baseerror = "Failed to upload changeset. ConnectionError: {0}"
             self.error = baseerror.format(e)
             return None
+        except Exception as e:
+            baseerror = "Unexpected exception:\n{0}\nPOSTing:\n{1}\nto {2}"
+            self.error = baseerror.format(e, change, url)
+            return None
         if resp.status_code != 200:
             baseerror = "Failed to upload changeset. Status: {0}, Response: {0}"
             self.error = baseerror.format(resp.status_code, resp.text)
@@ -360,7 +368,7 @@ class OsmApiServer:
             self.error = 'Timeout error closing changeset'
             return
         except Exception as e:
-            self.error = 'Unexpected exception ({0}) closing changeset ({1})'.format(e,url)
+            self.error = 'Unexpected exception:\n{0}\nPUTing: {1}'.format(e, url)
             return
         if resp.status_code == 404:
             self.error = 'No changeset with the given id could be found'
