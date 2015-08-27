@@ -107,11 +107,11 @@ valuemap = {
         'Temporarily Closed': {'access': 'no'},
         'Decommissioned': {'access': 'no'},
         'Proposed': {
-            {'access': 'no'},
+            'access': 'no',
             # 'highway': 'proposed'  # TODO: conflict with 'highway':'*' see trails.py for resolution
         },
         'Planned': {
-            {'access': 'no'},
+            'access': 'no',
             # 'highway': 'proposed'  # TODO: conflict with 'highway':'*' see trails.py for resolution
         }
     },
