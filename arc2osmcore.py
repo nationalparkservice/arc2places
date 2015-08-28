@@ -315,6 +315,11 @@ def mergewaypoints(options):
         if len(merged_points) > 0:
             way.points = merged_points
 
+def add_source_tags(xmlobject, options):
+    pass
+    # FIXME implement adding nps:source_system, nps:source_system_key, nps:source_system_key_value
+    return xmlobject
+
 
 def output_xml(options):
     """
@@ -387,6 +392,7 @@ def output_xml(options):
                 tag = eTree.Element('tag', {'k': key, 'v': value})
                 xmlobject.append(tag)
 
+        xmlobject = add_source_tags(xmlobject, options)
         elementroot.append(xmlobject)
 
     for way in ways:
