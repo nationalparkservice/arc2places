@@ -101,6 +101,8 @@ def getfeaturetags(arcfeature, fieldnames, options):
                 tags[fieldnames[i].upper()] = unicode(arcfeature[i])
             else:
                 tags[fieldnames[i].upper()] = str(arcfeature[i])
+        else:
+            tags[fieldnames[i].upper()] = None
     newtags = options.translator.filter_tags(tags)
     try:
         options.logger.debug("Tags: " + str(newtags))
