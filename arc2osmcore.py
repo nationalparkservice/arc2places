@@ -318,8 +318,14 @@ def mergewaypoints(options):
 
 def get_pk_name(options, places_key):
     try:
-        key = options.translator.fields_for_tag(places_key)[0]
-    except (AttributeError, IndexError):
+        primary_keys = options.translator.fields_for_tag(places_key)
+    except AttributeError:
+        return None
+    field_names = [f.name for f in arcpy.ListFields(options.sourceFile)]
+    existing_keys = [k for k in primary_keys if k in field_names]
+    try:
+        key = existing_keys[0]
+    except IndexError:
         key = None
     return key
 
