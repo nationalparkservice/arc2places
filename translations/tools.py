@@ -10,6 +10,7 @@ def valueof(name, altnames, attributes, no_values=('null', 'none', 'unknown')):
             for altname in altnames[name]:
                 if altname in attributes:
                     value = attributes[altname]
+                    break  # Use the first, not the last, matching name
     if value:
         value = value.strip()
         if value.lower() in no_values:
