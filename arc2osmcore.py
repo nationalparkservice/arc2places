@@ -315,9 +315,30 @@ def mergewaypoints(options):
         if len(merged_points) > 0:
             way.points = merged_points
 
-def add_source_tags(xmlobject, options):
-    pass
-    # FIXME implement adding nps:source_system, nps:source_system_key, nps:source_system_key_value
+
+def get_pk_name(options, places_key):
+    try:
+        key = options.translator.fields_for_tag(places_key)[0]
+    except (AttributeError, IndexError):
+        key = None
+    return key
+
+
+def add_source_tags(etree, xmlobject, options):
+    try:
+        name = options.sourceFile
+    except AttributeError:
+        name = None
+    try:
+        key = options.datasetKey
+    except AttributeError:
+        key = None
+    if name:
+        tag = etree.Element('tag', {'k': 'nps:source_system', 'v': name})
+        xmlobject.append(tag)
+    if key:
+        tag = etree.Element('tag', {'k': 'nps:source_system_key', 'v': key})
+        xmlobject.append(tag)
     return xmlobject
 
 
@@ -349,6 +370,7 @@ def output_xml(options):
             pass
 
     # First, set up a few data structures for optimization purposes
+    options.datasetKey = get_pk_name(options.translator, 'nps:source_system_key_value')
     nodes = [geom for geom in Geometry.geometries if type(geom) == Point]
     ways = [geom for geom in Geometry.geometries if type(geom) == Way]
     relations = [geom for geom in Geometry.geometries if
@@ -391,8 +413,8 @@ def output_xml(options):
             for (key, value) in featuresmap[node].tags.items():
                 tag = eTree.Element('tag', {'k': key, 'v': value})
                 xmlobject.append(tag)
+            xmlobject = add_source_tags(eTree, xmlobject, options)
 
-        xmlobject = add_source_tags(xmlobject, options)
         elementroot.append(xmlobject)
 
     for way in ways:
@@ -408,6 +430,7 @@ def output_xml(options):
             for (key, value) in featuresmap[way].tags.items():
                 tag = eTree.Element('tag', {'k': key, 'v': value})
                 xmlobject.append(tag)
+            xmlobject = add_source_tags(eTree, xmlobject, options)
 
         elementroot.append(xmlobject)
 
@@ -429,6 +452,7 @@ def output_xml(options):
             for (key, value) in featuresmap[relation].tags.items():
                 tag = eTree.Element('tag', {'k': key, 'v': value})
                 xmlobject.append(tag)
+            xmlobject = add_source_tags(eTree, xmlobject, options)
 
         elementroot.append(xmlobject)
     data = eTree.tostring(rootnode, encoding='utf-8')
@@ -527,6 +551,7 @@ class DefaultOptions:
     id = 0
     changesetId = -1
     translations = None
+    datasetKey = None
 
 
 def test():
@@ -536,6 +561,7 @@ def test():
     opts.sourceFile = "./testdata/test.gdb/PARKINGLOTS_py"
     opts.outputFile = "./testdata/test_parking.osm"
     opts.translator = Translator.get_translator("parkinglots")
+    opts.datasetKey = opts.translator.fields_for_tag('nps:source_system_key_value')[0]
     makeosmfile(opts)
 
 
