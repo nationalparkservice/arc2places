@@ -15,12 +15,25 @@ defaults = {
 # values map one to one from GIS field name to Places tag
 fieldmap = {
     # GIS_FieldName : Places Tag
-    'NAME': 'name',
+    'LOTLABEL': 'name',
+    'LOTNAME': 'nps:parkinglot_name',
+    'LOTALTNAME': 'nps:parkinglot_alt_name',
+    'LOTFEATTYPE': 'nps:parkinglot_feature_type',
+    'LOTTYPE': 'nps:parkinglot_type'
 }
 
 # alternate GIS field names.
 altnames = {
     # GIS Standard FieldName: List of alternate spellings of field name
+    'LOTLABEL': ['LABEL', 'LOT_LABEL', 'NAME', 'LOTNAME', 'LOT_NAME'],
+    'LOTNAME': ['NAME', 'LOT_NAME'],
+    'LOTALTNAME': ['ALTNAME', 'ALT_NAME', 'LOT_ALT_NAME',
+                   'ALTERNAME_NAME', 'ALTERNATENAME', 'LOT_ALTERNAME_NAME', 'LOTALTERNATENAME',
+                   'ALTNAMES', 'ALT_NAMES', 'LOT_ALT_NAMES',
+                   'ALTERNAME_NAMES', 'ALTERNATENAMES', 'LOT_ALTERNAME_NAMES', 'LOTALTERNATENAMES'],
+    'LOTFEATTYPE': ['FEATTYPE', 'FEAT_TYPE', 'LOT_FEAT_TYPE',
+                    'FEATURETYPE', 'FEATURE_TYPE', 'LOT_FEATURE_TYPE'],
+    'LOTTYPE': ['TYPE', 'LOT_TYPE'],
 }
 
 valuemap = {
