@@ -376,7 +376,7 @@ def output_xml(options):
             pass
 
     # First, set up a few data structures for optimization purposes
-    options.datasetKey = get_pk_name(options.translator, 'nps:source_system_key_value')
+    options.datasetKey = get_pk_name(options, 'nps:source_system_key_value')
     nodes = [geom for geom in Geometry.geometries if type(geom) == Point]
     ways = [geom for geom in Geometry.geometries if type(geom) == Way]
     relations = [geom for geom in Geometry.geometries if
