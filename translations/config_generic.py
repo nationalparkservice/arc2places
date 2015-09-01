@@ -41,7 +41,7 @@ fieldmap = {
     'EDITDATE': 'nps:edit_date',
     'EDITUSER': 'nps:edit_user',
     'FEATUREID': 'nps:feature_id',
-    'GEOMETRYID': 'nps:source_id',
+    'GEOMETRYID': 'nps:source_system_key_value',
 }
 
 # alternate GIS field names.

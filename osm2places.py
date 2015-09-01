@@ -44,7 +44,7 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
             has_tags = False
             for tag in grandchild.findall('tag'):
                 has_tags = True
-                if tag.attrib['k'] == 'nps:source_id':
+                if tag.attrib['k'] == 'nps:source_system_key_value':
                     source_id = tag.attrib['v']
                     break
             if has_tags:

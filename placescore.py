@@ -165,7 +165,7 @@ def valid4sync(featureclass, translator=None):
     Requires arcpy and ArcGIS 10.x ArcView or better license.
     Assumes but does not check that featureclass is suitable for Upload
     Additional checks for Syncing (requirements by code in arcupdate2osm.py):
-    * Checks that column that translates to 'nps:source_id' is fully populated and unique.
+    * Checks that column that translates to 'nps:source_system_key_value' is fully populated and unique.
     * Checks that editor tracking is turned on and the last_edit_date_field is defined (must be a geodatabase)
 
     :param featureclass: The ArcGIS feature class to validate
@@ -194,16 +194,16 @@ def valid4sync(featureclass, translator=None):
             issues.append("Editor Tracking must have an 'Edit Date' field defined for the feature class")
 
     if translator is None:
-        issues.append("Cannot validate the 'nps:source_id'.  You must provide a translator.")
+        issues.append("Cannot validate the 'nps:source_system_key_value'.  You must provide a translator.")
         return issues
 
-    primary_keys = translator.fields_for_tag('nps:source_id')
+    primary_keys = translator.fields_for_tag('nps:source_system_key_value')
     field_names = [f.name for f in arcpy.ListFields(featureclass)]
     existing_keys = [k for k in primary_keys if k in field_names]
     if len(existing_keys) < 1:
-        issues.append("There is no field that maps to the 'nps:source_id' tag")
+        issues.append("There is no field that maps to the 'nps:source_system_key_value' tag")
     if 1 < len(existing_keys):
-        issues.append("There are multiple fields {0:s} that map to the 'nps:source_id' tag".format(existing_keys))
+        issues.append("There are multiple fields {0:s} that map to the 'nps:source_system_key_value' tag".format(existing_keys))
     if len(existing_keys) == 1:
         primary_key = existing_keys[0]
         duplicates = get_duplicates(featureclass, primary_key, translator)

@@ -245,7 +245,7 @@ def test2():
             print translator.function_status
         print translator.filter_tags({'ALTNAME': 'Regan'})
         print translator.filter_tags({'POITYPE': 'Lake'})
-        print translator.fields_for_tag('nps:source_id')
+        print translator.fields_for_tag('nps:source_system_key_value')
 
 if __name__ == '__main__':
     test1()

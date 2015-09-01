@@ -56,14 +56,14 @@ def arc_build_osm_change_xml(featureclass, synctable, translator, server, logger
         raise ValueError("Field '{0:s}' not found in synctable."
                          .format(synctable_date_fieldname))
 
-    primary_keys = translator.fields_for_tag('nps:source_id')
+    primary_keys = translator.fields_for_tag('nps:source_system_key_value')
     field_names = [f.name for f in arcpy.ListFields(featureclass)]
     existing_keys = [k for k in primary_keys if k in field_names]
     if len(existing_keys) < 1:
         raise ValueError("There is no field in featureclass {0:s} that maps to "
-                         "the 'nps:source_id' tag".format(featureclass))
+                         "the 'nps:source_system_key_value' tag".format(featureclass))
     if 1 < len(existing_keys):
-        raise ValueError("There are multiple fields {0:s} that map to the 'nps:source_id' tag "
+        raise ValueError("There are multiple fields {0:s} that map to the 'nps:source_system_key_value' tag "
                          "in featureclass {0:s}".format(existing_keys, featureclass))
     source_id_fieldname = existing_keys[0]
     if not utils.hasfield(featureclass, source_id_fieldname):
