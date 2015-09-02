@@ -18,12 +18,22 @@ fieldmap = {
     'BUILDING_FCODE': 'nps:building_fcode',
     'ADMIN_TYPE': 'nps:admin_type',
     'FEDERAL_ENTITY_TYPE': 'nps:federal_entity_type',
-    'POLYGON_NOTES': 'nps:polygon_notes'
+    'POLYGON_NOTES': 'nps:polygon_notes',
+    'BUILDING_ID': 'nps:building_id',
+    'IS_SENSITIVE': 'nps:is_sensitive'
 }
 
 # alternate GIS field names.
 altnames = {
     # GIS Standard FieldName: List of alternate spellings of field name
+    'COMMON_NAME': ['COMMONNAME', 'NAME'],
+    'BUILDING_FCODE': ['BUILDING_FCODE', 'BLDGFCODE', 'BLDG_FCODE',
+                       'FCODE', 'FACILITYCODE', 'FACILITY_CODE'],
+    'ADMIN_TYPE': ['ADMINTYPE', 'BLDGADMINTYPE','BUILDING_ADMIN_TYPE'],
+    'FEDERAL_ENTITY_TYPE': ['FEDERALENTITYTYPE'],
+    'POLYGON_NOTES': ['POLYGON_NOTES', 'NOTES'],
+    'BUILDING_ID': ['BUILDINGID'],
+    'IS_SENSITIVE': ['ISSENSITIVE']
 }
 
 valuemap = {
