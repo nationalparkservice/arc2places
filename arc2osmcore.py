@@ -323,8 +323,8 @@ def get_pk_name(options, places_key):
         primary_keys = options.translator.fields_for_tag(places_key)
     except AttributeError:
         return None
-    field_names = [f.name.upper() for f in arcpy.ListFields(options.sourceFile)]
-    existing_keys = [k for k in primary_keys if k in field_names]
+    field_names = [f.name for f in arcpy.ListFields(options.sourceFile)]
+    existing_keys = [k for k in field_names if k.upper() in primary_keys]
     try:
         key = existing_keys[0]
     except IndexError:

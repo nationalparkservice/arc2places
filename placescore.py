@@ -198,8 +198,8 @@ def valid4sync(featureclass, translator=None):
         return issues
 
     primary_keys = translator.fields_for_tag('nps:source_system_key_value')
-    field_names = [f.name.upper() for f in arcpy.ListFields(featureclass)]
-    existing_keys = [k for k in primary_keys if k in field_names]
+    field_names = [f.name for f in arcpy.ListFields(featureclass)]
+    existing_keys = [k for k in field_names if k.upper() in primary_keys]
     if len(existing_keys) < 1:
         issues.append("There is no field that maps to the 'nps:source_system_key_value' tag")
     if 1 < len(existing_keys):
