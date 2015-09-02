@@ -22,9 +22,9 @@ defaults = {
 # values map one to one from field name to OSM tag
 fieldmap = {
     # GIS_FieldName : Places Tag
-    'TRLNAME': 'name',
-    'TRLALTNAME': 'nps:trail_alt_names',
-    'TRLLABEL': 'nps:trail_label',
+    'TRLNAME': 'nps:trail_name',
+    'TRLALTNAME': 'nps:trail_alt_name',
+    'TRLLABEL': 'name',
     'TRLFEATTYPE': 'nps:trail_feat_type',
     'TRLSTATUS': 'nps:trail_status',
     'TRLTYPE': 'nps:trail_type',

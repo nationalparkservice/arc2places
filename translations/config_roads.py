@@ -16,9 +16,9 @@ defaults = {
 # values map one to one from field name to OSM tag
 fieldmap = {
     # GIS_FieldName : Places Tag
-    'RDNAME': 'name',
-    'RDALTNAME': 'nps:road_alt_names',
-    'RDLABEL': 'nps:road_label',
+    'RDNAME': 'nps:road_name',
+    'RDALTNAME': 'nps:road_alt_name',
+    'RDLABEL': 'name',
     'RDSTATUS': 'nps:road_status',
     'RDCLASS': 'nps:road_class',
     'RDSURFACE': 'surface',
