@@ -13,17 +13,29 @@ defaults = {
 # values map one to one from GIS field name to Places tag
 fieldmap = {
     # GIS_FieldName : Places Tag
-    'POINAME': 'name',
-    'POITYPE': 'nps:type',
-    'FEATTYPE': 'nps:feature_type'
+    'POINAME': 'nps:poi_name',
+    'POIALTNAME': 'nps:poi_alt_name',
+    'POILABEL': 'name',
+    'POITYPE': 'nps:poi_type',
+    'POIFEATTYPE': 'nps:poi_feature_type',
+    'POIDESC': 'nps:poi_description'
 }
 
 # alternate GIS field names.
 altnames = {
     # GIS Standard FieldName: List of alternate spellings of field name
     'POINAME': ['POI_NAME', 'NAME'],
+    'POIALTNAME': ['ALTNAME', 'POI_ALTNAME', 'POI_ALT_NAME',
+                   'ALTERNAME_NAME', 'ALTERNATENAME',
+                   'POI_ALTERNAME_NAME', 'POI_ALTERNAMENAME', 'POIALTERNATENAME',
+                   'POIALTNAMES',
+                   'ALTNAMES', 'POI_ALTNAMES', 'POI_ALT_NAMES',
+                   'ALTERNAME_NAMES', 'ALTERNATENAMES',
+                   'POI_ALTERNAME_NAMES', 'POI_ALTERNAMENAMES', 'POIALTERNATENAMES'],
+    'POILABEL': ['POI_LABEL', 'LABEL'],
     'POITYPE': ['POI_TYPE', 'TYPE'],
-    'FEATTYPE': ['FEAT_TYPE', 'FEATURE_TYPE', 'FEATURETYPE']
+    'POIFEATTYPE': ['POI_FEAT_TYPE', 'POI_FEATURE_TYPE', 'POIFEATURETYPE',
+                    'FEAT_TYPE', 'FEATURE_TYPE', 'FEATURETYPE']
 }
 
 valuemap = {
