@@ -40,9 +40,8 @@ altnames = {
 
 valuemap = {
     # GIS_FieldName : {GIS_Value: {tag:value, ... }, ...}
-    'FEATTYPE': {
-        'Entrance point': {'entrance': 'yes'},
-        'Backcountry Cabin': {'building': 'cabin'}
+    'POIFEATTYPE': {
+        'Entrance point': {'entrance': 'yes'}
     },
     'POITYPE': {
         'Administrative Office': {'office': 'government', 'building': 'yes'},
