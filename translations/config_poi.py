@@ -1,7 +1,12 @@
-# Based on the Places Data Schema revision 6 (5/18/2015)
+# Field maps is based on the Places Data Schema revision 6 (5/18/2015)
 # https://github.com/nationalparkservice/places-data/wiki/Places-Data-Schema-Guide
+# with revisions for the current (9/1/2015) state of the draft POI GIS Data standard.
+# http://share.inside.nps.gov/sites/IR/RIM/EGIS/Library/Data%20Layers%20and%20Standards/!Standards%20Development%20Work%20Space/Points%20of%20Interest/PLACES_POI_Container/DRAFT_NPS_POISpatialDataContainer_20150821.pdf
+# Value Map is based on the NPS Presets Classes (DOI internal google sheets document)
+# https://docs.google.com/spreadsheets/d/1XFqkmIYMEp73q9flgNto9QJim6N5hbacgkUAgdf0rhE/edit#gid=0
 # with ogr2osm, the GIS field names are case sensitive
-# with arc2osm, all GIS field names are converted to upper case
+# with arc2osm, all GIS field names are converted to upper case;
+# all GIS vield values are converted to lower case for case insensitive comparisons.
 # all osm/Places tags should be lower case
 
 # All config files must have defaults, fieldmap, altnames and valuemap
@@ -38,6 +43,7 @@ altnames = {
                     'FEAT_TYPE', 'FEATURE_TYPE', 'FEATURETYPE']
 }
 
+# valuemap updated 9/3/2015
 valuemap = {
     # GIS_FieldName : {GIS_Value: {tag:value, ... }, ...}
     'POIFEATTYPE': {
