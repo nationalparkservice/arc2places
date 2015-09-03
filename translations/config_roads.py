@@ -58,41 +58,41 @@ valuemap = {
     # GIS_FieldName : {GIS_Value: {tag:value, ... }, ...}
     'RDCLASS': {
         # '*': {'highway': 'road'}  # by default
-        'Primary': {'highway': 'primary'},
-        'Secondary': {'highway': 'secondary'},
-        'Local': {'highway': 'residential'},
-        '4WD': {'4wd_only': 'yes'},
-        'Service': {
+        'primary': {'highway': 'primary'},
+        'secondary': {'highway': 'secondary'},
+        'local': {'highway': 'residential'},
+        '4wd': {'4wd_only': 'yes'},
+        'service': {
             'highway': 'service',
             'access': 'private'
         },
-        'Private': {'access': 'private'}
+        'private': {'access': 'private'}
     },
     'RDSTATUS': {
         # '*': {'access': 'no'}  # by default
-        'Existing': {'access': 'yes'},
-        'Proposed': {
+        'existing': {'access': 'yes'},
+        'proposed': {
             'highway': 'proposed'  # conflict with RDCLASS see roads.py for resolution
         },
-        'Planned': {
+        'planned': {
             'highway': 'proposed'  # conflict with RDCLASS see roads.py for resolution
         }
     },
     'RDSURFACE': {
         # '*': {'surface': 'ground'}  # by fieldmap
-        'Asphalt': {'surface': 'asphalt'},
-        'Brick/Pavers': {'surface': 'paving_stones'},
-        'Cobblestone': {'surface': 'cobblestone'},
-        'Concrete': {'surface': 'concrete'},
-        'Gravel': {'surface': 'gravel'},
-        'Paved Other': {'surface': 'paved'},
-        'Sand': {'surface': 'sand'},
-        'Unpaved Other': {'surface': 'unpaved'},
-        'Native or Dirt': {'surface': 'ground'}
+        'asphalt': {'surface': 'asphalt'},
+        'brick/pavers': {'surface': 'paving_stones'},
+        'cobblestone': {'surface': 'cobblestone'},
+        'concrete': {'surface': 'concrete'},
+        'gravel': {'surface': 'gravel'},
+        'paved other': {'surface': 'paved'},
+        'sand': {'surface': 'sand'},
+        'unpaved other': {'surface': 'unpaved'},
+        'native or dirt': {'surface': 'ground'}
     },
     'RDONEWAY': {
         # '*': {'oneway': 'no'}  # by default
-        'With Digitized': {'oneway': 'yes'},
-        'Against Digitized': {'oneway': '-1'}
+        'with digitized': {'oneway': 'yes'},
+        'against digitized': {'oneway': '-1'}
     }
 }

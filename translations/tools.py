@@ -32,8 +32,9 @@ def maptags(fieldname, altnames, attrs, tagmap):
     tags = {}
     value = valueof(fieldname, altnames, attrs)
     if value:
+        value_lower = value.lower()
         for tagkey in tagmap:
-            if tagkey == value:
+            if tagkey == value_lower:
                 tags.update(tagmap[tagkey])
     return tags
 

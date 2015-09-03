@@ -43,15 +43,16 @@ def filterTags(attrs):
     trailusemap = valuemap[usefieldname]
     value = tools.valueof(usefieldname, altnames, attrs)
     if value:
+        value_lower = value.lower()
         for trailusecode in trailusemap:
-            if trailusecode in value:
+            if trailusecode in value_lower:
                 tags.update(trailusemap[trailusecode])
 
     # trail use may be a collection of fields with yes/no values
     # FIXME a missing column or null/unknown value is same as negative value (i.e. it is denied not unspecified)
     for trailusecode, fieldname in trailusefields.items():
         flag = tools.valueof(fieldname, altnames, attrs)
-        if flag == 'True' or flag == 'Yes':
+        if flag and (flag.lower() == 'true' or flag.lower() == 'yes' or flag.lower() == 'y'):
             tags.update(trailusemap[trailusecode])
 
     # highway is not defined and piste:type is not defined, add highway = path
@@ -63,7 +64,7 @@ def filterTags(attrs):
     # similar to the OSM standard for roads
     # http://wiki.openstreetmap.org/wiki/Tag:highway%3Dproposed
     trail_status = tools.valueof('TRLSTATUS', altnames, attrs)
-    if trail_status == 'Planned' or trail_status == 'Proposed':
+    if trail_status and (trail_status.lower() == 'planned' or trail_status.lower() == 'proposed'):
         if 'highway' in tags:
             tags.update({
                 'highway': 'proposed',

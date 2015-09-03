@@ -40,6 +40,7 @@ fieldmap = {
 }
 
 # alternate GIS field names.
+# FIXME: coordinate with aliases in data standard
 altnames = {
     # GIS Standard FieldName: List of alternate spellings of field name
     'TRLNAME': ['NAME', 'TRAILNAME', 'TRL_NAME', 'TRAIL_NAME'],
@@ -66,33 +67,33 @@ altnames = {
 valuemap = {
     # GIS_FieldName : {GIS_Value: {tag:value, ... }, ...}
     'TRLFEATTYPE': {
-        'NHT': {
+        'nht': {
             'informal': 'no'
         },
-        'NST': {
+        'nst': {
             'informal': 'no'
         },
-        'Park Trail': {
+        'park trail': {
             'informal': 'no'
         },
-        'Route Path': {
+        'route path': {
             'informal': 'yes'
         },
-        'Unmaintained Trail': {
+        'unmaintained trail': {
             'informal': 'yes'
         },
-        'Unofficial Trail': {
+        'unofficial trail': {
             'informal': 'yes'
         },
-        'Sidewalk': {
+        'sidewalk': {
             'highway': 'footway',
             'footway': 'sidewalk'
         }
     },
     'TRLTYP': {
-        'Snow Trail': {'piste:type': 'yes'},
-        'Water Trail': {'waterway': 'yes'},
-        'Standard Terra Trail': {'highway': 'path'}
+        'snow trail': {'piste:type': 'yes'},
+        'water trail': {'waterway': 'yes'},
+        'standard terra trail': {'highway': 'path'}
     },
     'TRLCLASS': {
         # '*': {'tracktype': '*'}  # by fieldmap
@@ -103,80 +104,80 @@ valuemap = {
         '2150': {'tracktype': 'grade1'}
     },
     'TRLSTATUS': {
-        'Existing': {'access': 'yes'},
-        'Temporarily Closed': {'access': 'no'},
-        'Decommissioned': {'access': 'no'},
-        'Proposed': {
+        'existing': {'access': 'yes'},
+        'temporarily closed': {'access': 'no'},
+        'decommissioned': {'access': 'no'},
+        'proposed': {
             'access': 'no',
             # 'highway': 'proposed'  # TODO: conflict with 'highway':'*' see trails.py for resolution
         },
-        'Planned': {
+        'planned': {
             'access': 'no',
             # 'highway': 'proposed'  # TODO: conflict with 'highway':'*' see trails.py for resolution
         }
     },
     'TRLUSE': {
         # FIXME: undefined result when multiple conflicting tags are allowed (i.e. hike and atv)
-        'Hiker/Pedestrian': {
+        'hiker/pedestrian': {
             'highway': 'path',
             'foot': 'yes'
         },
-        'Pack and Saddle': {
+        'pack and saddle': {
             'highway': 'path',
             'horse': 'yes'
         },
-        'Bicycle': {
+        'bicycle': {
             'highway': 'path',
             'bicycle': 'yes'
         },
-        'Motorcycle': {
+        'motorcycle': {
             'highway': 'track',
             'motorcycle': 'yes'
         },
-        'All-Terrain Vehicle': {
+        'all-terrain vehicle': {
             'highway': 'track',
             'atv': 'yes'
         },
-        'Four-Wheel Drive Vehicle > 50" in Tread Width': {
+        'four-wheel drive vehicle > 50" in tread width': {
             'highway': 'track',
             '4wd_only': 'yes'
         },
-        'Backcountry Ski': {
+        'backcountry ski': {
             'piste:type': 'skitour',
             'ski': 'yes'
         },
-        'Cross-Country Ski': {
+        'cross-country ski': {
             'piste:type': 'nordic',
             'ski': 'yes'
         },
-        'Downhill Ski': {
+        'downhill ski': {
             'piste:type': 'downhill',
             'ski': 'yes'
         },
-        'Dog Sled': {
+        'dog sled': {
             'piste:type': 'sleigh'
         },
-        'Snowshoe': {
+        'snowshoe': {
             'piste:type': 'hike'
         },
-        'Snowmobile': {
+        'snowmobile': {
             'highway': 'track',
             'snowmobile': 'yes'
         },
-        'Motorized Watercraft': {
+        'motorized watercraft': {
             'motorboat': 'yes',
             'waterway': 'yes'
         },
-        'Non-Motorized Watercraft': {
+        'non-motorized watercraft': {
             'canoe': 'yes',
             'waterway': 'yes'
         },
-        'Human Use (Social)': {
+        'human use (social)': {
             'highway': 'path',
             'foot': 'yes',
             'informal': 'yes'
         },
-        'Non-Human Use (Animal)': {
+        'non-human use (animal)': {
             'highway': 'path',
             'informal': 'yes'
         },
@@ -187,17 +188,18 @@ valuemap = {
 # for when trail use is collection of fields with yes/no values
 trailusefields = {
     # Trail use value code : Matching boolean field name
-    'Hiker/Pedestrian': 'TRLUSE_FOOT',
-    'Pack and Saddle': 'TRLUSE_HORSE',
-    'Bicycle': 'TRLUSE_BICYCLE',
-    'Motorcycle': 'TRLUSE_MOTORCYCLE',
-    'All-Terrain Vehicle': 'TRLUSE_ATV',
-    'Four-Wheel Drive Vehicle > 50" in Tread Width': 'TRLUSE_4WD',
-    'Cross-Country Ski': 'TRLUSE_NORDIC',
-    'Downhill Ski': 'TRLUSE_DOWNHILL',
-    'Dog Sled': 'TRLUSE_DOGSLED',
-    'Snowshoe': 'TRLUSE_SNOWSHOE',
-    'Snowmobile': 'TRLUSE_SNOWMOBILE',
-    'Motorized Watercraft': 'TRLUSE_MOTORBOAT',
-    'Non-Motorized Watercraft': 'TRLUSE_CANOE'
+    'hiker/pedestrian': 'TRLUSE_FOOT',
+    'pack and saddle': 'TRLUSE_HORSE',
+    'bicycle': 'TRLUSE_BICYCLE',
+    'motorcycle': 'TRLUSE_MOTORCYCLE',
+    'all-terrain vehicle': 'TRLUSE_ATV',
+    'four-wheel drive vehicle > 50" in tread width': 'TRLUSE_4WD',
+    'cross-country ski': 'TRLUSE_NORDIC',
+    'downhill ski': 'TRLUSE_DOWNHILL',
+    'dog sled': 'TRLUSE_DOGSLED',
+    'snowshoe': 'TRLUSE_SNOWSHOE',
+    'snowmobile': 'TRLUSE_SNOWMOBILE',
+    'motorized watercraft': 'TRLUSE_MOTORBOAT',
+    'non-motorized watercraft': 'TRLUSE_CANOE'
+    # FIXME: TRLUSE_CANYONEERING, etc
 }
