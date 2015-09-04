@@ -5,6 +5,7 @@ This is quick and dirty code, don't expect it to work without some fiddling"""
 
 import requests
 import csv
+from io import open  # slow but python 3 compatible
 import ast
 
 
@@ -21,7 +22,7 @@ def get_csv_from_google():
 def get_csv_from_file():
     sheet_path = r"C:\Users\resarwas\Downloads\NPS_Preset_Classes - Sheet1.csv"
 
-    f = open(sheet_path)
+    f = open(sheet_path, 'r', encoding='utf-8')
     return csv.DictReader(f)
 
 # data = get_csv_from_google()
@@ -93,4 +94,3 @@ print "    'POITYPE': {"
 for (k, v) in mynewlist:
     print "        '{0}': {1},".format(k, v)
 print "    },"
-

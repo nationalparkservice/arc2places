@@ -5,6 +5,7 @@ import xml.etree.ElementTree as Et
 import optparse
 import os
 import sys
+from io import open  # slow but python 3 compatible
 # import urllib2
 import arcpy
 import utils
@@ -188,7 +189,7 @@ def test():
     if xml is not None:
         data = Et.tostring(xml, encoding='utf-8')
         osmchangefile = './tests/test_road_update.osm'
-        with open(osmchangefile, 'wb') as fw:
+        with open(osmchangefile, 'w', encoding='utf-8') as fw:
             fw.write(data)
         print "Done."
 
@@ -270,7 +271,7 @@ def cmdline():
     if xml:
         # TODO: do exception checking
         data = Et.tostring(xml, encoding='utf-8')
-        with open(osmchangefile, 'wb') as fw:
+        with open(osmchangefile, 'w', encoding='utf-8') as fw:
             fw.write(data)
         print "Done."
 

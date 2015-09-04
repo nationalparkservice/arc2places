@@ -4,6 +4,7 @@ import sys
 import os
 import json
 import inspect
+from io import open  # slow but python 3 compatible
 
 
 def get_function(module, name, arg_count):
@@ -23,7 +24,7 @@ def set_translators():
     config_file = 'translators.json'
     config_path = os.path.join(this_module_folder, translations_folder, config_file)
     try:
-        with open(config_path) as fp:
+        with open(config_path, 'r', encoding='utf-8') as fp:
             Translator.config = json.load(fp)
     except (IOError, ValueError):
         # If the file cannot be opened, IOError is raised

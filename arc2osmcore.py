@@ -38,6 +38,7 @@ Based very heavily on code released under the following terms:
 """
 
 import sys
+from io import open  # slow but python 3 compatible
 import arcpy
 
 from geom import *
@@ -352,12 +353,13 @@ def add_source_tags(etree, xmlobject, options):
 
 def output_xml(options):
     """
-    Writes an JOSM file (http://wiki.openstreetmap.org/wiki/JOSM_file_format)
+    Returns a unicode containing XML in the
+    JOSM format (http://wiki.openstreetmap.org/wiki/JOSM_file_format)
     suitable for use uploading with JOSM or an osmChange file
     (see http://wiki.openstreetmap.org/wiki/OsmChange)
     suitable for use with the /api/0.6/changeset/#id/upload API
     :param options:
-    :return: none
+    :return: str
     """
     '''
     Since we will be running under ArcGIS 10.x+ we will always have python 2.5+
@@ -464,7 +466,9 @@ def output_xml(options):
 
         elementroot.append(xmlobject)
     data = eTree.tostring(rootnode, encoding='utf-8')
+    # data is a now a sequence of bytes; I need to return a unicode object
     if data:
+        data = data.decode('utf-8')
         return None, data
     return "Unable to generate XML", None
 
@@ -524,7 +528,7 @@ def makeosmfile(options):
         Geometry.geometries, Feature.features)
     error, data = output_xml(options)
     if options.outputFile:
-        with open(options.outputFile, 'wb') as fw:
+        with open(options.outputFile, 'w', encoding='utf-8') as fw:
             fw.write(data)
         try:
             options.logger.info(u"Wrote {0:d} elements to file '{1:s}'"

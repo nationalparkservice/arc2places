@@ -316,7 +316,7 @@ class OsmApiServer:
         Uploads an osm changefile to an open changest (cid)
 
         :param cid: string - the id of the open changeset
-        :param change: string - the content of an osm change file
+        :param change: unicode - the content of an osm change file
         :return: returns the api upload response xml or None on error
         """
 
@@ -328,13 +328,13 @@ class OsmApiServer:
         if self._verbose and self.logger:
             self.logger.info('Upload to change set ' + cid)
         try:
-            resp = self._oauth.post(url, data=change, headers={'Content-Type': 'text/xml'})
+            resp = self._oauth.post(url, data=change.encode('utf-8'), headers={'Content-Type': 'text/xml'})
         except requests.ConnectionError as e:
             baseerror = "Failed to upload changeset. ConnectionError: {0}"
             self.error = baseerror.format(e)
             return None
         except Exception as e:
-            baseerror = "Unexpected exception:\n{0}\nPOSTing:\n{1}\nto {2}"
+            baseerror = u"Unexpected exception:\n{0}\nPOSTing:\n{1}\nto {2}"
             self.error = baseerror.format(e, change, url)
             return None
         if resp.status_code != 200:

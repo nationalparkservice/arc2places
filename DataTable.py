@@ -24,7 +24,8 @@ class DataTable:
         :rtype : None
         """
         # FIXME: This will kill an existing table.  In some cases we may want to append (check field match)
-        with open(filepath, 'wb') as f:
+        # Note: python 2.7 csv module does not support unicode; this CSV file should be all ASCII
+        with open(filepath, 'w') as f:
             self.export_csv_fd(f, header)
 
     def export_csv_fd(self, fd, header=True):

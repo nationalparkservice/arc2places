@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as Et
+from io import open  # slow but python 3 compatible
 import optparse
 import sys
 import os
@@ -16,6 +17,16 @@ class UploadError(BaseException):
 
 
 def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
+    """
+
+    :param diff_result: byte array (string) with utf encoded xml
+    :param uploaddata:  unicode data
+    :param date:
+    :param cid:
+    :param user:
+    :param logger:
+    :return:
+    """
     try:
         logger.info("Create link table from upload data and response")
     except AttributeError:
@@ -33,7 +44,7 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
             version = child.attrib['new_version']
         placesids[child.attrib['old_id']] = (child.attrib['new_id'], child.tag, version)
     gisids = {}
-    root = Et.fromstring(uploaddata)
+    root = Et.fromstring(uploaddata.encode('utf-8'))
     # this must be a valid osmChange file,
     # or we wouldn't get this far, so proceed without error checking
     for child in root:
@@ -88,7 +99,7 @@ def upload_osm_file(filepath, server, comment=None, csv_path=None, logger=None):
     :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset
     :rtype : DataTable
     """
-    with open(filepath, 'rb') as fr:
+    with open(filepath, 'r', encoding='utf-8') as fr:
         return upload_osm_data(fr.read(), server, comment, csv_path, logger)
 
 
@@ -100,7 +111,7 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
     Raises UploadError if there are any problems communicating with the server
     Raises IOError if there are problems writing to csv_path
 
-    :param data: basestring (or open(name, 'rb').read()) containing the contents of the change file to upload
+    :param data: unicode containing the contents of the change file to upload
     :param server: An OsmApiServer object (needed for connection info)
     :param comment: A string describing the contents of the changeset
     :param csv_path: A filesystem path to save the DataTable response as a CSV file
@@ -138,7 +149,7 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
         # response isn't valid
         raise e
     except Exception as e:
-        # response is valid, but there was and unexpected (programming?) error,
+        # response is valid, but there was an unexpected (programming?) error,
         # TODO: save response as text, and report the file name to the user
         raise e
     if csv_path and upload_log:
@@ -168,9 +179,9 @@ def test():
     api_server.logger.start_debug()
     upload_osm_file('./testdata/test_roads.osm', api_server, 'Testing upload OSM file function',
                     './testdata/test_roads_sync.csv', api_server.logger)
-    table = upload_osm_file('./testdata/test_poi.osm', api_server, 'Testing upload OSM file function',
-                            None, api_server.logger)
-    table.export_arcgis('./testdata/test.gdb', 'poi_sync')
+    #table = upload_osm_file('./testdata/test_poi.osm', api_server, 'Testing upload OSM file function',
+    #                        None, api_server.logger)
+    #table.export_arcgis('./testdata/test.gdb', 'poi_sync')
 
 
 def cmdline():
