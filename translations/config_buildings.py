@@ -18,7 +18,7 @@ fieldmap = {
     'BUILDING_FCODE': 'nps:building_fcode',
     'ADMIN_TYPE': 'nps:admin_type',
     'FEDERAL_ENTITY_TYPE': 'nps:federal_entity_type',
-    'POLYGON_NOTES': 'nps:polygon_notes',
+    'POLYGON_NOTES': 'note',
     'BUILDING_ID': 'nps:building_id',
     'IS_SENSITIVE': 'nps:is_sensitive'
 }
