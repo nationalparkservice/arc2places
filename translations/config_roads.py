@@ -8,9 +8,7 @@
 
 # default tags for road *lines* in Places
 defaults = {
-    'highway': 'road',
-    'oneway': 'no',
-    'access': 'no'
+    'highway': 'road'
 }
 
 # values map one to one from field name to OSM tag
@@ -57,29 +55,31 @@ altnames = {
 valuemap = {
     # GIS_FieldName : {GIS_Value: {tag:value, ... }, ...}
     'RDCLASS': {
-        # '*': {'highway': 'road'}  # by default
         'primary': {'highway': 'primary'},
         'secondary': {'highway': 'secondary'},
         'local': {'highway': 'residential'},
-        '4wd': {'4wd_only': 'yes'},
+        '4wd': {'highway': 'road', '4wd_only': 'yes'},
         'service': {
             'highway': 'service',
             'access': 'private'
         },
-        'private': {'access': 'private'}
+        'private': {'highway': 'road', 'access': 'private'}
     },
     'RDSTATUS': {
-        # '*': {'access': 'no'}  # by default
+        'decommissioned': {'access': 'no'},
         'existing': {'access': 'yes'},
+        'temporarily closed': {'access': 'no'},
         'proposed': {
+            'access': 'no',
             'highway': 'proposed'  # conflict with RDCLASS see roads.py for resolution
         },
         'planned': {
+            'access': 'no',
             'highway': 'proposed'  # conflict with RDCLASS see roads.py for resolution
         }
     },
     'RDSURFACE': {
-        # '*': {'surface': 'ground'}  # by fieldmap
+        # *: {'surface': *}  # by fieldmap
         'asphalt': {'surface': 'asphalt'},
         'brick/pavers': {'surface': 'paving_stones'},
         'cobblestone': {'surface': 'cobblestone'},
@@ -91,7 +91,6 @@ valuemap = {
         'native or dirt': {'surface': 'ground'}
     },
     'RDONEWAY': {
-        # '*': {'oneway': 'no'}  # by default
         'with digitized': {'oneway': 'yes'},
         'against digitized': {'oneway': '-1'}
     }
