@@ -8,15 +8,6 @@
 
 # default tags for trail *lines* in Places
 defaults = {
-    # 'highway': 'path',  # not appropriate for 'piste:type' and 'waterway'; set in trails.py if needed.
-    # 'access': 'no',  # unknown unless explicitly set with value from TRLSTATUS
-    # FIXME: decide if default is unknown or denied (currently denied
-    'foot': 'no',
-    'horse': 'no',
-    'bicycle': 'no',
-    'motor_vehicles': 'no',
-    'ski': 'no'
-    # 'wheelchair': 'no',  # eGIS standard is slient on this; defer to any value set in Places
 }
 
 # values map one to one from field name to OSM tag
