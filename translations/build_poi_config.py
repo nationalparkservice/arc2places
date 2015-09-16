@@ -75,10 +75,12 @@ for (k, v) in synonym_flip.items():
     if len(v) > 1:
         ignorelist.append((k, v))
 
+"""
 print '\n\nambiguous alt names\n'
 ignorelist.sort()
 for (k, v) in ignorelist:
     print k, v
+"""
 
 # Add the unambiguous alternative names
 for (k, v) in mylist:
@@ -89,8 +91,12 @@ for (k, v) in valuemap.items():
     mynewlist.append((k, v))
 
 mynewlist.sort()
-print '\n\nfinal value map\n'
-print "    'POITYPE': {"
+result = ""
+result += "    'POITYPE': {\n"
 for (k, v) in mynewlist:
-    print "        '{0}': {1},".format(k, v)
-print "    },"
+    result += "        '{0}': {1},\n".format(k, v)
+result += "    },\n"
+result = result.replace("'*'","'yes'")
+
+print '\n\nfinal value map\n'
+print result
