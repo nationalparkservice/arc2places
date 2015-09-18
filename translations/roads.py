@@ -42,11 +42,12 @@ def filterTags(attrs):
     # http://wiki.openstreetmap.org/wiki/Tag:highway%3Dproposed
     road_status = tools.valueof('rdstatus', altnames, attrs)
     if road_status and (road_status.lower() == 'planned' or road_status.lower() == 'proposed'):
-        road_class = tools.valueof('rdclass', altnames, attrs)
-        if road_class:
+        if 'highway' in tags:
             tags.update({
                 'highway': 'proposed',
-                'proposed': road_class
+                'proposed': tags['highway']
             })
+        else:
+            tags['highway'] = 'proposed'
 
     return tags

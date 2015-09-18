@@ -76,9 +76,8 @@ valuemap = {
     u'rdstatus': {
         u'closed': {u'access': u'no'},
         u'decommissioned': {u'access': u'no'},
-        u'existing': {u'access': u'yes'},
-        u'planned': {u'access': u'no', u'highway': u'proposed'},
-        u'proposed': {u'access': u'no', u'highway': u'proposed'},
+        u'planned': {u'access': u'no'},
+        u'proposed': {u'access': u'no'},
         u'temporarily closed': {u'access': u'no'}
     },
     u'rdsurface': {
