@@ -1,80 +1,66 @@
-# Based on the Places Data Schema revision 6 (5/18/2015)
-# https://github.com/nationalparkservice/places-data/wiki/Places-Data-Schema-Guide
-# with ogr2osm, the GIS field names are case sensitive
-# with arc2osm, all GIS field names are converted to upper case
-# all osm/Places tags should be lower case
-
-# All config files must have defaults, fieldmap, altnames and valuemap
-
-# default tags for generic features in Places
 defaults = {}
 
-# values map one to one from GIS field name to Places tag
-# the GIS field name is guaranteed to be unique (hash table), but not the places tag
-# if the same tag is used in multiple dictionary entries, there is telling which value
-# will be used since the items in a dictionary are unsorted.
 fieldmap = {
-    # GIS_FieldName : Places Tag
-    # 'PLACESID': 'nps:places_id'  # Ignore - managed by system
-    'NAME': 'name',
-    'ALTNAME': 'nps:alt_name',
-    'SHORTNAME': 'nps:short_name',
-    'UNITCODE': 'nps:unit_code',
-    'UNITNAME': 'nps:unit_name',
-    'UNITTYPE': 'nps:unit_type',
-    'GROUPCODE': 'nps:group_code',
-    'REGIONCODE': 'nps:region_code',
-    'LOCATIONID': 'nps:location_id',
-    'ASSETID': 'nps:asset_id',
-    'ISEXTANT': 'nps:is_extant',
-    'MAPMETHOD': 'nps:map_method',
-    'MAPSOURCE': 'source',
-    'SRCESCALE': 'nps:source_scale',
-    'SOURCEDATE': 'nps:source_date',
-    'XYERROR': 'nps:xy_error',
-    'ZERROR': 'nps:z_error',
-    'NOTES': 'note',
-    'RESTRICTION': 'nps:restriction',
-    'DISTRIBUTE': 'nps:distribute',
-    'CREATEDATE': 'nps:create_date',
-    'CREATEUSER': 'nps:create_user',
-    'EDITDATE': 'nps:edit_date',
-    'EDITUSER': 'nps:edit_user',
-    'FEATUREID': 'nps:feature_id',
-    'GEOMETRYID': 'nps:source_system_key_value',
+    u'altname': u'alt_name',
+    u'assetid': u'nps:asset_id',
+    u'createdate': u'nps:create_date',
+    u'createuser': u'nps:create_user',
+    u'distribute': u'nps:distribute',
+    u'editdate': u'nps:edit_date',
+    u'edituser': u'nps:edit_user',
+    u'fcategory': u'nps:feature_category',
+    u'featureid': u'nps:feature_id',
+    u'fnotes': u'nps:feature_note',
+    u'geometryid': u'nps:source_system_key_value',
+    u'groupcode': u'nps:group_code',
+    u'isextant': u'nps:is_extant',
+    u'issensitive': u'nps:is_sensitive',
+    u'locationid': u'nps:location_id',
+    u'mapmethod': u'nps:map_method',
+    u'mapsource': u'source',
+    u'name': u'name',
+    u'notes': u'note',
+    u'regioncode': u'nps:region_code',
+    u'restriction': u'nps:restriction',
+    u'shortname': u'short_name',
+    u'sourcedate': u'nps:source_date',
+    u'srcescale': u'nps:source_scale',
+    u'unitcode': u'nps:unit_code',
+    u'unitname': u'nps:unit_name',
+    u'unittype': u'nps:unit_type',
+    u'xyerror': u'nps:xy_error',
+    u'zerror': u'nps:z_error'
 }
 
-# alternate GIS field names.
-# all of these names in the value's list map to the the same tags as the dictionary key
-# only the keys that match the keys in the fieldmap and/or valuemap will be used.
-# The first fieldname in the list that is found in the dataset is used.
 altnames = {
-    # GIS Standard FieldName: List of alternate spellings of field name
-    'UNITCODE': ['UNIT_CODE'],
-    'UNITNAME': ['UNIT_NAME'],
-    'UNITTYPE': ['UNIT_TYPE'],
-    'GROUPCODE': ['GROUP_CODE', 'ADMIN_UNIT_CODE'],
-    'REGIONCODE': ['REGION_CODE'],
-    'LOCATIONID': ['LOCATION_ID', 'FMSSID', 'FMSS_ID', 'FMSS_LOCATION_ID'],
-    'ASSETID': ['ASSET_ID', 'FMSS_ASSET_ID'],
-    'ISEXTANT': ['IS_EXTANT'],
-    'MAPMETHOD': ['MAP_METHOD'],
-    'MAPSOURCE': ['MAP_SOURCE'],
-    'SRCESCALE': ['SOURCESCALE', 'SOURCE_SCALE'],
-    'SOURCEDATE': ['SOURCE_DATE', 'SRCEDATE'],
-    'XYERROR': ['XY_ERROR', 'HORIZONTALERROR', 'HORIZONTAL_ERROR', 'HERROR'],
-    'ZERROR': ['Z_ERROR', 'VERTICALERROR', 'VERTICAL_ERROR', 'VERROR'],
-    'NOTES': ['GIS_NOTES', 'NOTE', 'GIS_NOTE', 'REMARKS', 'COMMENTS'],
-    'RESTRICTION': ['RESTRICT', 'RESTRICT_STATUS', 'RESTRICTION_STATUS',
-                    'RESTRICTSTATUS', 'RESTRICTIONSTATUS'],
-    'DISTRIBUTE': ['DISTRIBUTION', 'PUBLICLY_DISTRIBUTE',
-                   'PUBLICLYDISTRIBUTE'],
-    'CREATEDATE': ['CREATE_DATE', 'CREATED_DATE'],
-    'CREATEUSER': ['CREATE_USER', 'CREATED_USER'],
-    'EDITDATE': ['EDIT_DATE', 'LAST_EDIT_DATE', 'LAST_EDITED_DATE'],
-    'EDITUSER': ['EDIT_USER', 'LAST_EDIT_USER', 'LAST_EDITED_USER'],
-    'FEATUREID': ['FEATURE_ID'],
-    'GEOMETRYID': ['GEOMETRY_ID'],
+    u'altname': [u'alt_name', u'alternatename', u'altername_name', u'altnames', u'alt_names', u'alternatenames', u'altername_names'],
+    u'assetid': [u'asset_id', u'fmss_asset_id'],
+    u'createdate': [u'create_date', u'created_date'],
+    u'createuser': [u'create_user', u'created_user'],
+    u'distribute': [u'distribution', u'publicly_distribute', u'publiclydistribute'],
+    u'editdate': [u'edit_date', u'last_edit_date', u'last_edited_date'],
+    u'edituser': [u'edit_user', u'last_edit_user', u'last_edited_user'],
+    u'fcategory': [u'category', u'f_category', u'featurecategory', u'feature_category'],
+    u'featureid': [u'feature_id'],
+    u'fnotes': [u'f_notes', u'f_note', u'feature_note', u'feature_notes', u'fnote', u'featurenote', u'featurenotes'],
+    u'geometryid': [u'geometry_id', u'globalid', u'objectid', u'fid', u'oid'],
+    u'groupcode': [u'group_code', u'admin_unit_code'],
+    u'isextant': [u'is_extant'],
+    u'issensitive': [u'is_sensitive', u'issensitiv'],
+    u'locationid': [u'location_id', u'fmssid', u'fmss_id', u'fmss_location_id'],
+    u'mapmethod': [u'map_method'],
+    u'mapsource': [u'map_source'],
+    u'notes': [u'gis_notes', u'note', u'gis_note', u'remarks', u'comments'],
+    u'regioncode': [u'region_code'],
+    u'restriction': [u'restrict', u'restrictio', u'restrict_status', u'restriction_status', u'restrictstatus', u'restrictionstatus'],
+    u'shortname': [u'short_name'],
+    u'sourcedate': [u'source_date', u'srcedate'],
+    u'srcescale': [u'sourcescale', u'source_scale'],
+    u'unitcode': [u'unit_code'],
+    u'unitname': [u'unit_name'],
+    u'unittype': [u'unit_type'],
+    u'xyerror': [u'xy_error', u'horizontalerror', u'horizontal_error', u'herror'],
+    u'zerror': [u'z_error', u'verticalerror', u'vertical_error', u'verror']
 }
 
 valuemap = {}

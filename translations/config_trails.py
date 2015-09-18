@@ -1,196 +1,179 @@
-# Based on the Places Data Schema revision 6 (5/18/2015)
-# https://github.com/nationalparkservice/places-data/wiki/Places-Data-Schema-Guide
-# with ogr2osm, the GIS field names are case sensitive
-# with arc2osm, all GIS field names are converted to upper case
-# all osm/Places tags should be lower case
+defaults = {}
 
-# All config files must have defaults, fieldmap, altnames and valuemap
-
-# default tags for trail *lines* in Places
-defaults = {
-}
-
-# values map one to one from field name to OSM tag
 fieldmap = {
-    # GIS_FieldName : Places Tag
-    'TRLNAME': 'nps:trail_name',
-    'TRLALTNAME': 'nps:trail_alt_name',
-    'TRLLABEL': 'name',
-    'TRLFEATTYPE': 'nps:trail_feat_type',
-    'TRLSTATUS': 'nps:trail_status',
-    'TRLTYPE': 'nps:trail_type',
-    'TRLTRACK': 'nps:trail_track',
-    'TRLCLASS': 'tracktype',
-    'TRLUSE': 'nps:trail_uses',
-    'TRLISADMIN': 'nps:trail_is_admin',
-    'TRLDESC': 'nps:trail_description',
-    'WHLENGTH': 'nps:trail_wheel_length',
-    'WHLENUOM': 'nps:trail_wheel_length_UOM',
-    # Non-standard (pre-standard) attributes
-    'TRLSURFACE': 'surface'
+    u'trlaltname': u'alt_name',
+    u'trlclass': u'tracktype',
+    u'trldesc': u'nps:trail_description',
+    u'trlfeattype': u'nps:trail_feat_type',
+    u'trlisadmin': u'nps:trail_is_admin',
+    u'trllabel': u'name',
+    u'trlname': u'official_name',
+    u'trlstatus': u'nps:trail_status',
+    u'trlsurface': u'surface',
+    u'trltrack': u'nps:trail_track',
+    u'trltype': u'nps:trail_type',
+    u'trluse': u'nps:trail_uses',
+    u'whlength': u'nps:trail_wheel_length',
+    u'whlenuom': u'nps:trail_wheel_length_uom'
 }
 
-# alternate GIS field names.
-# FIXME: coordinate with aliases in data standard
 altnames = {
-    # GIS Standard FieldName: List of alternate spellings of field name
-    'TRLNAME': ['NAME', 'TRAILNAME', 'TRL_NAME', 'TRAIL_NAME'],
-    'TRLALTNAME': ['ALTNAME', 'TRAILALTNAME', 'TRL_ALTNAME', 'TRAIL_ALTNAME',
-                   'TRLALTNAMES', 'ALTNAMES', 'TRAILALTNAMES', 'TRL_ALTNAMES',
-                   'TRAIL_ALTNAMES'],
-    'TRLLABEL': ['LABEL', 'TRAILLABEL', 'TRL_LABEL', 'TRAIL_LABEL'],
-    'TRLFEATTYPE': ['FEATTYPE', 'FEATURETYPE', 'FEATURE_TYPE', 'TRL_FEAT_TYPE',
-                    'TRAILFEATURETYPE', 'TRAIL_FEATURE_TYPE'],
-    'TRLSTATUS': ['STATUS', 'TRAILSTATUS', 'TRL_STATUS', 'TRAIL_STATUS'],
-    'TRLSURFACE': ['SURFACE', 'TRAILSURFACE', 'TRL_SURFACE', 'TRAIL_SURFACE'],
-    'TRLTYPE': ['TYPE', 'TRAILTYPE', 'TRL_TYPE', 'TRAIL_TYPE'],
-    'TRLTRACK': ['TRACK', 'TRAILTRACK', 'TRL_TRACK', 'TRAIL_TRACK'],
-    'TRLCLASS': ['CLASS', 'TRAILCLASS', 'TRL_CLASS', 'TRAIL_CLASS'],
-    'TRLUSE': ['USE', 'TRAILUSE', 'TRL_USE', 'TRAIL_USE', 'USES', 'TRAILUSES',
-               'TRLUSES', 'TRL_USES', 'TRAIL_USES'],
-    'TRLISADMIN': ['ISADMIN', 'TRAILISADMIN', 'TRL_ISADMIN', 'TRAIL_ISADMIN', 'ADMIN', 'ADMINISTRATIVE'],
-    'TRLDESC': ['TRL_DESC', 'TRAIL_DESC', 'TRAILDESC', 'DESCRIPTION', 'TRAIL_DESCRIPTION'],
-    'WHLENGTH': ['WH_LENGTH', 'WHEEL_LENGTH'],
-    'WHLENUOM': ['WH_LEN_UOM', 'WH_LENGTH_UOM', 'WHEEL_LENGTH_UOM']
+    u'trlaltname': [u'altname', u'alt_name', u'alternatename', u'altername_name', u'trl_altname', u'trl_alt_name', u'trlalternatename', u'trl_alternamename', u'trl_altername_name', u'trailaltname', u'trail_altname', u'trail_alt_name', u'trailalternatename', u'trail_alternamename', u'trail_altername_name', u'altnames', u'alt_names', u'alternatenames', u'altername_names', u'trlaltnames', u'trl_altnames', u'trl_alt_names', u'trlalternatenames', u'trl_alternamenames', u'trl_altername_names', u'trailaltnames', u'trail_altnames', u'trail_alt_names', u'trailalternatenames', u'trail_alternamenames', u'trail_altername_names'],
+    u'trlclass': [u'class', u'trailclass', u'trl_class', u'trail_class'],
+    u'trldesc': [u'trl_desc', u'trail_desc', u'traildesc', u'description', u'trail_description'],
+    u'trlfeattype': [u'feattype', u'feat_type', u'featuretype', u'feature_type', u'trl_feattype', u'trl_feat_type', u'trailfeaturetype', u'trail_feature_type', u'trlfeattyp'],
+    u'trlisadmin': [u'isadmin', u'trailisadmin', u'trl_isadmin', u'trail_isadmin', u'admin', u'administrative'],
+    u'trllabel': [u'label', u'traillabel', u'trl_label', u'trail_label', u'trlname', u'name', u'trailname', u'trl_name', u'trail_name'],
+    u'trlname': [u'name', u'trailname', u'trl_name', u'trail_name'],
+    u'trlstatus': [u'status', u'trailstatus', u'trl_status', u'trail_status'],
+    u'trlsurface': [u'surface', u'trailsurface', u'trl_surface', u'trail_surface'],
+    u'trltrack': [u'track', u'trailtrack', u'trl_track', u'trail_track'],
+    u'trltype': [u'type', u'trailtype', u'trl_type', u'trail_type'],
+    u'trluse': [u'use', u'alloweduse', u'allowed_use', u'trailuse', u'trl_use', u'trail_use', u'uses', u'alloweduses', u'allowed_uses', u'trailuses', u'trluses', u'trl_uses', u'trail_uses'],
+    u'whlength': [u'wh_length', u'wheel_length'],
+    u'whlenuom': [u'wh_len_uom', u'wh_length_uom', u'wheel_length_uom']
 }
 
-# GIS field names where different values map to a specific set of Places tags
 valuemap = {
-    # GIS_FieldName : {GIS_Value: {tag:value, ... }, ...}
-    'TRLFEATTYPE': {
-        'nht': {
-            'informal': 'no'
-        },
-        'nst': {
-            'informal': 'no'
-        },
-        'park trail': {
-            'informal': 'no'
-        },
-        'route path': {
-            'informal': 'yes'
-        },
-        'unmaintained trail': {
-            'informal': 'yes'
-        },
-        'unofficial trail': {
-            'informal': 'yes'
-        },
-        'sidewalk': {
-            'highway': 'footway',
-            'footway': 'sidewalk'
-        }
+    u'isbridge': {
+        u'true': {u'bridge': u'yes'},
+        u'y': {u'bridge': u'yes'},
+        u'yes': {u'bridge': u'yes'}
     },
-    'TRLTYP': {
-        'snow trail': {'piste:type': 'yes'},
-        'water trail': {'waterway': 'yes'},
-        'standard terra trail': {'highway': 'path'}
+    u'istunnel': {
+        u'true': {u'tunnel': u'yes'},
+        u'y': {u'tunnel': u'yes'},
+        u'yes': {u'tunnel': u'yes'}
     },
-    'TRLCLASS': {
-        # '*': {'tracktype': '*'}  # by fieldmap
-        '2110': {'tracktype': 'grade5'},
-        '2120': {'tracktype': 'grade4'},
-        '2130': {'tracktype': 'grade3'},
-        '2140': {'tracktype': 'grade2'},
-        '2150': {'tracktype': 'grade1'}
+    u'trlclass': {
+        u'2110': {u'tracktype': u'grade5'},
+        u'2120': {u'tracktype': u'grade4'},
+        u'2130': {u'tracktype': u'grade3'},
+        u'2140': {u'tracktype': u'grade2'},
+        u'2150': {u'tracktype': u'grade1'},
+        u'class 1': {u'tracktype': u'grade5'},
+        u'class 1: minimally developed': {u'tracktype': u'grade5'},
+        u'class 2': {u'tracktype': u'grade4'},
+        u'class 2: moderately developed': {u'tracktype': u'grade4'},
+        u'class 3': {u'tracktype': u'grade3'},
+        u'class 3: developed': {u'tracktype': u'grade3'},
+        u'class 4': {u'tracktype': u'grade2'},
+        u'class 4: highly developed': {u'tracktype': u'grade2'},
+        u'class 5': {u'tracktype': u'grade1'},
+        u'class 5: fully developed': {u'tracktype': u'grade1'},
+        u'developed': {u'tracktype': u'grade3'},
+        u'fully developed': {u'tracktype': u'grade1'},
+        u'highly developed': {u'tracktype': u'grade2'},
+        u'minimally developed': {u'tracktype': u'grade5'},
+        u'moderately developed': {u'tracktype': u'grade4'}
     },
-    'TRLSTATUS': {
-        'existing': {'access': 'yes'},
-        'temporarily closed': {'access': 'no'},
-        'decommissioned': {'access': 'no'},
-        'proposed': {
-            'access': 'no',
-            # 'highway': 'proposed'  # TODO: conflict with 'highway':'*' see trails.py for resolution
-        },
-        'planned': {
-            'access': 'no',
-            # 'highway': 'proposed'  # TODO: conflict with 'highway':'*' see trails.py for resolution
-        }
+    u'trlfeattype': {
+        u'nht': {u'informal': u'no'},
+        u'nst': {u'informal': u'no'},
+        u'park trail': {u'informal': u'no'},
+        u'park trail (only)': {u'informal': u'no'},
+        u'route path': {u'informal': u'yes'},
+        u'sidewalk': {u'footway': u'sidewalk', u'highway': u'footway'},
+        u'social trail': {u'informal': u'yes'},
+        u'unmaintained trail': {u'informal': u'yes'},
+        u'unofficial trail': {u'informal': u'yes'}
     },
-    'TRLUSE': {
-        # FIXME: undefined result when multiple conflicting tags are allowed (i.e. hike and atv)
-        'hiker/pedestrian': {
-            'highway': 'path',
-            'foot': 'yes'
-        },
-        'pack and saddle': {
-            'highway': 'path',
-            'horse': 'yes'
-        },
-        'bicycle': {
-            'highway': 'path',
-            'bicycle': 'yes'
-        },
-        'motorcycle': {
-            'highway': 'track',
-            'motorcycle': 'yes'
-        },
-        'all-terrain vehicle': {
-            'highway': 'track',
-            'atv': 'yes'
-        },
-        'four-wheel drive vehicle > 50" in tread width': {
-            'highway': 'track',
-            '4wd_only': 'yes'
-        },
-        'backcountry ski': {
-            'piste:type': 'skitour',
-            'ski': 'yes'
-        },
-        'cross-country ski': {
-            'piste:type': 'nordic',
-            'ski': 'yes'
-        },
-        'downhill ski': {
-            'piste:type': 'downhill',
-            'ski': 'yes'
-        },
-        'dog sled': {
-            'piste:type': 'sleigh'
-        },
-        'snowshoe': {
-            'piste:type': 'hike'
-        },
-        'snowmobile': {
-            'highway': 'track',
-            'snowmobile': 'yes'
-        },
-        'motorized watercraft': {
-            'motorboat': 'yes',
-            'waterway': 'yes'
-        },
-        'non-motorized watercraft': {
-            'canoe': 'yes',
-            'waterway': 'yes'
-        },
-        'human use (social)': {
-            'highway': 'path',
-            'foot': 'yes',
-            'informal': 'yes'
-        },
-        'non-human use (animal)': {
-            'highway': 'path',
-            'informal': 'yes'
-        },
+    u'trlstatus': {
+        u'closed': {u'access': u'no'},
+        u'decommissioned': {u'access': u'no'},
+        u'existing': {u'access': u'yes'},
+        u'planned': {u'access': u'no'},
+        u'proposed': {u'access': u'no'},
+        u'temporarily closed': {u'access': u'no'}
+    },
+    u'trltype': {
+        u'snow trail': {u'piste:type': u'yes'},
+        u'standard terra trail': {u'highway': u'path'},
+        u'water trail': {u'waterway': u'yes'}
+    },
+    u'trluse': {
+        u'4 wheeler': {u'4wd_only': u'yes', u'highway': u'track'},
+        u'4wd': {u'4wd_only': u'yes', u'highway': u'track'},
+        u'all terrain vehicle': {u'atv': u'yes', u'highway': u'track'},
+        u'all-terrain vehicle trail': {u'atv': u'yes', u'highway': u'track'},
+        u'alpine': {u'piste:type': u'downhill'},
+        u'alpine ski': {u'piste:type': u'downhill'},
+        u'alpine ski trail': {u'piste:type': u'downhill'},
+        u'animal trail': {u'highway': u'path'},
+        u'atv': {u'atv': u'yes', u'highway': u'track'},
+        u'atv trail': {u'atv': u'yes', u'highway': u'track'},
+        u'backcountry': {u'piste:type': u'skitour'},
+        u'backcountry ski': {u'piste:type': u'skitour'},
+        u'backcountry ski trail': {u'piste:type': u'skitour'},
+        u'bicycle': {u'bicycle': u'yes', u'highway': u'path'},
+        u'bicycle trail': {u'bicycle': u'yes', u'highway': u'path'},
+        u'bridleway': {u'horse': u'yes', u'highway': u'path'},
+        u'canoe': {u'waterway': u'yes', u'canoe': u'yes'},
+        u'canyoneering': {u'sport': u'canyoning', u'highway': u'path'},
+        u'canyoneering route': {u'sport': u'canyoning', u'highway': u'path'},
+        u'climbing route': {u'sport': u'climbing', u'highway': u'path'},
+        u'climing': {u'sport': u'climbing', u'highway': u'path'},
+        u'cross-country': {u'piste:type': u'nordic'},
+        u'cross-country ski': {u'piste:type': u'nordic'},
+        u'cross-country ski trail': {u'piste:type': u'nordic'},
+        u'dog sled': {u'piste:type': u'sleigh'},
+        u'dog sled trail': {u'piste:type': u'sleigh'},
+        u'downhill': {u'piste:type': u'downhill'},
+        u'downhill ski': {u'piste:type': u'downhill'},
+        u'downhill ski trail': {u'piste:type': u'downhill'},
+        u'equestrian': {u'horse': u'yes', u'highway': u'path'},
+        u'equestrian trail': {u'horse': u'yes', u'highway': u'path'},
+        u'ferry': {u'route': u'ferry'},
+        u'ferry route': {u'route': u'ferry'},
+        u'footpath': {u'highway': u'path'},
+        u'four-wheel drive trail': {u'4wd_only': u'yes', u'highway': u'track'},
+        u'four-wheel drive vehicle > 50 in tread width': {u'4wd_only': u'yes', u'highway': u'track'},
+        u'four-wheeler': {u'4wd_only': u'yes', u'highway': u'track'},
+        u'hike': {u'highway': u'path'},
+        u'hiker/pedestrian': {u'highway': u'path'},
+        u'hiking': {u'highway': u'path'},
+        u'horse': {u'horse': u'yes', u'highway': u'path'},
+        u'horse riding': {u'horse': u'yes', u'highway': u'path'},
+        u'horseback riding trail': {u'horse': u'yes', u'highway': u'path'},
+        u'human use (social)': {u'highway': u'path'},
+        u'kayak': {u'waterway': u'yes', u'canoe': u'yes'},
+        u'motorboat': {u'waterway': u'yes', u'motorboat': u'yes'},
+        u'motorcycle': {u'motorcycle': u'yes', u'highway': u'track'},
+        u'motorcycle trail': {u'motorcycle': u'yes', u'highway': u'track'},
+        u'motorized': {u'highway': u'track'},
+        u'motorized trail': {u'highway': u'track'},
+        u'motorized watercraft': {u'waterway': u'yes', u'motorboat': u'yes'},
+        u'motorized watercraft trail': {u'waterway': u'yes', u'motorboat': u'yes'},
+        u'mountain climbing': {u'sport': u'climbing', u'highway': u'path'},
+        u'mountain climbing route': {u'sport': u'climbing', u'highway': u'path'},
+        u'mushing': {u'piste:type': u'sleigh'},
+        u'mushing trail': {u'piste:type': u'sleigh'},
+        u'non-human use (animal)': {u'highway': u'path'},
+        u'non-motorized': {u'highway': u'path'},
+        u'non-motorized watercraft': {u'waterway': u'yes', u'canoe': u'yes'},
+        u'non-motorized watercraft trail': {u'waterway': u'yes', u'canoe': u'yes'},
+        u'nordic': {u'piste:type': u'nordic'},
+        u'nordic ski': {u'piste:type': u'nordic'},
+        u'nordic ski trail': {u'piste:type': u'nordic'},
+        u'pack and saddle': {u'horse': u'yes', u'highway': u'path'},
+        u'pedestrian path': {u'highway': u'footway'},
+        u'pedestrian trail': {u'highway': u'footway'},
+        u'quad': {u'atv': u'yes', u'highway': u'track'},
+        u'raft': {u'waterway': u'yes', u'canoe': u'yes'},
+        u'sidewalk': {u'footway': u'sidewalk', u'highway': u'footway'},
+        u'snow machine': {u'snowmobile': u'yes', u'highway': u'track'},
+        u'snowmobile': {u'snowmobile': u'yes', u'highway': u'track'},
+        u'snowmobile trail': {u'snowmobile': u'yes', u'highway': u'track'},
+        u'snowshoe': {u'piste:type': u'hike'},
+        u'snowshoe trail': {u'piste:type': u'hike'},
+        u'social trail': {u'highway': u'path'},
+        u'staircase': {u'highway': u'steps'},
+        u'stairs': {u'highway': u'steps'},
+        u'steps': {u'highway': u'steps'},
+        u'trackway': {u'highway': u'path'},
+        u'trail': {u'highway': u'path'},
+        u'walk': {u'highway': u'path'},
+        u'winter track': {u'piste:type': u'sleigh'},
+        u'xcs': {u'piste:type': u'nordic'}
     }
-}
-
-# Special case
-# for when trail use is collection of fields with yes/no values
-trailusefields = {
-    # Trail use value code : Matching boolean field name
-    'hiker/pedestrian': 'TRLUSE_FOOT',
-    'pack and saddle': 'TRLUSE_HORSE',
-    'bicycle': 'TRLUSE_BICYCLE',
-    'motorcycle': 'TRLUSE_MOTORCYCLE',
-    'all-terrain vehicle': 'TRLUSE_ATV',
-    'four-wheel drive vehicle > 50" in tread width': 'TRLUSE_4WD',
-    'cross-country ski': 'TRLUSE_NORDIC',
-    'downhill ski': 'TRLUSE_DOWNHILL',
-    'dog sled': 'TRLUSE_DOGSLED',
-    'snowshoe': 'TRLUSE_SNOWSHOE',
-    'snowmobile': 'TRLUSE_SNOWMOBILE',
-    'motorized watercraft': 'TRLUSE_MOTORBOAT',
-    'non-motorized watercraft': 'TRLUSE_CANOE'
-    # FIXME: TRLUSE_CANYONEERING, etc
 }

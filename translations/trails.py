@@ -39,6 +39,7 @@ def filterTags(attrs):
     # trail use may be a delimeter separated list of values
     # these are permitted activities;  FIXME: Are other activities denied or unknown? (currently denied)
     # (this requires a slightly modified version of generic.maptags)
+    # FIXME: split on '|' first.  we do not want 'motorized' to match '...|non-motorized|...'
     usefieldname = 'TRLUSE'
     trailusemap = valuemap[usefieldname]
     value = tools.valueof(usefieldname, altnames, attrs)
@@ -47,6 +48,26 @@ def filterTags(attrs):
         for trailusecode in trailusemap:
             if trailusecode in value_lower:
                 tags.update(trailusemap[trailusecode])
+
+    # Special case
+    # for when trail use is collection of fields with yes/no values
+    trailusefields = {
+        # Trail use value code : Matching boolean field name
+        'hiker/pedestrian': 'TRLUSE_FOOT',
+        'pack and saddle': 'TRLUSE_HORSE',
+        'bicycle': 'TRLUSE_BICYCLE',
+        'motorcycle': 'TRLUSE_MOTORCYCLE',
+        'all-terrain vehicle': 'TRLUSE_ATV',
+        'four-wheel drive vehicle > 50" in tread width': 'TRLUSE_4WD',
+        'cross-country ski': 'TRLUSE_NORDIC',
+        'downhill ski': 'TRLUSE_DOWNHILL',
+        'dog sled': 'TRLUSE_DOGSLED',
+        'snowshoe': 'TRLUSE_SNOWSHOE',
+        'snowmobile': 'TRLUSE_SNOWMOBILE',
+        'motorized watercraft': 'TRLUSE_MOTORBOAT',
+        'non-motorized watercraft': 'TRLUSE_CANOE'
+        # FIXME: TRLUSE_CANYONEERING, etc
+    }
 
     # trail use may be a collection of fields with yes/no values
     # FIXME a missing column or null/unknown value is same as negative value (i.e. it is denied not unspecified)

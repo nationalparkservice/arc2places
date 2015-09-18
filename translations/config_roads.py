@@ -1,97 +1,108 @@
-# Based on the Places Data Schema revision 6 (5/18/2015)
-# https://github.com/nationalparkservice/places-data/wiki/Places-Data-Schema-Guide
-# with ogr2osm, the GIS field names are case sensitive
-# with arc2osm, all GIS field names are converted to upper case
-# all osm/Places tags should be lower case
-
-# All config files must have defaults, fieldmap, altnames and valuemap
-
-# default tags for road *lines* in Places
 defaults = {
-    'highway': 'road'
+    u'highway': u'road'
 }
 
-# values map one to one from field name to OSM tag
 fieldmap = {
-    # GIS_FieldName : Places Tag
-    'RDNAME': 'nps:road_name',
-    'RDALTNAME': 'nps:road_alt_name',
-    'RDLABEL': 'name',
-    'RDSTATUS': 'nps:road_status',
-    'RDCLASS': 'nps:road_class',
-    'RDSURFACE': 'surface',
-    'MAINTAINER': 'nps:road_maintainer',
-    'RDLANES': 'lanes',
-    'ROUTEID': 'nps:route_id',
-    'RTENUMBER': 'nps:route_number'
+    u'maintainer': u'nps:road_maintainer',
+    u'rdaltname': u'alt_name',
+    u'rdclass': u'nps:road_class',
+    u'rdlabel': u'name',
+    u'rdlanes': u'lanes',
+    u'rdname': u'official_name',
+    u'rdoneway': u'oneway',
+    u'rdstatus': u'nps:road_status',
+    u'rdsurface': u'surface',
+    u'routeid': u'nps:route_id',
+    u'rtenumber': u'nps:route_number'
 }
 
-# alternate GIS field names.
 altnames = {
-    # GIS Standard FieldName: List of alternate spellings of field name
-    'RDNAME': ['NAME', 'ROADNAME', 'RD_NAME', 'ROAD_NAME'],
-    'RDALTNAME': ['ALTNAME', 'ROADALTNAME', 'RD_ALTNAME', 'ROAD_ALTNAME',
-                  'ALTERNAME_NAME', 'ALTERNATENAME', 'ALTNAMES',
-                  'ROADALTNAMES', 'RD_ALTNAMES', 'ROAD_ALTNAMES',
-                  'ALTERNAME_NAMES', 'ALTERNATENAMES'],
-    'RDLABEL': ['LABEL', 'ROADLABEL', 'RD_LABEL', 'ROAD_LABEL'],
-    'RDSTATUS': ['STATUS', 'ROADSTATUS', 'RD_STATUS', 'ROAD_STATUS'],
-    'RDCLASS': ['CLASS', 'ROADCLASS', 'RD_CLASS', 'ROAD_CLASS',
-                'ADMINISTRATIVE_ROAD_CLASS'],
-    'RDSURFACE': ['SURFACE', 'ROADSURFACE', 'RD_SURFACE', 'ROAD_SURFACE'],
-    'MAINTAINER': ['RDMAINTAINER', 'ROADMAINTAINER', 'RD_MAINTAINER',
-                   'ROAD_MAINTAINER', 'PRIMARYROADMAINTAINER',
-                   'PRIMARY_ROAD_MAINTAINER'],
-    'RDONEWAY': ['ONEWAY', 'ONE_WAY', 'ROADONEWAY', 'ROAD_ONE_WAY',
-                 'RD_ONE_WAY'],
-    'RDLANES': ['LANES', 'ROADLANES', 'RD_LANES', 'ROAD_LANES',
-                'NUMBEROFLANES', 'NUMBER_OF_LANES'],
-
-    'ROUTEID': ['ROUTE', 'ROUTE_ID', 'FHWA_NPS_ROUTE_ID'],
-    'RTENUMBER': ['RTE_NUMBER', 'ROUTENUMBER', 'ROUTE_NUMBER']
+    u'maintainer': [u'rdmaintainer', u'roadmaintainer', u'rd_maintainer', u'road_maintainer', u'primaryroadmaintainer', u'primary_road_maintainer'],
+    u'rdaltname': [u'altname', u'alt_name', u'alternatename', u'altername_name', u'rd_altname', u'rd_alt_name', u'rdalternatename', u'rd_alternamename', u'rd_altername_name', u'roadaltname', u'road_altname', u'road_alt_name', u'roadalternatename', u'road_alternamename', u'road_altername_name', u'altnames', u'alt_names', u'alternatenames', u'altername_names', u'rdaltnames', u'rd_altnames', u'rd_alt_names', u'rdalternatenames', u'rd_alternamenames', u'rd_altername_names', u'roadaltnames', u'road_altnames', u'road_alt_names', u'roadalternatenames', u'road_alternamenames', u'road_altername_names'],
+    u'rdclass': [u'class', u'roadclass', u'rd_class', u'road_class', u'administrative_road_class'],
+    u'rdlabel': [u'label', u'roadlabel', u'rd_label', u'road_label', u'rdname', u'name', u'roadname', u'rd_name', u'road_name'],
+    u'rdlanes': [u'lanes', u'roadlanes', u'rd_lanes', u'road_lanes', u'numberoflanes', u'number_of_lanes'],
+    u'rdname': [u'name', u'roadname', u'rd_name', u'road_name'],
+    u'rdoneway': [u'oneway', u'one_way', u'roadoneway', u'rd_oneway', u'road_oneway', u'road_one_way'],
+    u'rdstatus': [u'status', u'roadstatus', u'rd_status', u'road_status'],
+    u'rdsurface': [u'surface', u'roadsurface', u'rd_surface', u'road_surface'],
+    u'routeid': [u'route', u'route_id', u'fhwa_nps_route_id'],
+    u'rtenumber': [u'rte_number', u'routenumber', u'route_number']
 }
 
-# GIS field names where different values map to a specific set of Places tags
 valuemap = {
-    # GIS_FieldName : {GIS_Value: {tag:value, ... }, ...}
-    'RDCLASS': {
-        'primary': {'highway': 'primary'},
-        'secondary': {'highway': 'secondary'},
-        'local': {'highway': 'residential'},
-        '4wd': {'highway': 'road', '4wd_only': 'yes'},
-        'service': {
-            'highway': 'service',
-            'access': 'private'
-        },
-        'private': {'highway': 'road', 'access': 'private'}
+    u'isbridge': {
+        u'true': {u'bridge': u'yes'},
+        u'y': {u'bridge': u'yes'},
+        u'yes': {u'bridge': u'yes'}
     },
-    'RDSTATUS': {
-        'decommissioned': {'access': 'no'},
-        'existing': {'access': 'yes'},
-        'temporarily closed': {'access': 'no'},
-        'proposed': {
-            'access': 'no',
-            'highway': 'proposed'  # conflict with RDCLASS see roads.py for resolution
-        },
-        'planned': {
-            'access': 'no',
-            'highway': 'proposed'  # conflict with RDCLASS see roads.py for resolution
-        }
+    u'istunnel': {
+        u'true': {u'tunnel': u'yes'},
+        u'y': {u'tunnel': u'yes'},
+        u'yes': {u'tunnel': u'yes'}
     },
-    'RDSURFACE': {
-        # *: {'surface': *}  # by fieldmap
-        'asphalt': {'surface': 'asphalt'},
-        'brick/pavers': {'surface': 'paving_stones'},
-        'cobblestone': {'surface': 'cobblestone'},
-        'concrete': {'surface': 'concrete'},
-        'gravel': {'surface': 'gravel'},
-        'paved other': {'surface': 'paved'},
-        'sand': {'surface': 'sand'},
-        'unpaved other': {'surface': 'unpaved'},
-        'native or dirt': {'surface': 'ground'}
+    u'rdclass': {
+        u'4wd': {u'4wd_only': u'yes', u'highway': u'road'},
+        u'access road': {u'access': u'private', u'highway': u'service'},
+        u'four-wheel drive road': {u'4wd_only': u'yes', u'highway': u'road'},
+        u'highway': {u'highway': u'primary'},
+        u'highway link': {u'highway': u'primary'},
+        u'local': {u'highway': u'residential'},
+        u'minor road': {u'highway': u'residential'},
+        u'parking aisle': {u'access': u'private', u'highway': u'service'},
+        u'pedestrian street': {u'highway': u'residential'},
+        u'primary': {u'highway': u'primary'},
+        u'primary link': {u'highway': u'primary'},
+        u'primary road': {u'highway': u'primary'},
+        u'private': {u'access': u'private', u'highway': u'road'},
+        u'private road': {u'access': u'private', u'highway': u'road'},
+        u'residential road': {u'highway': u'residential'},
+        u'road': {u'highway': u'residential'},
+        u'secondary': {u'highway': u'secondary'},
+        u'secondary link': {u'highway': u'secondary'},
+        u'secondary road': {u'highway': u'secondary'},
+        u'service': {u'access': u'private', u'highway': u'service'},
+        u'tertiary link': {u'highway': u'secondary'},
+        u'tertiary road': {u'highway': u'secondary'},
+        u'unknown road': {u'highway': u'residential'}
     },
-    'RDONEWAY': {
-        'with digitized': {'oneway': 'yes'},
-        'against digitized': {'oneway': '-1'}
+    u'rdoneway': {
+        u'against digitized': {u'oneway': u'-1'},
+        u'backwards': {u'oneway': u'-1'},
+        u'forward': {u'oneway': u'yes'},
+        u'with digitized': {u'oneway': u'yes'},
+        u'yes': {u'oneway': u'yes'}
+    },
+    u'rdstatus': {
+        u'closed': {u'access': u'no'},
+        u'decommissioned': {u'access': u'no'},
+        u'existing': {u'access': u'yes'},
+        u'planned': {u'access': u'no', u'highway': u'proposed'},
+        u'proposed': {u'access': u'no', u'highway': u'proposed'},
+        u'temporarily closed': {u'access': u'no'}
+    },
+    u'rdsurface': {
+        u'asphalt': {u'surface': u'asphalt'},
+        u'brick': {u'surface': u'paving_stones'},
+        u'brick/pavers': {u'surface': u'paving_stones'},
+        u'bricks': {u'surface': u'paving_stones'},
+        u'cobbles': {u'surface': u'cobblestone'},
+        u'cobblestone': {u'surface': u'cobblestone'},
+        u'cobblestones': {u'surface': u'cobblestone'},
+        u'concrete': {u'surface': u'concrete'},
+        u'dirt': {u'surface': u'ground'},
+        u'gravel': {u'surface': u'gravel'},
+        u'ground': {u'surface': u'ground'},
+        u'native': {u'surface': u'ground'},
+        u'native or dirt': {u'surface': u'ground'},
+        u'other, paved': {u'surface': u'paved'},
+        u'other, unpaved': {u'surface': u'unpaved'},
+        u'paved': {u'surface': u'paved'},
+        u'paved other': {u'surface': u'paved'},
+        u'pavers': {u'surface': u'paving_stones'},
+        u'paving stones': {u'surface': u'paving_stones'},
+        u'sand': {u'surface': u'sand'},
+        u'unpaved': {u'surface': u'unpaved'},
+        u'unpaved other': {u'surface': u'unpaved'}
     }
 }
