@@ -76,6 +76,8 @@ def filterTags(attrs):
         if flag and (flag.lower() == 'true' or flag.lower() == 'yes' or flag.lower() == 'y'):
             tags.update(trailusemap[trailusecode])
 
+    # FIXME: Add additional code to handle conflicts with highway tag in TRLTYP and TRLUSE; footway wins
+
     # highway is not defined and piste:type is not defined, add highway = path
     if 'highway' not in tags and 'piste:type' not in tags and 'waterway' not in tags:
         tags['highway'] = 'path'
@@ -84,22 +86,24 @@ def filterTags(attrs):
     # and thier 'proposed' value set to thier 'highway' value
     # similar to the OSM standard for roads
     # http://wiki.openstreetmap.org/wiki/Tag:highway%3Dproposed
-    trail_status = tools.valueof('TRLSTATUS', altnames, attrs)
+    trail_status = tools.valueof('trlstatus', altnames, attrs)
     if trail_status and (trail_status.lower() == 'planned' or trail_status.lower() == 'proposed'):
         if 'highway' in tags:
             tags.update({
                 'highway': 'proposed',
                 'proposed': tags['highway']
             })
-        if 'piste:type' in tags:
+        elif 'piste:type' in tags:
             tags.update({
                 'piste:type': 'proposed',
                 'proposed': tags['piste:type']
             })
-        if 'waterway' in tags:
+        elif 'waterway' in tags:
             tags.update({
                 'waterway': 'proposed',
                 'proposed': tags['waterway']
             })
+        else:
+            tags['proposed'] = 'yes'
 
     return tags
