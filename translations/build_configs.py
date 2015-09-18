@@ -103,10 +103,7 @@ def valuemap_from_presets_internal(selector, lead='    ', debug=False, as_string
             if not altnames:
                 continue
             try:
-                # FIXME: convert 'altNames' column to a JSON list
-                # TODO: Add all eGIS TRLUSE values to altNames in NPS_Preset_Classes
-                # altnames = json.loads(altnames)
-                altnames = altnames[1:][:-1].replace('"', '').split(',')
+                altnames = json.loads(altnames)
             except (ValueError, IndexError):
                 print u"Unable to decode altName for {0} on line {2} of NPS_Preset_Classes".format(name, line)
                 continue
