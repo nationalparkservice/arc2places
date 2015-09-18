@@ -13,14 +13,13 @@
       <nd ref="-2"/>
       <nd ref="-3"/>
       <nd ref="-4"/>
-      <tag k="nps:road_name" v="road1"/>
       <tag k="lanes" v="1"/>
       <tag k="nps:is_extant" v="Yes"/>
       <tag k="surface" v="asphalt"/>
+      <tag k="official_name" v="road1"/>
       <tag k="nps:road_maintainer" v="NPS"/>
       <tag k="nps:region_code" v="AKR"/>
       <tag k="nps:unit_code" v="AKRO"/>
-      <tag k="nps:road_alt_name" v="regan's road"/>
       <tag k="nps:source_system_key_value" v="{04599ADE-9BE2-46F2-84A2-F5FEBE490AD0}"/>
       <tag k="nps:road_class" v="Secondary"/>
       <tag k="name" v="drive me"/>
@@ -28,10 +27,9 @@
       <tag k="nps:distribute" v="Public"/>
       <tag k="nps:map_method" v="Differential GPS"/>
       <tag k="nps:road_status" v="Existing"/>
-      <tag k="access" v="yes"/>
-      <tag k="oneway" v="no"/>
       <tag k="nps:route_number" v="1"/>
       <tag k="highway" v="secondary"/>
+      <tag k="alt_name" v="regan's road"/>
       <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\ROADS_ln"/>
       <tag k="nps:source_system_key" v="GEOMETRYID"/>
     </way>
@@ -41,9 +39,8 @@
       <nd ref="-7"/>
       <nd ref="-8"/>
       <nd ref="-2"/>
-      <tag k="nps:road_name" v="road2"/>
-      <tag k="lanes" v="2"/>
-      <tag k="proposed" v="Primary"/>
+      <tag k="nps:road_class" v="Primary"/>
+      <tag k="proposed" v="primary"/>
       <tag k="nps:restriction" v="Unrestricted"/>
       <tag k="nps:distribute" v="Public"/>
       <tag k="nps:road_maintainer" v="NPS"/>
@@ -51,8 +48,9 @@
       <tag k="surface" v="cobblestone"/>
       <tag k="nps:road_status" v="Proposed"/>
       <tag k="access" v="no"/>
+      <tag k="official_name" v="road2"/>
       <tag k="oneway" v="yes"/>
-      <tag k="nps:road_class" v="Primary"/>
+      <tag k="lanes" v="2"/>
       <tag k="nps:route_number" v="2"/>
       <tag k="highway" v="proposed"/>
       <tag k="nps:source_system_key_value" v="{93CB94D6-FFD1-49DD-9231-E035B067B045}"/>
@@ -64,8 +62,7 @@
       <nd ref="-10"/>
       <nd ref="-11"/>
       <nd ref="-4"/>
-      <tag k="nps:road_name" v="road3"/>
-      <tag k="lanes" v="3"/>
+      <tag k="nps:road_class" v="Private"/>
       <tag k="name" v="R&#xE9;sum&#xE9;"/>
       <tag k="nps:restriction" v="Unrestricted"/>
       <tag k="nps:distribute" v="Public"/>
@@ -75,8 +72,9 @@
       <tag k="nps:road_status" v="Existing"/>
       <tag k="access" v="private"/>
       <tag k="nps:xy_error" v="&gt; 5 m and &lt;= 10 m"/>
+      <tag k="official_name" v="road3"/>
       <tag k="oneway" v="-1"/>
-      <tag k="nps:road_class" v="Private"/>
+      <tag k="lanes" v="3"/>
       <tag k="nps:route_number" v="3"/>
       <tag k="highway" v="road"/>
       <tag k="nps:source_system_key_value" v="{7FD6BFD5-11A4-430A-9F2A-D34A42AC31CC}"/>
@@ -86,18 +84,17 @@
     <way changeset="-1" id="-12" version="1" visible="true">
       <nd ref="-3"/>
       <nd ref="-11"/>
-      <tag k="nps:road_name" v="road4"/>
       <tag k="nps:road_class" v="Private"/>
       <tag k="name" v="&#x1F19;&#x3BB;&#x3BB;&#x3AC;&#x3C2;"/>
       <tag k="nps:restriction" v="Unrestricted"/>
       <tag k="nps:distribute" v="Public"/>
-      <tag k="nps:road_maintainer" v="NPS"/>
-      <tag k="proposed" v="Private"/>
+      <tag k="proposed" v="road"/>
       <tag k="nps:is_extant" v="Other"/>
       <tag k="surface" v="sand"/>
       <tag k="nps:road_status" v="Planned"/>
-      <tag k="access" v="private"/>
-      <tag k="oneway" v="no"/>
+      <tag k="access" v="no"/>
+      <tag k="official_name" v="road4"/>
+      <tag k="nps:road_maintainer" v="NPS"/>
       <tag k="highway" v="proposed"/>
       <tag k="nps:source_system_key_value" v="{549F9377-B1FF-4CCE-BCCB-B86A41633EFC}"/>
       <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\ROADS_ln"/>
