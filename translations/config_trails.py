@@ -125,6 +125,7 @@ valuemap = {
         u'equestrian trail': {u'horse': u'yes', u'highway': u'path'},
         u'ferry': {u'route': u'ferry'},
         u'ferry route': {u'route': u'ferry'},
+        u'foot': {u'highway': u'path'},
         u'footpath': {u'highway': u'path'},
         u'four-wheel drive trail': {u'4wd_only': u'yes', u'highway': u'track'},
         u'four-wheel drive vehicle > 50 in tread width': {u'4wd_only': u'yes', u'highway': u'track'},
