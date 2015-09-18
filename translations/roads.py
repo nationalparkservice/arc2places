@@ -40,9 +40,9 @@ def filterTags(attrs):
     # dictionaries are unsorted, so class may not be applied before
     # status. This will fix that per OSM standards
     # http://wiki.openstreetmap.org/wiki/Tag:highway%3Dproposed
-    road_status = tools.valueof('RDSTATUS', altnames, attrs)
-    if road_status == 'Planned' or road_status == 'Proposed':
-        road_class = tools.valueof('RDCLASS', altnames, attrs)
+    road_status = tools.valueof('rdstatus', altnames, attrs)
+    if road_status and (road_status.lower() == 'planned' or road_status.lower() == 'proposed'):
+        road_class = tools.valueof('rdclass', altnames, attrs)
         if road_class:
             tags.update({
                 'highway': 'proposed',
