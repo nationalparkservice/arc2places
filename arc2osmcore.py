@@ -99,11 +99,11 @@ def getfeaturetags(arcfeature, fieldnames, options):
         if arcfeature[i]:
             if sys.version[0] < '3':
                 # unicode command was removed in python 3.x
-                tags[fieldnames[i].upper()] = unicode(arcfeature[i])
+                tags[fieldnames[i].lower()] = unicode(arcfeature[i])
             else:
-                tags[fieldnames[i].upper()] = str(arcfeature[i])
+                tags[fieldnames[i].lower()] = str(arcfeature[i])
         else:
-            tags[fieldnames[i].upper()] = None
+            tags[fieldnames[i].lower()] = None
     newtags = options.translator.filter_tags(tags)
     try:
         options.logger.debug("Tags: " + str(newtags))
@@ -325,7 +325,7 @@ def get_pk_name(options, places_key):
     except AttributeError:
         return None
     field_names = [f.name for f in arcpy.ListFields(options.sourceFile)]
-    existing_keys = [k for k in field_names if k.upper() in primary_keys]
+    existing_keys = [k for k in field_names if k.lower() in primary_keys]
     try:
         key = existing_keys[0]
     except IndexError:
@@ -570,9 +570,9 @@ def test():
     opts = DefaultOptions()
     opts.logger = Logger()
     opts.logger.start_debug()
-    opts.sourceFile = "./testdata/test.gdb/PARKINGLOTS_py"
-    opts.outputFile = "./testdata/test_parking.osm"
-    opts.translator = Translator.get_translator("parkinglots")
+    opts.sourceFile = "./testdata/test.gdb/ROADS_ln"
+    opts.outputFile = "./testdata/test_roads.osm"
+    opts.translator = Translator.get_translator("roads")
     opts.datasetKey = opts.translator.fields_for_tag('nps:source_system_key_value')[0]
     makeosmfile(opts)
 
