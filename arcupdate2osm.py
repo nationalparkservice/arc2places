@@ -59,14 +59,17 @@ def arc_build_osm_change_xml(featureclass, synctable, translator, server, logger
 
     primary_keys = translator.fields_for_tag('nps:source_system_key_value')
     field_names = [f.name for f in arcpy.ListFields(featureclass)]
-    existing_keys = [k for k in primary_keys if k in field_names]
-    if len(existing_keys) < 1:
+    # need to do case insensitive compare, but return the original case.
+    # use the first value from primary_keys, not the first value from field_names.
+    lower_field_names = [f.lower() for f in field_names]
+    source_id_fieldname = None
+    for key in primary_keys:
+        if key in lower_field_names:
+            source_id_fieldname = field_names[lower_field_names.index(key)]
+            break
+    if source_id_fieldname is None:
         raise ValueError("There is no field in featureclass {0:s} that maps to "
                          "the 'nps:source_system_key_value' tag".format(featureclass))
-    if 1 < len(existing_keys):
-        raise ValueError("There are multiple fields {0:s} that map to the 'nps:source_system_key_value' tag "
-                         "in featureclass {0:s}".format(existing_keys, featureclass))
-    source_id_fieldname = existing_keys[0]
     if not utils.hasfield(featureclass, source_id_fieldname):
         raise ValueError("Field '{0:s}' not found in features."
                          .format(source_id_fieldname))

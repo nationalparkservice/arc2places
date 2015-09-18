@@ -199,13 +199,22 @@ def valid4sync(featureclass, translator=None):
 
     primary_keys = translator.fields_for_tag('nps:source_system_key_value')
     field_names = [f.name for f in arcpy.ListFields(featureclass)]
-    existing_keys = [k for k in field_names if k.upper() in primary_keys]
+    # need to do case insensitive compare, but use the original case.
+    # use the first value from primary_keys, not the first value from field_names.
+    lower_field_names = [f.lower() for f in field_names]
+    primary_key = None
+    for key in primary_keys:
+        if key in lower_field_names:
+            primary_key = field_names[lower_field_names.index(key)]
+            break
+    existing_keys = [k for k in field_names if k.lower() in primary_keys]
     if len(existing_keys) < 1:
         issues.append("There is no field that maps to the 'nps:source_system_key_value' tag")
-    if 1 < len(existing_keys):
-        issues.append("There are multiple fields {0:s} that map to the 'nps:source_system_key_value' tag".format(existing_keys))
-    if len(existing_keys) == 1:
-        primary_key = existing_keys[0]
+    # if 1 < len(existing_keys):
+        # TODO: Log this message, but to do not report as an issue.
+        # issues.append("There are multiple fields {0:s} that map to the 'nps:source_system_key_value' tag. "
+        #               "Using {1:s}".format(existing_keys, primary_key))
+    if primary_key:
         duplicates = get_duplicates(featureclass, primary_key, translator)
         if duplicates:
             issues.append("Primary key: {0:s} has duplicate values: {1:s}".format(primary_key, duplicates))
@@ -377,5 +386,5 @@ def link_test():
 
 if __name__ == '__main__':
     validation_test()
-    add_id_test()
-    link_test()
+    # add_id_test()
+    # link_test()

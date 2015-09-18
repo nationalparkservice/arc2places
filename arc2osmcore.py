@@ -325,12 +325,15 @@ def get_pk_name(options, places_key):
     except AttributeError:
         return None
     field_names = [f.name for f in arcpy.ListFields(options.sourceFile)]
-    existing_keys = [k for k in field_names if k.lower() in primary_keys]
-    try:
-        key = existing_keys[0]
-    except IndexError:
-        key = None
-    return key
+    # need to do case insensitive compare, but return the original case.
+    # use the first value from primary_keys, not the first value from field_names.
+    lower_field_names = [f.lower() for f in field_names]
+    primary_key = None
+    for key in primary_keys:
+        if key in lower_field_names:
+            primary_key = field_names[lower_field_names.index(key)]
+            break
+    return primary_key
 
 
 def add_source_tags(etree, xmlobject, options):
@@ -567,13 +570,14 @@ class DefaultOptions:
 
 
 def test():
+    import os
     opts = DefaultOptions()
     opts.logger = Logger()
     opts.logger.start_debug()
-    opts.sourceFile = "./testdata/test.gdb/ROADS_ln"
+    opts.sourceFile = os.path.abspath("./testdata/test.gdb/ROADS_ln")
     opts.outputFile = "./testdata/test_roads.osm"
     opts.translator = Translator.get_translator("roads")
-    opts.datasetKey = opts.translator.fields_for_tag('nps:source_system_key_value')[0]
+    opts.datasetKey = get_pk_name(opts, 'nps:source_system_key_value')
     makeosmfile(opts)
 
 
