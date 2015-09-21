@@ -36,17 +36,18 @@ def filterTags(attrs):
 
     # Special Instructions
 
-    # trail use may be a delimeter separated list of values
-    # these are permitted activities;  FIXME: Are other activities denied or unknown? (currently denied)
+    # trail use is a pipe (|) delimiter separated list of values
+    # these are permitted activities; Permission of other activities is unknown.
     # (this requires a slightly modified version of generic.maptags)
-    # FIXME: split on '|' first.  we do not want 'motorized' to match '...|non-motorized|...'
+    # Split on '|' first.  we do not want 'motorized' to match '...|non-motorized|...'
     usefieldname = 'TRLUSE'
     trailusemap = valuemap[usefieldname]
     value = tools.valueof(usefieldname, altnames, attrs)
     if value:
         value_lower = value.lower()
+        values = value_lower.split('|')
         for trailusecode in trailusemap:
-            if trailusecode in value_lower:
+            if trailusecode in values:
                 tags.update(trailusemap[trailusecode])
 
     # Special case
@@ -59,28 +60,36 @@ def filterTags(attrs):
         'motorcycle': 'TRLUSE_MOTORCYCLE',
         'all-terrain vehicle': 'TRLUSE_ATV',
         'four-wheel drive vehicle > 50" in tread width': 'TRLUSE_4WD',
+        'backcountry ski': 'TRLUSE_SKITOUR',
         'cross-country ski': 'TRLUSE_NORDIC',
         'downhill ski': 'TRLUSE_DOWNHILL',
         'dog sled': 'TRLUSE_DOGSLED',
         'snowshoe': 'TRLUSE_SNOWSHOE',
         'snowmobile': 'TRLUSE_SNOWMOBILE',
         'motorized watercraft': 'TRLUSE_MOTORBOAT',
-        'non-motorized watercraft': 'TRLUSE_CANOE'
-        # FIXME: TRLUSE_CANYONEERING, etc
+        'non-motorized watercraft': 'TRLUSE_CANOE',
+        'canyoneering route': 'TRLUSE_CANYONEER',
+        'climbing route': 'TRLUSE_CLIMB'
     }
 
     # trail use may be a collection of fields with yes/no values
-    # FIXME a missing column or null/unknown value is same as negative value (i.e. it is denied not unspecified)
+    # A negative value is the same as a missing column or null/unknown value
     for trailusecode, fieldname in trailusefields.items():
         flag = tools.valueof(fieldname, altnames, attrs)
         if flag and (flag.lower() == 'true' or flag.lower() == 'yes' or flag.lower() == 'y'):
-            tags.update(trailusemap[trailusecode])
-
-    # FIXME: Add additional code to handle conflicts with highway tag in TRLTYP and TRLUSE; footway wins
+            try:
+                tags.update(trailusemap[trailusecode])
+            except KeyError:
+                pass  # protect against boolean fields without a matching set of tags
 
     # highway is not defined and piste:type is not defined, add highway = path
     if 'highway' not in tags and 'piste:type' not in tags and 'waterway' not in tags:
         tags['highway'] = 'path'
+
+    # Possible conflit on highway between TRLFEATURETYPE or TRLUSE == sidewalk, and other trail types.
+    # Winner is sidewalk.
+    if 'footway' in tags and tags['footway'] == 'sidewalk':
+        tags['highway'] = 'footway'
 
     # Planned/Proposed trails have their 'highway' value set to 'proposed'.
     # and thier 'proposed' value set to thier 'highway' value
@@ -102,6 +111,11 @@ def filterTags(attrs):
             tags.update({
                 'waterway': 'proposed',
                 'proposed': tags['waterway']
+            })
+        elif 'footway' in tags:
+            tags.update({
+                'footway': 'proposed',
+                'proposed': tags['footway']
             })
         else:
             tags['proposed'] = 'yes'
