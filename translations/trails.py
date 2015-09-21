@@ -41,7 +41,10 @@ def filterTags(attrs):
     # (this requires a slightly modified version of generic.maptags)
     # Split on '|' first.  we do not want 'motorized' to match '...|non-motorized|...'
     usefieldname = 'TRLUSE'
-    trailusemap = valuemap[usefieldname]
+    if usefieldname in valuemap:
+        trailusemap = valuemap[usefieldname]
+    else:
+        trailusemap = {}
     value = tools.valueof(usefieldname, altnames, attrs)
     if value:
         value_lower = value.lower()
@@ -54,22 +57,22 @@ def filterTags(attrs):
     # for when trail use is collection of fields with yes/no values
     trailusefields = {
         # Trail use value code : Matching boolean field name
-        'hiker/pedestrian': 'TRLUSE_FOOT',
-        'pack and saddle': 'TRLUSE_HORSE',
-        'bicycle': 'TRLUSE_BICYCLE',
-        'motorcycle': 'TRLUSE_MOTORCYCLE',
-        'all-terrain vehicle': 'TRLUSE_ATV',
-        'four-wheel drive vehicle > 50" in tread width': 'TRLUSE_4WD',
-        'backcountry ski': 'TRLUSE_SKITOUR',
-        'cross-country ski': 'TRLUSE_NORDIC',
-        'downhill ski': 'TRLUSE_DOWNHILL',
-        'dog sled': 'TRLUSE_DOGSLED',
-        'snowshoe': 'TRLUSE_SNOWSHOE',
-        'snowmobile': 'TRLUSE_SNOWMOBILE',
-        'motorized watercraft': 'TRLUSE_MOTORBOAT',
-        'non-motorized watercraft': 'TRLUSE_CANOE',
-        'canyoneering route': 'TRLUSE_CANYONEER',
-        'climbing route': 'TRLUSE_CLIMB'
+        'hiker/pedestrian': 'trluse_foot',
+        'pack and saddle': 'trluse_horse',
+        'bicycle': 'trluse_bicycle',
+        'motorcycle': 'trluse_motorcycle',
+        'all-terrain vehicle': 'trluse_atv',
+        'four-wheel drive vehicle > 50" in tread width': 'trluse_4wd',
+        'backcountry ski': 'trluse_skitour',
+        'cross-country ski': 'trluse_nordic',
+        'downhill ski': 'trluse_downhill',
+        'dog sled': 'trluse_dogsled',
+        'snowshoe': 'trluse_snowshoe',
+        'snowmobile': 'trluse_snowmobile',
+        'motorized watercraft': 'trluse_motorboat',
+        'non-motorized watercraft': 'trluse_canoe',
+        'canyoneering route': 'trluse_canyoneer',
+        'climbing route': 'trluse_climb'
     }
 
     # trail use may be a collection of fields with yes/no values
