@@ -40,7 +40,7 @@ def filterTags(attrs):
     # these are permitted activities; Permission of other activities is unknown.
     # (this requires a slightly modified version of generic.maptags)
     # Split on '|' first.  we do not want 'motorized' to match '...|non-motorized|...'
-    usefieldname = 'TRLUSE'
+    usefieldname = 'trluse'
     if usefieldname in valuemap:
         trailusemap = valuemap[usefieldname]
     else:
