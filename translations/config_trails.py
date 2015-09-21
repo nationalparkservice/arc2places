@@ -2,7 +2,7 @@ defaults = {}
 
 fieldmap = {
     u'trlaltname': u'alt_name',
-    u'trlclass': u'tracktype',
+    u'trlclass': u'nps:trail_class',
     u'trldesc': u'nps:trail_description',
     u'trlfeattype': u'nps:trail_feat_type',
     u'trlisadmin': u'nps:trail_is_admin',
@@ -68,10 +68,6 @@ valuemap = {
         u'moderately developed': {u'tracktype': u'grade4'}
     },
     u'trlfeattype': {
-        u'nht': {u'informal': u'no'},
-        u'nst': {u'informal': u'no'},
-        u'park trail': {u'informal': u'no'},
-        u'park trail (only)': {u'informal': u'no'},
         u'route path': {u'informal': u'yes'},
         u'sidewalk': {u'footway': u'sidewalk', u'highway': u'footway'},
         u'social trail': {u'informal': u'yes'},
@@ -81,7 +77,6 @@ valuemap = {
     u'trlstatus': {
         u'closed': {u'access': u'no'},
         u'decommissioned': {u'access': u'no'},
-        u'existing': {u'access': u'yes'},
         u'planned': {u'access': u'no'},
         u'proposed': {u'access': u'no'},
         u'temporarily closed': {u'access': u'no'}
