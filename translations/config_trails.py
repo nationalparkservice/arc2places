@@ -128,7 +128,7 @@ valuemap = {
         u'foot': {u'highway': u'path'},
         u'footpath': {u'highway': u'path'},
         u'four-wheel drive trail': {u'4wd_only': u'yes', u'highway': u'track'},
-        u'four-wheel drive vehicle > 50 in tread width': {u'4wd_only': u'yes', u'highway': u'track'},
+        u'four-wheel drive vehicle > 50" in tread width': {u'4wd_only': u'yes', u'highway': u'track'},
         u'four-wheeler': {u'4wd_only': u'yes', u'highway': u'track'},
         u'hike': {u'highway': u'path'},
         u'hiker/pedestrian': {u'highway': u'path'},
