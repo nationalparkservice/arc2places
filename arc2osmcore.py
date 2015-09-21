@@ -574,9 +574,9 @@ def test():
     opts = DefaultOptions()
     opts.logger = Logger()
     opts.logger.start_debug()
-    opts.sourceFile = os.path.abspath("./testdata/test.gdb/ROADS_ln")
-    opts.outputFile = "./testdata/test_roads.osm"
-    opts.translator = Translator.get_translator("roads")
+    opts.sourceFile = os.path.abspath("./testdata/test.gdb/TRAILS_ln")
+    opts.outputFile = "./testdata/test_trails.osm"
+    opts.translator = Translator.get_translator("trails")
     opts.datasetKey = get_pk_name(opts, 'nps:source_system_key_value')
     makeosmfile(opts)
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0"?>
 <osmChange generator="arc2places" version="0.6">
   <create>
     <node changeset="-1" id="-2" lat="61.204556961" lon="-149.918594184" version="1" visible="true"/>
@@ -9,75 +9,115 @@
     <node changeset="-1" id="-9" lat="61.205314447" lon="-149.915574203" version="1" visible="true"/>
     <node changeset="-1" id="-10" lat="61.204816895" lon="-149.914011897" version="1" visible="true"/>
     <node changeset="-1" id="-11" lat="61.203982261" lon="-149.915179858" version="1" visible="true"/>
-    <node changeset="-1" id="-13" lat="61.206378368" lon="-149.916264441" version="1" visible="true"/>
-    <node changeset="-1" id="-14" lat="61.20617146" lon="-149.916320742" version="1" visible="true"/>
-    <node changeset="-1" id="-15" lat="61.206218893" lon="-149.91583949" version="1" visible="true"/>
-    <node changeset="-1" id="-16" lat="61.206320015" lon="-149.915410727" version="1" visible="true"/>
-    <node changeset="-1" id="-17" lat="61.206058904" lon="-149.915236428" version="1" visible="true"/>
-    <node changeset="-1" id="-18" lat="61.205883819" lon="-149.915407429" version="1" visible="true"/>
-    <node changeset="-1" id="-19" lat="61.205883154" lon="-149.914902669" version="1" visible="true"/>
-    <node changeset="-1" id="-20" lat="61.205971047" lon="-149.914346922" version="1" visible="true"/>
-    <node changeset="-1" id="-21" lat="61.205811856" lon="-149.913931847" version="1" visible="true"/>
-    <node changeset="-1" id="-23" lat="61.206986907" lon="-149.918255138" version="1" visible="true"/>
-    <node changeset="-1" id="-24" lat="61.206945567" lon="-149.917656598" version="1" visible="true"/>
-    <node changeset="-1" id="-25" lat="61.206668767" lon="-149.917593185" version="1" visible="true"/>
-    <node changeset="-1" id="-26" lat="61.206609478" lon="-149.91686827" version="1" visible="true"/>
-    <node changeset="-1" id="-27" lat="61.206427344" lon="-149.916960979" version="1" visible="true"/>
-    <node changeset="-1" id="-28" lat="61.206476374" lon="-149.916212243" version="1" visible="true"/>
-    <node changeset="-1" id="-30" lat="61.206035975" lon="-149.917031088" version="1" visible="true"/>
-    <node changeset="-1" id="-31" lat="61.206027324" lon="-149.916576849" version="1" visible="true"/>
-    <node changeset="-1" id="-32" lat="61.205822521" lon="-149.916543786" version="1" visible="true"/>
-    <node changeset="-1" id="-33" lat="61.205916306" lon="-149.916026883" version="1" visible="true"/>
-    <node changeset="-1" id="-34" lat="61.205636598" lon="-149.915864872" version="1" visible="true"/>
-    <node changeset="-1" id="-35" lat="61.205706117" lon="-149.915489674" version="1" visible="true"/>
-    <node changeset="-1" id="-36" lat="61.205466804" lon="-149.915411563" version="1" visible="true"/>
-    <node changeset="-1" id="-38" lat="61.206475227" lon="-149.918103117" version="1" visible="true"/>
-    <node changeset="-1" id="-39" lat="61.206378091" lon="-149.917541456" version="1" visible="true"/>
-    <node changeset="-1" id="-40" lat="61.206206926" lon="-149.917523861" version="1" visible="true"/>
-    <node changeset="-1" id="-41" lat="61.206201546" lon="-149.917019703" version="1" visible="true"/>
-    <node changeset="-1" id="-43" lat="61.205488488" lon="-149.914941627" version="1" visible="true"/>
-    <node changeset="-1" id="-44" lat="61.205284947" lon="-149.914870722" version="1" visible="true"/>
-    <node changeset="-1" id="-45" lat="61.205258564" lon="-149.914458368" version="1" visible="true"/>
-    <node changeset="-1" id="-46" lat="61.205094224" lon="-149.914350824" version="1" visible="true"/>
+    <node changeset="-1" id="-13" lat="61.206035975" lon="-149.917031088" version="1" visible="true"/>
+    <node changeset="-1" id="-14" lat="61.206027324" lon="-149.916576849" version="1" visible="true"/>
+    <node changeset="-1" id="-15" lat="61.205822521" lon="-149.916543786" version="1" visible="true"/>
+    <node changeset="-1" id="-16" lat="61.205916306" lon="-149.916026883" version="1" visible="true"/>
+    <node changeset="-1" id="-17" lat="61.205636598" lon="-149.915864872" version="1" visible="true"/>
+    <node changeset="-1" id="-18" lat="61.205706117" lon="-149.915489674" version="1" visible="true"/>
+    <node changeset="-1" id="-19" lat="61.205466804" lon="-149.915411563" version="1" visible="true"/>
+    <node changeset="-1" id="-21" lat="61.206475227" lon="-149.918103117" version="1" visible="true"/>
+    <node changeset="-1" id="-22" lat="61.206378091" lon="-149.917541456" version="1" visible="true"/>
+    <node changeset="-1" id="-23" lat="61.206206926" lon="-149.917523861" version="1" visible="true"/>
+    <node changeset="-1" id="-24" lat="61.206201546" lon="-149.917019703" version="1" visible="true"/>
+    <node changeset="-1" id="-26" lat="61.206378368" lon="-149.916264441" version="1" visible="true"/>
+    <node changeset="-1" id="-27" lat="61.20617146" lon="-149.916320742" version="1" visible="true"/>
+    <node changeset="-1" id="-28" lat="61.206218893" lon="-149.91583949" version="1" visible="true"/>
+    <node changeset="-1" id="-29" lat="61.206320015" lon="-149.915410727" version="1" visible="true"/>
+    <node changeset="-1" id="-30" lat="61.206058904" lon="-149.915236428" version="1" visible="true"/>
+    <node changeset="-1" id="-31" lat="61.205883819" lon="-149.915407429" version="1" visible="true"/>
+    <node changeset="-1" id="-32" lat="61.205883154" lon="-149.914902669" version="1" visible="true"/>
+    <node changeset="-1" id="-33" lat="61.205971047" lon="-149.914346922" version="1" visible="true"/>
+    <node changeset="-1" id="-34" lat="61.205811856" lon="-149.913931847" version="1" visible="true"/>
+    <node changeset="-1" id="-36" lat="61.206986907" lon="-149.918255138" version="1" visible="true"/>
+    <node changeset="-1" id="-37" lat="61.206945567" lon="-149.917656598" version="1" visible="true"/>
+    <node changeset="-1" id="-38" lat="61.206668767" lon="-149.917593185" version="1" visible="true"/>
+    <node changeset="-1" id="-39" lat="61.206609478" lon="-149.91686827" version="1" visible="true"/>
+    <node changeset="-1" id="-40" lat="61.206427344" lon="-149.916960979" version="1" visible="true"/>
+    <node changeset="-1" id="-41" lat="61.206476374" lon="-149.916212243" version="1" visible="true"/>
+    <node changeset="-1" id="-43" lat="61.203668494" lon="-149.918383366" version="1" visible="true"/>
+    <node changeset="-1" id="-44" lat="61.203680392" lon="-149.917306659" version="1" visible="true"/>
+    <node changeset="-1" id="-46" lat="61.203698237" lon="-149.917092508" version="1" visible="true"/>
+    <node changeset="-1" id="-47" lat="61.203710135" lon="-149.916015801" version="1" visible="true"/>
+    <node changeset="-1" id="-49" lat="61.203484086" lon="-149.917074662" version="1" visible="true"/>
+    <node changeset="-1" id="-50" lat="61.203495984" lon="-149.915997955" version="1" visible="true"/>
+    <node changeset="-1" id="-52" lat="61.203882646" lon="-149.915783805" version="1" visible="true"/>
+    <node changeset="-1" id="-53" lat="61.203894544" lon="-149.914707098" version="1" visible="true"/>
+    <node changeset="-1" id="-55" lat="61.203692289" lon="-149.915765959" version="1" visible="true"/>
+    <node changeset="-1" id="-56" lat="61.203704187" lon="-149.914689252" version="1" visible="true"/>
+    <node changeset="-1" id="-58" lat="61.203495983" lon="-149.915748113" version="1" visible="true"/>
+    <node changeset="-1" id="-59" lat="61.203507881" lon="-149.914671406" version="1" visible="true"/>
+    <node changeset="-1" id="-61" lat="61.203846954" lon="-149.918371469" version="1" visible="true"/>
+    <node changeset="-1" id="-62" lat="61.203858852" lon="-149.917294762" version="1" visible="true"/>
+    <node changeset="-1" id="-64" lat="61.203858851" lon="-149.917080611" version="1" visible="true"/>
+    <node changeset="-1" id="-65" lat="61.203870749" lon="-149.916003904" version="1" visible="true"/>
+    <node changeset="-1" id="-67" lat="61.203472189" lon="-149.918383366" version="1" visible="true"/>
+    <node changeset="-1" id="-68" lat="61.203484087" lon="-149.917306659" version="1" visible="true"/>
+    <node changeset="-1" id="-70" lat="61.203162858" lon="-149.917068713" version="1" visible="true"/>
+    <node changeset="-1" id="-71" lat="61.203174756" lon="-149.915992006" version="1" visible="true"/>
+    <node changeset="-1" id="-73" lat="61.20240738" lon="-149.917015175" version="1" visible="true"/>
+    <node changeset="-1" id="-74" lat="61.202419278" lon="-149.915938468" version="1" visible="true"/>
+    <node changeset="-1" id="-76" lat="61.203323472" lon="-149.917056816" version="1" visible="true"/>
+    <node changeset="-1" id="-77" lat="61.20333537" lon="-149.915980109" version="1" visible="true"/>
+    <node changeset="-1" id="-79" lat="61.203329421" lon="-149.918371469" version="1" visible="true"/>
+    <node changeset="-1" id="-80" lat="61.203341319" lon="-149.917294762" version="1" visible="true"/>
+    <node changeset="-1" id="-82" lat="61.203133116" lon="-149.918371469" version="1" visible="true"/>
+    <node changeset="-1" id="-83" lat="61.203145014" lon="-149.917294762" version="1" visible="true"/>
+    <node changeset="-1" id="-85" lat="61.202222972" lon="-149.917015175" version="1" visible="true"/>
+    <node changeset="-1" id="-86" lat="61.20223487" lon="-149.915938468" version="1" visible="true"/>
+    <node changeset="-1" id="-88" lat="61.20205641" lon="-149.917003278" version="1" visible="true"/>
+    <node changeset="-1" id="-89" lat="61.202068308" lon="-149.915926571" version="1" visible="true"/>
+    <node changeset="-1" id="-91" lat="61.201872002" lon="-149.917003278" version="1" visible="true"/>
+    <node changeset="-1" id="-92" lat="61.2018839" lon="-149.915926571" version="1" visible="true"/>
+    <node changeset="-1" id="-94" lat="61.201681644" lon="-149.917003278" version="1" visible="true"/>
+    <node changeset="-1" id="-95" lat="61.201693542" lon="-149.915926571" version="1" visible="true"/>
+    <node changeset="-1" id="-97" lat="61.202966553" lon="-149.917068714" version="1" visible="true"/>
+    <node changeset="-1" id="-98" lat="61.202978451" lon="-149.915992007" version="1" visible="true"/>
+    <node changeset="-1" id="-100" lat="61.202799991" lon="-149.917038971" version="1" visible="true"/>
+    <node changeset="-1" id="-101" lat="61.202811889" lon="-149.915962264" version="1" visible="true"/>
+    <node changeset="-1" id="-103" lat="61.202615583" lon="-149.917044919" version="1" visible="true"/>
+    <node changeset="-1" id="-104" lat="61.202627481" lon="-149.915968212" version="1" visible="true"/>
+    <node changeset="-1" id="-106" lat="61.202562045" lon="-149.919341099" version="1" visible="true"/>
+    <node changeset="-1" id="-107" lat="61.202573943" lon="-149.918264392" version="1" visible="true"/>
+    <node changeset="-1" id="-109" lat="61.202359791" lon="-149.919317304" version="1" visible="true"/>
+    <node changeset="-1" id="-110" lat="61.202371689" lon="-149.918240597" version="1" visible="true"/>
     <way changeset="-1" id="-1" version="1" visible="true">
       <nd ref="-2"/>
       <nd ref="-3"/>
       <nd ref="-4"/>
-      <tag k="nps:trail_status" v="Existing"/>
-      <tag k="horse" v="no"/>
-      <tag k="nps:source_id" v="{FE5DC3F4-0A8D-447D-A5F1-CF65569C6593}"/>
-      <tag k="bicycle" v="no"/>
-      <tag k="name" v="trail1"/>
       <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="informal" v="yes"/>
       <tag k="nps:distribute" v="Public"/>
       <tag k="nps:create_user" v="nps\resarwas"/>
-      <tag k="atv" v="yes"/>
-      <tag k="nps:trail_type" v="Standard/Terra Trail"/>
-      <tag k="motorcycle" v="no"/>
-      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
-      <tag k="foot" v="yes"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="official_name" v="trail1"/>
+      <tag k="nps:trail_feat_type" v="Unmaintained Trail"/>
       <tag k="highway" v="path"/>
-      <tag k="snowmobile" v="no"/>
+      <tag k="nps:source_system_key_value" v="{FE5DC3F4-0A8D-447D-A5F1-CF65569C6593}"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
     </way>
     <way changeset="-1" id="-5" version="1" visible="true">
       <nd ref="-2"/>
       <nd ref="-6"/>
       <nd ref="-7"/>
-      <tag k="nps:trail_status" v="Proposed"/>
+      <tag k="access" v="no"/>
       <tag k="horse" v="yes"/>
-      <tag k="nps:source_id" v="{2020B5B7-FB92-423B-9F9F-C796B49EAC9F}"/>
-      <tag k="bicycle" v="no"/>
-      <tag k="name" v="trail2"/>
+      <tag k="alt_name" v="my trail"/>
+      <tag k="nps:trail_class" v="Class 1: Minimally Developed"/>
       <tag k="nps:restriction" v="Unrestricted"/>
       <tag k="nps:distribute" v="Public"/>
+      <tag k="proposed" v="path"/>
       <tag k="nps:create_user" v="nps\resarwas"/>
-      <tag k="atv" v="no"/>
-      <tag k="motorcycle" v="no"/>
-      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
-      <tag k="foot" v="yes"/>
+      <tag k="nps:trail_status" v="Proposed"/>
+      <tag k="official_name" v="trail2"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
       <tag k="tracktype" v="grade5"/>
-      <tag k="highway" v="path"/>
-      <tag k="snowmobile" v="no"/>
+      <tag k="highway" v="proposed"/>
+      <tag k="nps:source_system_key_value" v="{2020B5B7-FB92-423B-9F9F-C796B49EAC9F}"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
     </way>
     <way changeset="-1" id="-8" version="1" visible="true">
       <nd ref="-7"/>
@@ -85,23 +125,18 @@
       <nd ref="-10"/>
       <nd ref="-11"/>
       <nd ref="-7"/>
-      <tag k="nps:trail_status" v="Existing"/>
-      <tag k="horse" v="no"/>
-      <tag k="nps:source_id" v="{51DBA0B5-7137-4444-B6D8-660709FBF24A}"/>
-      <tag k="bicycle" v="no"/>
-      <tag k="name" v="sidewalk1"/>
       <tag k="nps:restriction" v="Unrestricted"/>
       <tag k="canoe" v="yes"/>
       <tag k="nps:distribute" v="Public"/>
       <tag k="nps:create_user" v="nps\resarwas"/>
-      <tag k="atv" v="no"/>
-      <tag k="footway" v="sidewalk"/>
+      <tag k="nps:trail_status" v="Existing"/>
       <tag k="nps:trail_type" v="Water Trail"/>
-      <tag k="motorcycle" v="no"/>
-      <tag k="nps:trail_feat_type" v="Sidewalk Centerline"/>
-      <tag k="foot" v="yes"/>
-      <tag k="highway" v="path"/>
-      <tag k="snowmobile" v="no"/>
+      <tag k="official_name" v="canoe sidewalk"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="waterway" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{51DBA0B5-7137-4444-B6D8-660709FBF24A}"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
     </way>
     <way changeset="-1" id="-12" version="1" visible="true">
       <nd ref="-13"/>
@@ -111,89 +146,404 @@
       <nd ref="-17"/>
       <nd ref="-18"/>
       <nd ref="-19"/>
-      <nd ref="-20"/>
-      <nd ref="-21"/>
       <tag k="nps:trail_status" v="Existing"/>
-      <tag k="horse" v="no"/>
-      <tag k="bicycle" v="no"/>
-      <tag k="name" v="multi -trail"/>
-      <tag k="atv" v="no"/>
-      <tag k="motorcycle" v="no"/>
-      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
-      <tag k="foot" v="yes"/>
       <tag k="highway" v="path"/>
-      <tag k="snowmobile" v="no"/>
+      <tag k="nps:trail_class" v="Class 4"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="tracktype" v="grade2"/>
+      <tag k="official_name" v="segmented"/>
+      <tag k="name" v="label2"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
     </way>
-    <way changeset="-1" id="-22" version="1" visible="true">
+    <way changeset="-1" id="-20" version="1" visible="true">
+      <nd ref="-21"/>
+      <nd ref="-22"/>
       <nd ref="-23"/>
       <nd ref="-24"/>
-      <nd ref="-25"/>
+      <nd ref="-13"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="NST"/>
+      <tag k="name" v="label1"/>
+      <tag k="official_name" v="segmented"/>
+      <tag k="highway" v="path"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-25" version="1" visible="true">
       <nd ref="-26"/>
       <nd ref="-27"/>
       <nd ref="-28"/>
-      <tag k="nps:trail_status" v="Existing"/>
-      <tag k="horse" v="no"/>
-      <tag k="bicycle" v="no"/>
-      <tag k="name" v="multi -trail"/>
-      <tag k="atv" v="no"/>
-      <tag k="motorcycle" v="no"/>
-      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
-      <tag k="foot" v="yes"/>
-      <tag k="highway" v="path"/>
-      <tag k="snowmobile" v="no"/>
-    </way>
-    <way changeset="-1" id="-29" version="1" visible="true">
+      <nd ref="-29"/>
       <nd ref="-30"/>
       <nd ref="-31"/>
       <nd ref="-32"/>
       <nd ref="-33"/>
       <nd ref="-34"/>
-      <nd ref="-35"/>
-      <nd ref="-36"/>
       <tag k="nps:trail_status" v="Existing"/>
-      <tag k="horse" v="no"/>
-      <tag k="bicycle" v="no"/>
-      <tag k="name" v="segmented"/>
-      <tag k="atv" v="no"/>
-      <tag k="motorcycle" v="no"/>
-      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
-      <tag k="foot" v="yes"/>
-      <tag k="highway" v="path"/>
-      <tag k="snowmobile" v="no"/>
+      <tag k="footway" v="sidewalk"/>
+      <tag k="highway" v="footway"/>
+      <tag k="nps:trail_class" v="Developed"/>
+      <tag k="nps:trail_feat_type" v="Sidewalk"/>
+      <tag k="tracktype" v="grade3"/>
+      <tag k="official_name" v="multi-trail1"/>
+      <tag k="nps:source_system_key_value" v="{51DBA0B5-7137-4444-B6D8-660709FBF24A}"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
     </way>
-    <way changeset="-1" id="-37" version="1" visible="true">
+    <way changeset="-1" id="-35" version="1" visible="true">
+      <nd ref="-36"/>
+      <nd ref="-37"/>
       <nd ref="-38"/>
       <nd ref="-39"/>
       <nd ref="-40"/>
       <nd ref="-41"/>
-      <nd ref="-30"/>
       <tag k="nps:trail_status" v="Existing"/>
-      <tag k="horse" v="no"/>
-      <tag k="bicycle" v="no"/>
-      <tag k="name" v="segmented"/>
-      <tag k="atv" v="no"/>
-      <tag k="motorcycle" v="no"/>
-      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
-      <tag k="foot" v="yes"/>
       <tag k="highway" v="path"/>
-      <tag k="snowmobile" v="no"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="official_name" v="multi-trail2"/>
+      <tag k="nps:source_system_key_value" v="{51DBA0B5-7137-4444-B6D8-660709FBF24A}"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
     </way>
     <way changeset="-1" id="-42" version="1" visible="true">
-      <nd ref="-36"/>
       <nd ref="-43"/>
       <nd ref="-44"/>
-      <nd ref="-45"/>
-      <nd ref="-46"/>
       <tag k="nps:trail_status" v="Existing"/>
-      <tag k="horse" v="no"/>
-      <tag k="bicycle" v="no"/>
-      <tag k="name" v="segmented"/>
-      <tag k="atv" v="no"/>
-      <tag k="motorcycle" v="no"/>
-      <tag k="nps:trail_feat_type" v="Park Trail Centerline"/>
-      <tag k="foot" v="yes"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Four-Wheel Drive Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Four-Wheel Drive Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="4wd_only" v="yes"/>
+      <tag k="highway" v="track"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-45" version="1" visible="true">
+      <nd ref="-46"/>
+      <nd ref="-47"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="bicycle" v="yes"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Bicycle Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Bicycle Trail"/>
+      <tag k="nps:distribute" v="Public"/>
       <tag k="highway" v="path"/>
-      <tag k="snowmobile" v="no"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-48" version="1" visible="true">
+      <nd ref="-49"/>
+      <nd ref="-50"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Canyoneering Route"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Canyoneering Route"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="sport" v="canyoning"/>
+      <tag k="highway" v="path"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-51" version="1" visible="true">
+      <nd ref="-52"/>
+      <nd ref="-53"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Water Trail"/>
+      <tag k="name" v="Ferry Route"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Ferry Route"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="route" v="ferry"/>
+      <tag k="waterway" v="yes"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-54" version="1" visible="true">
+      <nd ref="-55"/>
+      <nd ref="-56"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Water Trail"/>
+      <tag k="name" v="Motorized Watercraft Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Motorized Watercraft Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="motorboat" v="yes"/>
+      <tag k="waterway" v="yes"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-57" version="1" visible="true">
+      <nd ref="-58"/>
+      <nd ref="-59"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Water Trail"/>
+      <tag k="name" v="Non-Motorized Watercraft Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="canoe" v="yes"/>
+      <tag k="nps:trail_uses" v="Non-Motorized Watercraft Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="waterway" v="yes"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-60" version="1" visible="true">
+      <nd ref="-61"/>
+      <nd ref="-62"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="All-Terrain Vehicle Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="All-Terrain Vehicle Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="atv" v="yes"/>
+      <tag k="highway" v="track"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-63" version="1" visible="true">
+      <nd ref="-64"/>
+      <nd ref="-65"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Snow Trail"/>
+      <tag k="name" v="Backcountry Ski Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Backcountry Ski Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="piste:type" v="skitour"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-66" version="1" visible="true">
+      <nd ref="-67"/>
+      <nd ref="-68"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Motorcycle Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Motorcycle Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="highway" v="track"/>
+      <tag k="motorcycle" v="yes"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-69" version="1" visible="true">
+      <nd ref="-70"/>
+      <nd ref="-71"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Snow Trail"/>
+      <tag k="name" v="Cross-Country Ski Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Cross-Country Ski Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="piste:type" v="nordic"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-72" version="1" visible="true">
+      <nd ref="-73"/>
+      <nd ref="-74"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="highway" v="path"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-75" version="1" visible="true">
+      <nd ref="-76"/>
+      <nd ref="-77"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Climbing Route"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Climbing Route"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="sport" v="climbing"/>
+      <tag k="highway" v="path"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-78" version="1" visible="true">
+      <nd ref="-79"/>
+      <nd ref="-80"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Motorized Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Motorized Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="highway" v="track"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-81" version="1" visible="true">
+      <nd ref="-82"/>
+      <nd ref="-83"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Snow Trail"/>
+      <tag k="name" v="Snowmobile Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Snowmobile Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="piste:type" v="yes"/>
+      <tag k="highway" v="track"/>
+      <tag k="snowmobile" v="yes"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-84" version="1" visible="true">
+      <nd ref="-85"/>
+      <nd ref="-86"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Pedestrian Path"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Pedestrian Path"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="highway" v="footway"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-87" version="1" visible="true">
+      <nd ref="-88"/>
+      <nd ref="-89"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Sidewalk"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Sidewalk"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="highway" v="footway"/>
+      <tag k="footway" v="sidewalk"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-90" version="1" visible="true">
+      <nd ref="-91"/>
+      <nd ref="-92"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Snow Trail"/>
+      <tag k="name" v="Snowshoe Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Snowshoe Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="piste:type" v="hike"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-93" version="1" visible="true">
+      <nd ref="-94"/>
+      <nd ref="-95"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Steps"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Steps"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="highway" v="steps"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-96" version="1" visible="true">
+      <nd ref="-97"/>
+      <nd ref="-98"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Snow Trail"/>
+      <tag k="name" v="Dog Sled Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Dog Sled Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="piste:type" v="sleigh"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-99" version="1" visible="true">
+      <nd ref="-100"/>
+      <nd ref="-101"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_type" v="Snow Trail"/>
+      <tag k="name" v="Downhill Ski Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Downhill Ski Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="piste:type" v="downhill"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-102" version="1" visible="true">
+      <nd ref="-103"/>
+      <nd ref="-104"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="horse" v="yes"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="name" v="Horseback Riding Trail"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:trail_uses" v="Horseback Riding Trail"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="highway" v="path"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-105" version="1" visible="true">
+      <nd ref="-106"/>
+      <nd ref="-107"/>
+      <tag k="atv" v="yes"/>
+      <tag k="name" v="hike|atv"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="official_name" v="Mixed Use"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_uses" v="hike|atv"/>
+      <tag k="highway" v="track"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-108" version="1" visible="true">
+      <nd ref="-109"/>
+      <nd ref="-110"/>
+      <tag k="atv" v="yes"/>
+      <tag k="name" v="atv|hike"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="official_name" v="Mixed Use"/>
+      <tag k="nps:trail_status" v="Existing"/>
+      <tag k="nps:trail_type" v="Standard Terra Trail"/>
+      <tag k="nps:trail_feat_type" v="Park Trail"/>
+      <tag k="nps:trail_uses" v="atv|hike"/>
+      <tag k="highway" v="track"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\TRAILS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
     </way>
   </create>
 </osmChange>
