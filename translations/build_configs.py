@@ -78,6 +78,8 @@ def valuemap_from_presets(translator, field):
         return valuemap_from_presets_internal(lambda row: row['point'] == 'x')
     if translator == 'trails' and field == 'trluse':
         return valuemap_from_presets_internal(lambda row: row['superclass'] == 'Trail')
+    if translator == 'roads' and field == 'rdclass':
+        return valuemap_from_presets_internal(lambda row: row['superclass'] == 'Road')
 
 
 def valuemap_from_presets_internal(selector, lead='    ', debug=False, as_string=False):
