@@ -16,16 +16,12 @@ def get_feature_info(featureclass, translator=None):
     """
     results = []
     # The default shape format with da.cursor is centroid, I need the full geometry with 'SHAPE@'
-    shape_field_name = arcpy.Describe(featureclass).shapeFieldname
-    oid_field_name = arcpy.Describe(featureclass).OIDFieldName
-    fieldnames = [f.name for f in arcpy.ListFields(featureclass)]
+    fieldnames = ['SHAPE@', 'OID@'] + [f.name for f in arcpy.ListFields(featureclass)]
     is_point = arcpy.Describe(featureclass).shapeType == 'Point'
-    shape_field_index = fieldnames.index(shape_field_name)
-    oid_field_index = fieldnames.index(oid_field_name)
-    cursor = arcpy.SearchCursor(featureclass, fields=";".join(fieldnames))
-    if cursor:
-        for row in cursor:
-            arcfeature = [row.getValue(fn) for fn in fieldnames]
+    shape_field_index = 0
+    oid_field_index = 1
+    with arcpy.da.SearchCursor(featureclass, fieldnames) as cursor:
+        for arcfeature in cursor:
             # print arcfeature
             if translator:
                 feature = translator.filter_feature(arcfeature, fieldnames, None)
@@ -353,7 +349,7 @@ def validation_test():
                  ('./testdata/test.gdb/poi_pt', 'poi'),
                  ('./testdata/test.gdb/trails_ln', 'none'),
                  ('./testdata/test.gdb/trails_ln', None),
-                 (sde + '/akr_facility.GIS.TRAILS_ln', 'trails'),  # crashes python due to ArcGIS bug in da.cursor
+                 (sde + '/akr_facility.GIS.TRAILS_ln', 'trails'),  # crashes python: da.cursor in ArcGIS 10.3 32bit
                  (sde + '/akr_facility.GIS.ROADS_ln', 'roads')
                  ]
     for src, tname in test_list:
