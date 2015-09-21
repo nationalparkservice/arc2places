@@ -51,7 +51,12 @@ def filterTags(attrs):
         values = value_lower.split('|')
         for trailusecode in trailusemap:
             if trailusecode in values:
-                tags.update(trailusemap[trailusecode])
+                # more complicated than usual to special case highway:path and highway:track conflict
+                for k,v in trailusemap[trailusecode].items():
+                    if k == 'highway' and v == 'path' and 'highway' in tags and tags['highway'] == 'track':
+                        pass
+                    else:
+                        tags[k] = v
 
     # Special case
     # for when trail use is collection of fields with yes/no values
@@ -80,10 +85,13 @@ def filterTags(attrs):
     for trailusecode, fieldname in trailusefields.items():
         flag = tools.valueof(fieldname, altnames, attrs)
         if flag and (flag.lower() == 'true' or flag.lower() == 'yes' or flag.lower() == 'y'):
-            try:
-                tags.update(trailusemap[trailusecode])
-            except KeyError:
-                pass  # protect against boolean fields without a matching set of tags
+            if trailusecode in trailusemap:
+                # more complicated than usual to special case highway:path and highway:track conflict
+                for k,v in trailusemap[trailusecode].items():
+                    if k == 'highway' and v == 'path' and 'highway' in tags and tags['highway'] == 'track':
+                        pass
+                    else:
+                        tags[k] = v
 
     # highway is not defined and piste:type is not defined, add highway = path
     if 'highway' not in tags and 'piste:type' not in tags and 'waterway' not in tags:
