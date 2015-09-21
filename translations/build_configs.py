@@ -307,7 +307,27 @@ def add_it_up(translators):
     return results
 
 
+def translator_details():
+    _translators = {}
+    for row in get_csv_from_file("translators"):
+        translator = row['Name'].lower()
+        name = row['Display Name']
+        try:
+            geom = json.loads(row['Geometry Types'])
+        except ValueError:
+            print u"Unable to decode Geometry Types for {0} in translators sheet".format(translator)
+            geom = []
+        _translators[name] = {
+            u"filename" : translator,
+            u"geomtypes": geom
+        }
+    ustr = json.dumps(_translators, indent=2, ensure_ascii=False)
+    return ustr
+
+
 def print_it():
+    print "\n\n", '#' * 10, "Translator List", '#' * 10, "\n"
+    print translator_details()
     translators = get_translators_list()
     results = add_it_up(translators)
     for translator in translators:
@@ -316,6 +336,8 @@ def print_it():
 
 
 def save_it():
+    with open('translators.json', 'w', encoding='utf-8') as f:
+        f.write(translator_details() + '\n')
     translators = get_translators_list()
     results = add_it_up(translators)
     for translator in translators:
