@@ -1,5 +1,3 @@
-__author__ = 'regan'
-
 import sys
 import os
 import json

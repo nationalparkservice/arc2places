@@ -1,5 +1,3 @@
-__author__ = 'RESarwas'
-
 import os
 
 

@@ -39,6 +39,7 @@ Based very heavily on code released under the following terms:
 # TODO: optparse is deprecated, replace with argparse
 import optparse
 import os
+from arc2osmcore import makeosmfile
 
 # Setup program usage
 usage = """%prog SRCDATA
@@ -132,5 +133,4 @@ if not options.forceOverwrite and os.path.exists(options.outputFile):
         u"Output file '{0:s}' exists".format(options.outputFile))
 
 
-from arc2osmcore import makeosmfile
 makeosmfile(options)

@@ -15,7 +15,7 @@ Details on the tools can be found [here](https://github.com/nationalparkservice/
 * If Unit data is needed in ArcGIS format it is extracted from Places.
 
 2) GIS Master 1
-----------------
+---------------
 * Unit sends ArcGIS data to NPMap team.
 * NPMap imports data into Places.
 * Unit edits/maintains ArcGIS data.

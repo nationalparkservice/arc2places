@@ -179,9 +179,9 @@ def test():
     api_server.logger.start_debug()
     upload_osm_file('./testdata/test_roads.osm', api_server, 'Testing upload OSM file function',
                     './testdata/test_roads_sync.csv', api_server.logger)
-    #table = upload_osm_file('./testdata/test_poi.osm', api_server, 'Testing upload OSM file function',
-    #                        None, api_server.logger)
-    #table.export_arcgis('./testdata/test.gdb', 'poi_sync')
+    # table = upload_osm_file('./testdata/test_poi.osm', api_server, 'Testing upload OSM file function',
+    #                         None, api_server.logger)
+    # table.export_arcgis('./testdata/test.gdb', 'poi_sync')
 
 
 def cmdline():

@@ -52,7 +52,7 @@ def filterTags(attrs):
         for trailusecode in trailusemap:
             if trailusecode in values:
                 # more complicated than usual to special case highway:path and highway:track conflict
-                for k,v in trailusemap[trailusecode].items():
+                for k, v in trailusemap[trailusecode].items():
                     if k == 'highway' and v == 'path' and 'highway' in tags and tags['highway'] == 'track':
                         pass
                     else:
@@ -87,7 +87,7 @@ def filterTags(attrs):
         if flag and (flag.lower() == 'true' or flag.lower() == 'yes' or flag.lower() == 'y'):
             if trailusecode in trailusemap:
                 # more complicated than usual to special case highway:path and highway:track conflict
-                for k,v in trailusemap[trailusecode].items():
+                for k, v in trailusemap[trailusecode].items():
                     if k == 'highway' and v == 'path' and 'highway' in tags and tags['highway'] == 'track':
                         pass
                     else:

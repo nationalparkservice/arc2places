@@ -318,7 +318,7 @@ def translator_details():
             print u"Unable to decode Geometry Types for {0} in translators sheet".format(translator)
             geom = []
         _translators[name] = {
-            u"filename" : translator,
+            u"filename": translator,
             u"geomtypes": geom
         }
     ustr = json.dumps(_translators, indent=2, ensure_ascii=False)

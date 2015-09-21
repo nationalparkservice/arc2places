@@ -421,8 +421,8 @@ class PushUploadToPlaces(object):
             parameters[2].value = arcpy.ValidateTableName(parameters[2].valueAsText,
                                                           parameters[1].valueAsText)
             # undo conversion from '.csv' to '_csv'
-            if (arcpy.Describe(parameters[1].valueAsText).workspaceType == 'FileSystem'
-                    and parameters[2].valueAsText[-4:]) == '_csv':
+            if (arcpy.Describe(parameters[1].valueAsText).workspaceType == 'FileSystem' and
+                    parameters[2].valueAsText[-4:]) == '_csv':
                 parameters[2].value = parameters[2].valueAsText[:-4] + '.csv'
 
     def updateMessages(self, parameters):
@@ -633,8 +633,8 @@ class SeedPlaces(object):
             parameters[4].value = arcpy.ValidateTableName(parameters[4].valueAsText,
                                                           parameters[3].valueAsText)
             # undo conversion from '.csv' to '_csv'
-            if (arcpy.Describe(parameters[3].valueAsText).workspaceType == 'FileSystem'
-                    and parameters[4].valueAsText[-4:]) == '_csv':
+            if (arcpy.Describe(parameters[3].valueAsText).workspaceType == 'FileSystem' and
+                    parameters[4].valueAsText[-4:]) == '_csv':
                 parameters[4].value = parameters[4].valueAsText[:-4] + '.csv'
 
     def updateMessages(self, parameters):

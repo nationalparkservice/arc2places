@@ -1,5 +1,4 @@
 """This module provides classes that communicate with Open Street Map (OSM) API servers"""
-__author__ = 'RESarwas'
 
 import os
 import sys
