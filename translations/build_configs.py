@@ -254,11 +254,12 @@ def get_valuemap_dict():
             continue
         altvalues = row['Alternate GIS Values'].lower()
         tags = None
-        try:
-            tags = json.loads(row['Places Tags'])
-        except ValueError:
-            print u"Unable to decode Places Tags for {0} = {1} in {2} on line {3} of Value Mapping sheet".format(
-                field, value, translator, line)
+        if row['Places Tags']:
+            try:
+                tags = json.loads(row['Places Tags'])
+            except ValueError:
+                print u"Unable to decode Places Tags for {0} = {1} in {2} on line {3} of Value Mapping sheet".format(
+                    field, value, translator, line)
         if tags is not None:
             _valuemap[translator][field][value] = tags
             if altvalues:
