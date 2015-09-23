@@ -62,7 +62,6 @@ class DataTable:
             arcpy = None
         if arcpy is None:
             return
-        # FIXME: will fail if table exists.  In some cases we may want to append to existing (check field match)
         table_path = os.path.join(workspace, table_name)
         self.fieldnames = [arcpy.ValidateFieldName(f, workspace) for f in self.fieldnames]
         if not append:
