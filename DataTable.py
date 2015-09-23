@@ -43,11 +43,13 @@ class DataTable:
             csv_writer.writerow(row)
 
     # Public - PushUploadToPlaces, SeedPlaces in arc2places.pyt; test() in self
-    def export_arcgis(self, workspace, table_name):
+    def export_arcgis(self, workspace, table_name, append=False):
         """
         Exports the data table to an ArcGIS dataset path.
         Does nothing if ArcGIS (arcpy) is not available.
         May throw arcpy exceptions.
+        Will throw an exception if table exists and append == False
+        will throw an exception if append == True and schemas are different
 
         :param workspace: A path (string) to an ArcGIS workspace
         :param table_name: The name (string) of the table to create in the ArcGIS workspace.
@@ -61,11 +63,13 @@ class DataTable:
         if arcpy is None:
             return
         # FIXME: will fail if table exists.  In some cases we may want to append to existing (check field match)
-        arcpy.CreateTable_management(workspace, table_name)
         table_path = os.path.join(workspace, table_name)
         self.fieldnames = [arcpy.ValidateFieldName(f, workspace) for f in self.fieldnames]
-        for fname, ftype in zip(self.fieldnames, self.fieldtypes):
-            arcpy.AddField_management(table_path, fname, ftype)
+        if not append:
+            # will throw if table exists
+            arcpy.CreateTable_management(workspace, table_name)
+            for fname, ftype in zip(self.fieldnames, self.fieldtypes):
+                arcpy.AddField_management(table_path, fname, ftype)
         with arcpy.da.InsertCursor(table_path, self.fieldnames) as cursor:
             for row in self.rows:
                 cursor.insertRow(row)
@@ -80,8 +84,10 @@ def test():
     data.export_csv(r'./testdata/simpletable.csv')
     data.export_csv(r'./testdata/simpletable.csv', append=True)
     data.export_arcgis('./testdata/test.gdb', 'simpletable')
+    data.export_arcgis('./testdata/test.gdb', 'simpletable', append=True)
     sde = os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde")
     data.export_arcgis(sde, 'simpletable')
+    data.export_arcgis(sde, 'simpletable', append=True)
 
 
 if __name__ == '__main__':
