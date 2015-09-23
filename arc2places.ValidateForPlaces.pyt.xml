@@ -48,16 +48,16 @@
   <tool xmlns="" name="ValidateForPlaces" displayname="1) Validate Data For Places" toolboxalias="Places">
     <parameters>
       <param name="feature" displayname="Feature Class" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
-        <dialogReference>The feature class to check. Any ArcGIS feature class can be checked.</dialogReference>
-        <pythonReference>The feature class to check. Any ArcGIS feature class can be checked.</pythonReference>
+        <dialogReference>&lt;p/&gt;The feature class to check. Any ArcGIS feature class can be checked.</dialogReference>
+        <pythonReference>&lt;p/&gt;The feature class to check. Any ArcGIS feature class can be checked.</pythonReference>
       </param>
       <param name="translator" displayname="Standard Translator" type="Optional" direction="Input" datatype="String" expression="{Buildings | Generic | Parking Lots | Points of Interest | Roads | Trails | Other}">
-        <dialogReference>The translator to apply to the feature class when it will be uploaded. The translator's feature filter is used to only check the features that will be uploaded.</dialogReference>
-        <pythonReference>The translator to apply to the feature class when it will be uploaded. The translator's feature filter is used to only check the features that will be uploaded.</pythonReference>
+        <dialogReference>&lt;p/&gt;The translator to apply to the feature class when it will be uploaded. The translator's feature filter is used to only check the features that will be uploaded.</dialogReference>
+        <pythonReference>&lt;p/&gt;The translator to apply to the feature class when it will be uploaded. The translator's feature filter is used to only check the features that will be uploaded.</pythonReference>
       </param>
       <param name="alt_translator" displayname="Alternate Translator" type="Optional" direction="Input" datatype="String" expression="{alt_translator}">
-        <dialogReference>The name of a non-standard translator</dialogReference>
-        <pythonReference>The name of a non-standard translator</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of a non-standard translator</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of a non-standard translator</pythonReference>
       </param>
     </parameters>
     <summary>Verify that data can be sent to Places, and if it is suitable for future syncing</summary>

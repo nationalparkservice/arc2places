@@ -49,36 +49,36 @@
   <tool xmlns="" name="SeedPlaces" displayname="Seed Places with EGIS data" toolboxalias="Places">
     <parameters>
       <param name="feature" displayname="Input Feature" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
-        <dialogReference>The feature class to be converted to Places elements</dialogReference>
-        <pythonReference>The feature class to be converted to Places elements</pythonReference>
+        <dialogReference>&lt;p/&gt;The feature class to be converted to Places elements</dialogReference>
+        <pythonReference>&lt;p/&gt;The feature class to be converted to Places elements</pythonReference>
       </param>
       <param name="translator" displayname="Standard Translator" type="Required" direction="Input" datatype="String" expression="Buildings | Generic | Parking Lots | Points of Interest | Roads | Trails | Other">
-        <dialogReference>The translator specifies how to filter and convert GIS features into Places elements.</dialogReference>
-        <pythonReference>The translator specifies how to filter and convert GIS features into Places elements.</pythonReference>
+        <dialogReference>&lt;p/&gt;The translator specifies how to filter and convert GIS features into Places elements.</dialogReference>
+        <pythonReference>&lt;p/&gt;The translator specifies how to filter and convert GIS features into Places elements.</pythonReference>
       </param>
       <param name="alt_translator" displayname="Alternate Translator" type="Optional" direction="Input" datatype="String" expression="{alt_translator}">
-        <dialogReference>The name of a non-standard translator</dialogReference>
-        <pythonReference>The name of a non-standard translator</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of a non-standard translator</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of a non-standard translator</pythonReference>
       </param>
       <param name="workspace" displayname="Output Location" type="Required" direction="Input" datatype="Workspace" expression="workspace">
-        <dialogReference>The workspace in which to create the upload log.</dialogReference>
-        <pythonReference>The workspace in which to create the upload log.</pythonReference>
+        <dialogReference>&lt;p/&gt;The workspace in which to create the upload log.</dialogReference>
+        <pythonReference>&lt;p/&gt;The workspace in which to create the upload log.</pythonReference>
       </param>
       <param name="log_table" displayname="Upload Log Table" type="Required" direction="Input" datatype="String" expression="log_table">
-        <dialogReference>The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</dialogReference>
-        <pythonReference>The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</pythonReference>
       </param>
       <param name="ignore_sync_warnings" displayname="Ignore warnings about future syncing" type="Required" direction="Input" datatype="Boolean" expression="ignore_sync_warnings">
-        <dialogReference>Should the upload proceed if there are issues?&lt;UL&gt;&lt;LI&gt;Unchecked - Data will not be uploaded if there are known problems with syncing. This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Proceed with the upload despite the warnings.  The warnings will need to be addressed and corrected before syncing will work.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
-        <pythonReference>Should the upload proceed if there are issues?&lt;UL&gt;&lt;LI&gt;Unchecked - Data will not be uploaded if there are known problems with syncing. This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Proceed with the upload despite the warnings.  The warnings will need to be addressed and corrected before syncing will work.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
+        <dialogReference>&lt;p/&gt;Should the upload proceed if there are issues?&lt;UL&gt;&lt;LI&gt;Unchecked - Data will not be uploaded if there are known problems with syncing. This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Proceed with the upload despite the warnings.  The warnings will need to be addressed and corrected before syncing will work.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
+        <pythonReference>&lt;p/&gt;Should the upload proceed if there are issues?&lt;UL&gt;&lt;LI&gt;Unchecked - Data will not be uploaded if there are known problems with syncing. This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Proceed with the upload despite the warnings.  The warnings will need to be addressed and corrected before syncing will work.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
       </param>
       <param name="addIds" displayname="Add Places IDs to Input Feature" type="Required" direction="Input" datatype="Boolean" expression="addIds">
-        <dialogReference>Should the Places ID be added to your original features?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will not be modified.  This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be assigned their new Places ID.  There must be an existing text(10+) field called 'PLACESID'.  This step is not required nor encouraged.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
-        <pythonReference>Should the Places ID be added to your original features?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will not be modified.  This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be assigned their new Places ID.  There must be an existing text(10+) field called 'PLACESID'.  This step is not required nor encouraged.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
+        <dialogReference>&lt;p/&gt;Should the Places ID be added to your original features?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will not be modified.  This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be assigned their new Places ID.  There must be an existing text(10+) field called 'PLACESID'.  This step is not required nor encouraged.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
+        <pythonReference>&lt;p/&gt;Should the Places ID be added to your original features?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will not be modified.  This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be assigned their new Places ID.  There must be an existing text(10+) field called 'PLACESID'.  This step is not required nor encouraged.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
       </param>
       <param name="testing" displayname="Upload to the TEST version of Places" type="Required" direction="Input" datatype="Boolean" expression="testing">
-        <dialogReference>Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places.  They will not appear in Park Tiles.  This is the default.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
-        <pythonReference>Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places.  They will not appear in Park Tiles.  This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
+        <dialogReference>&lt;p/&gt;Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places.  They will not appear in Park Tiles.  This is the default.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
+        <pythonReference>&lt;p/&gt;Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places.  They will not appear in Park Tiles.  This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
       </param>
     </parameters>
     <summary>Send a feature class to Places</summary>

@@ -46,24 +46,24 @@
   <tool xmlns="" name="CreatePlacesUpload" displayname="4) Creates a Places Upload File" toolboxalias="Places">
     <parameters>
       <param name="feature" displayname="Input Features" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
-        <dialogReference>The feature class to be converted to Places elements</dialogReference>
-        <pythonReference>The feature class to be converted to Places elements</pythonReference>
+        <dialogReference>&lt;p/&gt;The feature class to be converted to Places elements</dialogReference>
+        <pythonReference>&lt;p/&gt;The feature class to be converted to Places elements</pythonReference>
       </param>
       <param name="translator" displayname="Standard Translator" type="Required" direction="Input" datatype="String" expression="Buildings | Generic | Parking Lots | Points of Interest | Roads | Trails | Other">
-        <dialogReference>The translator specifies how to filter and convert GIS features into Places elements.</dialogReference>
-        <pythonReference>The translator specifies how to filter and convert GIS features into Places elements.</pythonReference>
+        <dialogReference>&lt;p/&gt;The translator specifies how to filter and convert GIS features into Places elements.</dialogReference>
+        <pythonReference>&lt;p/&gt;The translator specifies how to filter and convert GIS features into Places elements.</pythonReference>
       </param>
       <param name="alt_translator" displayname="Alternate Translator" type="Optional" direction="Input" datatype="String" expression="{alt_translator}">
-        <dialogReference>The name of a non-standard translator</dialogReference>
-        <pythonReference>The name of a non-standard translator</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of a non-standard translator</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of a non-standard translator</pythonReference>
       </param>
       <param name="folder" displayname="Output Folder" type="Required" direction="Input" datatype="Folder" expression="folder">
-        <dialogReference>Location (directory) for the generated file.</dialogReference>
-        <pythonReference>Location (directory) for the generated file.</pythonReference>
+        <dialogReference>&lt;p/&gt;Location (directory) for the generated file.</dialogReference>
+        <pythonReference>&lt;p/&gt;Location (directory) for the generated file.</pythonReference>
       </param>
       <param name="output" displayname="File Name" type="Required" direction="Input" datatype="String" expression="output">
-        <dialogReference>The name of the file to create.  It must not already exist.  It typically has an extension of ".osm"</dialogReference>
-        <pythonReference>The name of the file to create.  It must not already exist.  It typically has an extension of ".osm"</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the file to create.  It must not already exist.  It typically has an extension of ".osm"</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the file to create.  It must not already exist.  It typically has an extension of ".osm"</pythonReference>
       </param>
     </parameters>
     <summary>Create a places upload file</summary>

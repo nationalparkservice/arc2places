@@ -46,12 +46,12 @@
   <tool xmlns="" name="AddUniqueId" displayname="3) Add and populate a unique feature id for syncing" toolboxalias="Places">
     <parameters>
       <param name="feature" displayname="Feature Class" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
-        <dialogReference>The feature class in need of a globally unique id for each feature</dialogReference>
-        <pythonReference>The feature class in need of a globally unique id for each feature</pythonReference>
+        <dialogReference>&lt;p/&gt;The feature class in need of a globally unique id for each feature</dialogReference>
+        <pythonReference>&lt;p/&gt;The feature class in need of a globally unique id for each feature</pythonReference>
       </param>
       <param name="guid_name" displayname="Name of Globally Unique Identifier Field" type="Required" direction="Input" datatype="String" expression="guid_name">
-        <dialogReference>The name of the field to store the unique id</dialogReference>
-        <pythonReference>The name of the field to store the unique id</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the field to store the unique id</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the field to store the unique id</pythonReference>
       </param>
     </parameters>
     <summary>Add and populate a unique feature id for syncing</summary>

@@ -46,8 +46,8 @@
   <tool xmlns="" name="PushUpdatesToPlaces" displayname="Send Updates to Places" toolboxalias="Places">
     <parameters>
       <param name="feature" displayname="Input Feature" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
-        <dialogReference>Feature class that has changed data</dialogReference>
-        <pythonReference>Feature class that has changed data</pythonReference>
+        <dialogReference>&lt;p/&gt;Feature class that has changed data</dialogReference>
+        <pythonReference>&lt;p/&gt;Feature class that has changed data</pythonReference>
       </param>
     </parameters>
     <summary>Not Yet Implemented - Find changes in eGIS data since last update and send those changes to Places</summary>

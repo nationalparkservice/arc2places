@@ -47,28 +47,28 @@
   <tool xmlns="" name="IntegratePlacesIds" displayname="6) Add Places Ids to EGIS" toolboxalias="Places">
     <parameters>
       <param name="feature" displayname="EGIS Feature Class" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
-        <dialogReference>The feature class that has been uploaded to Places</dialogReference>
-        <pythonReference>The feature class that has been uploaded to Places</pythonReference>
+        <dialogReference>&lt;p/&gt;The feature class that has been uploaded to Places</dialogReference>
+        <pythonReference>&lt;p/&gt;The feature class that has been uploaded to Places</pythonReference>
       </param>
       <param name="table" displayname="Upload Log Table" type="Required" direction="Input" datatype="Table" expression="table">
-        <dialogReference>The table documenting the upload.  This table has the Places id for each feature uploaded.</dialogReference>
-        <pythonReference>The table documenting the upload.  This table has the Places id for each feature uploaded.</pythonReference>
+        <dialogReference>&lt;p/&gt;The table documenting the upload.  This table has the Places id for each feature uploaded.</dialogReference>
+        <pythonReference>&lt;p/&gt;The table documenting the upload.  This table has the Places id for each feature uploaded.</pythonReference>
       </param>
       <param name="gisid" displayname="EGIS ID Field in EGIS" type="Required" direction="Input" datatype="Field" expression="gisid">
-        <dialogReference>The name of the field in the feature class that was used as the feature's unique id.</dialogReference>
-        <pythonReference>The name of the field in the feature class that was used as the feature's unique id.</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the field in the feature class that was used as the feature's unique id.</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the field in the feature class that was used as the feature's unique id.</pythonReference>
       </param>
       <param name="placesid" displayname="Places ID Field in EGIS" type="Required" direction="Input" datatype="Field" expression="placesid">
-        <dialogReference>The field in the feature class that will store the id created in Places.</dialogReference>
-        <pythonReference>The field in the feature class that will store the id created in Places.</pythonReference>
+        <dialogReference>&lt;p/&gt;The field in the feature class that will store the id created in Places.</dialogReference>
+        <pythonReference>&lt;p/&gt;The field in the feature class that will store the id created in Places.</pythonReference>
       </param>
       <param name="gisidcsv" displayname="EGIS ID Field in Upload Log" type="Required" direction="Input" datatype="Field" expression="gisidcsv">
-        <dialogReference>The name of the field in the Upload Log Table that has the feature's unique id.</dialogReference>
-        <pythonReference>The name of the field in the Upload Log Table that has the feature's unique id.</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the field in the Upload Log Table that has the feature's unique id.</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the field in the Upload Log Table that has the feature's unique id.</pythonReference>
       </param>
       <param name="placesidcsv" displayname="Places ID Field in Upload Log" type="Required" direction="Input" datatype="Field" expression="placesidcsv">
-        <dialogReference>The name of the field in the Upload Log Table that has the id created in Places.</dialogReference>
-        <pythonReference>The name of the field in the Upload Log Table that has the id created in Places.</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the field in the Upload Log Table that has the id created in Places.</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the field in the Upload Log Table that has the id created in Places.</pythonReference>
       </param>
     </parameters>
     <summary>Add Places ID to the eGIS features</summary>

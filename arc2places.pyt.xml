@@ -47,8 +47,9 @@
 	</distInfo>
 	<toolbox name="arc2places" alias="Places">
 		<toolsets>
-			<toolset name="Seed Places Step by Step"/></toolsets>
-		<arcToolboxHelpPath>c:\program files (x86)\arcgis\desktop10.3\Help\gp</arcToolboxHelpPath></toolbox>
+			<toolset name="Seed Places Step by Step"/>
+    </toolsets>
+  </toolbox>
 	<mdHrLv>
 		<ScopeCd value="005"/>
 	</mdHrLv>

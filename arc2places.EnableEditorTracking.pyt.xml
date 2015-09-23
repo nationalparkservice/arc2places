@@ -17,7 +17,7 @@
     <idCitation>
       <resTitle>Enable Editor Tracking</resTitle>
     </idCitation>
-    <idAbs>Enables editor tracking.&lt;br/&gt;See System Toolboxes\Data Management Tools.tbx\Fields\Enable Editor Tracking for details.&lt;br/&gt;Dates will be recorded in UTC (Coordinated Universal Time).</idAbs>
+    <idAbs>Enables editor tracking.&lt;p/&gt;See System Toolboxes\Data Management Tools.tbx\Fields\Enable Editor Tracking for details.&lt;p/&gt;Dates will be recorded in UTC (Coordinated Universal Time).</idAbs>
     <idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
     <searchKeys>
       <keyword>NPMap</keyword>
@@ -46,28 +46,28 @@
   <tool xmlns="" name="EnableEditorTracking" displayname="2) Enable Editor Tracking" toolboxalias="Places">
     <parameters>
       <param name="feature" displayname="Input Dataset" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
-        <dialogReference>The feature class, table, mosaic dataset, or raster catalog that will have editor tracking enabled.</dialogReference>
-        <pythonReference>The feature class, table, mosaic dataset, or raster catalog that will have editor tracking enabled.</pythonReference>
+        <dialogReference>&lt;p/&gt;The feature class, table, mosaic dataset, or raster catalog that will have editor tracking enabled.</dialogReference>
+        <pythonReference>&lt;p/&gt;The feature class, table, mosaic dataset, or raster catalog that will have editor tracking enabled.</pythonReference>
       </param>
       <param name="creator" displayname="Creator Field" type="Optional" direction="Input" datatype="String" expression="{creator}">
-        <dialogReference>The name of the field that will store the names of users who created features or records. If this field already exists, it must be a String field.</dialogReference>
-        <pythonReference>The name of the field that will store the names of users who created features or records. If this field already exists, it must be a String field.</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the field that will store the names of users who created features or records. If this field already exists, it must be a String field.</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the field that will store the names of users who created features or records. If this field already exists, it must be a String field.</pythonReference>
       </param>
       <param name="create_date" displayname="Creation Date Field" type="Optional" direction="Input" datatype="String" expression="{create_date}">
-        <dialogReference>The name of the field that will store the dates features or records were created. If this field already exists, it must be a Date field.</dialogReference>
-        <pythonReference>The name of the field that will store the dates features or records were created. If this field already exists, it must be a Date field.</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the field that will store the dates features or records were created. If this field already exists, it must be a Date field.</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the field that will store the dates features or records were created. If this field already exists, it must be a Date field.</pythonReference>
       </param>
       <param name="editor" displayname="Last Editor Field" type="Optional" direction="Input" datatype="String" expression="{editor}">
-        <dialogReference>The name of the field that will store the names of users who last edited features or records. If this field already exists, it must be a String field.</dialogReference>
-        <pythonReference>The name of the field that will store the names of users who last edited features or records. If this field already exists, it must be a String field.</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the field that will store the names of users who last edited features or records. If this field already exists, it must be a String field.</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the field that will store the names of users who last edited features or records. If this field already exists, it must be a String field.</pythonReference>
       </param>
       <param name="edit_date" displayname="Last Edit Date Field" type="Optional" direction="Input" datatype="String" expression="{edit_date}">
-        <dialogReference>The name of the field that will store the dates features or records were last edited. If this field already exists, it must be a Date field.</dialogReference>
-        <pythonReference>The name of the field that will store the dates features or records were last edited. If this field already exists, it must be a Date field.</pythonReference>
+        <dialogReference>&lt;p/&gt;The name of the field that will store the dates features or records were last edited. If this field already exists, it must be a Date field.</dialogReference>
+        <pythonReference>&lt;p/&gt;The name of the field that will store the dates features or records were last edited. If this field already exists, it must be a Date field.</pythonReference>
       </param>
       <param name="addfields" displayname="Add fields if they don't exist" type="Required" direction="Input" datatype="Boolean" expression="addfields">
-        <dialogReference>Specifies whether to add fields if they don't already exist.&lt;UL&gt;&lt;LI&gt;Unchecked - Fields will not be added. Fields specified must already exist in the input dataset. This is the default. &lt;/LI&gt;&lt;LI&gt;Checked - Fields will be added if they do not already exist.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
-        <pythonReference>Specifies whether to add fields if they don't already exist.&lt;UL&gt;&lt;LI&gt;Unchecked - Fields will not be added. Fields specified must already exist in the input dataset. This is the default. &lt;/LI&gt;&lt;LI&gt;Checked - Fields will be added if they do not already exist.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
+        <dialogReference>&lt;p/&gt;Specifies whether to add fields if they don't already exist.&lt;UL&gt;&lt;LI&gt;Unchecked - Fields will not be added. Fields specified must already exist in the input dataset. This is the default. &lt;/LI&gt;&lt;LI&gt;Checked - Fields will be added if they do not already exist.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
+        <pythonReference>&lt;p/&gt;Specifies whether to add fields if they don't already exist.&lt;UL&gt;&lt;LI&gt;Unchecked - Fields will not be added. Fields specified must already exist in the input dataset. This is the default. &lt;/LI&gt;&lt;LI&gt;Checked - Fields will be added if they do not already exist.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
       </param>
     </parameters>
     <summary>Enables editor tracking</summary>
