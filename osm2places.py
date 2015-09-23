@@ -77,13 +77,15 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     return data
 
 
-def make_upload_log_from_files(upload_path, response_path, user, logger):
+def make_upload_log_from_files(upload_path, response_path, logger):
     with open(upload_path, 'r', encoding='utf-8') as fr:
         data = fr.read()
     with open(response_path, 'r', encoding='utf-8') as fr:
         resp = fr.read()
-    date = None  # FIXME: get from resp
-    cid = 1  # FIXME: get from resp
+    # Assume there is only one changeset for the upload/response.
+    date = None  # FIXME: get this from the changeset of the first element in the response object
+    cid = None  # FIXME: get this from the changeset of the first element in the response object
+    user = None  # FIXME: get this from the changeset of the first element in the response object
     return make_upload_log(data, resp, date, cid, user, logger)
 
 

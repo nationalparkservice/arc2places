@@ -541,7 +541,7 @@ class CreateUploadLog(object):
         workspace = parameters[2].valueAsText
         table_name = parameters[3].valueAsText
         table_path = os.path.join(workspace, table_name)
-        table = osm2places.make_upload_log_from_files(upload_path, response_path, places.username, places.logger)
+        table = osm2places.make_upload_log_from_files(upload_path, response_path, places.logger)
         ext = os.path.splitext(table_name)[1].lower()
         if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
             table.export_csv(table_path)
