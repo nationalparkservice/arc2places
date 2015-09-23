@@ -77,6 +77,16 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     return data
 
 
+def make_upload_log_from_files(upload_path, response_path, user, logger):
+    with open(upload_path, 'r', encoding='utf-8') as fr:
+        data = fr.read()
+    with open(response_path, 'r', encoding='utf-8') as fr:
+        resp = fr.read()
+    date = None  # FIXME: get from resp
+    cid = 1  # FIXME: get from resp
+    return make_upload_log(data, resp, date, cid, user, logger)
+
+
 def fixchangefile(cid, data):
     i = 'changeset="-1"'
     o = 'changeset="' + cid + '"'

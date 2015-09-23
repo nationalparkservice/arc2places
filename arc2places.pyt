@@ -89,6 +89,7 @@ class Toolbox(object):
                       AddUniqueId,
                       CreatePlacesUpload,
                       PushUploadToPlaces,
+                      CreateUploadLog,
                       IntegratePlacesIds,
                       SeedPlaces,
                       GetUpdatesFromPlaces,
@@ -456,9 +457,102 @@ class PushUploadToPlaces(object):
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
+class CreateUploadLog(object):
+    def __init__(self):
+        self.label = "6) Create Upload Log"
+        self.description = ("Creates a table documenting the upload. "
+                            "Table is built from the OSM Upload file and the Upload respons file. "
+                            "Table is used and updated by future sync tasks")
+        self.category = "Seed Places Step by Step"
+
+    def getParameterInfo(self):
+        upload = arcpy.Parameter(
+            name="upload",
+            displayName="OSM Change File",
+            direction="Input",
+            datatype="DEFile",
+            parameterType="Required")
+        upload.filter.list = ["osm"]
+
+        response = arcpy.Parameter(
+            name="upload",
+            displayName="Server Response File",
+            direction="Input",
+            datatype="DEFile",
+            parameterType="Required")
+        response.filter.list = ["*"]
+
+        workspace = arcpy.Parameter(
+            name="workspace",
+            displayName="Output Location",
+            direction="Input",
+            datatype="DEWorkspace",
+            parameterType="Required")
+
+        log_table = arcpy.Parameter(
+            name="log_table",
+            displayName="Upload Log Table",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Required")
+
+        parameters = [upload, response, workspace, log_table]
+        return parameters
+
+    def updateParameters(self, parameters):
+        # Default output workspace
+        if parameters[0].value and not parameters[2].altered:
+            dir_name = os.path.dirname(parameters[0].valueAsText)
+            parameters[2].value = dir_name
+        if parameters[1].value and not parameters[2].altered:
+            dir_name = os.path.dirname(parameters[1].valueAsText)
+            parameters[2].value = dir_name
+        # Default table name
+        if not parameters[3].altered and (parameters[0].value or parameters[1].value):
+            if parameters[0].value:
+                base_name = os.path.basename(parameters[0].valueAsText)
+                base_name = os.path.splitext(base_name)[0]
+            else:
+                base_name = os.path.basename(parameters[1].valueAsText)
+                base_name = os.path.splitext(base_name)[1]
+            table_name = base_name + '_upload_log'
+            if parameters[2].value:
+                if arcpy.Describe(parameters[1].valueAsText).workspaceType == 'FileSystem':
+                    table_name += '.csv'
+            parameters[3].value = table_name
+        # Ensure the table name is appropriate for the workspace
+        if parameters[2].value and parameters[2].value:
+            parameters[3].value = arcpy.ValidateTableName(parameters[3].valueAsText,
+                                                          parameters[2].valueAsText)
+            # undo conversion from '.csv' to '_csv'
+            if (arcpy.Describe(parameters[2].valueAsText).workspaceType == 'FileSystem' and
+                    parameters[3].valueAsText[-4:]) == '_csv':
+                parameters[3].value = parameters[3].valueAsText[:-4] + '.csv'
+
+    def updateMessages(self, parameters):
+        if parameters[2].value and parameters[3].value:
+            table_path = os.path.join(parameters[2].valueAsText, parameters[3].valueAsText)
+            if arcpy.Exists(table_path):
+                parameters[3].setErrorMessage("Output {0:s} already exists".format(table_path))
+
+    def execute(self, parameters, messages):
+        upload_path = parameters[0].valueAsText
+        response_path = parameters[1].valueAsText
+        workspace = parameters[2].valueAsText
+        table_name = parameters[3].valueAsText
+        table_path = os.path.join(workspace, table_name)
+        table = osm2places.make_upload_log_from_files(upload_path, response_path, places.username, places.logger)
+        ext = os.path.splitext(table_name)[1].lower()
+        if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
+            table.export_csv(table_path)
+        else:
+            table.export_arcgis(workspace, table_name)
+
+
+# noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class IntegratePlacesIds(object):
     def __init__(self):
-        self.label = "6) Add Places Ids to EGIS"
+        self.label = "7) Add Places Ids to EGIS"
         self.description = ("Populates the PlacesId in an EGIS dataset using "
                             "upload log table which links Places Ids to EGIS Ids.")
         self.category = "Seed Places Step by Step"
