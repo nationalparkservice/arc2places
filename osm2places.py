@@ -7,6 +7,7 @@ import optparse
 import sys
 import os
 import datetime
+import tempfile
 from OsmApiServer import OsmApiServer, Places
 from Logger import Logger
 from DataTable import DataTable
@@ -150,22 +151,63 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
         raise e
     except Exception as e:
         # response is valid, but there was an unexpected (programming?) error,
-        # TODO: save response as text, and report the file name to the user
+        f = tempfile.NamedTemporaryFile(delete=False, prefix='osmchange_')
+        osm_filename = f.name
+        f.close()
+        f = tempfile.NamedTemporaryFile(delete=False, prefix='placesresp_')
+        resp_filename = f.name
+        f.close()
+        try:
+            logger.warn('There was a problem creating the upload log.'
+                        '\nThe OSM Change file will be saved as "{0}".'
+                        '\nThe server response will be saved as "{1}".'
+                        '\nYou can use these to create the upload log'
+                        'once the outstanding issues have been resolved.'
+                        '\n\tDetails: {0}'.format(osm_filename, resp_filename, e))
+        except AttributeError:
+            pass
+        try:
+            with open(osm_filename, 'w', encoding='utf-8') as f:
+                f.write(data)
+        except IOError as e:
+            try:
+                logger.error('Error saving the OSM Change file.\n' + e.message)
+            except AttributeError:
+                pass
+        try:
+            with open(resp_filename, 'w', encoding='utf-8') as f:
+                f.write(data)
+        except IOError as e:
+            try:
+                logger.error('Error saving the server response.\n' + e.message)
+            except AttributeError:
+                pass
         raise e
     if csv_path and upload_log:
         upload_log.export_csv(csv_path)
+        try:
+            logger.info("Saved link table as CSV file.")
+        except AttributeError:
+            pass
 
     # close the changeset; Errors closing the changeset are non-fatal
     try:
         server.close_changeset(cid)
     except Exception as e:
         try:
-            logger.warn('Server could not close the change request.\n\tDetails: {0}'.format(e))
+            logger.warn('Places could not close the change request.\n\tDetails: {0}'
+                        '\nThe change was uploaded, and may still be processed correctly.'
+                        '\nCheck the Places editor shortly to validate your upload.'
+                        '\nContact the NPMap team regarding change #{1} if there are problems.'.format(e, cid))
         except AttributeError:
             pass
     if server.error:
         try:
-            logger.warn('Server could not close the change request.\n\tDetails: ' + server.error)
+            logger.warn('Places could not close the change request.\n\tDetails: {0}'
+                        '\nThe change was uploaded, and may still be processed correctly.'
+                        '\nCheck the Places editor shortly to validate your upload.'
+                        '\nContact the NPMap team regarding change #{1} if there are problems.'
+                        .format(server.error, cid))
         except AttributeError:
             pass
 
