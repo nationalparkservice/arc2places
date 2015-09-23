@@ -17,7 +17,7 @@
     <idCitation>
       <resTitle>Send Updates to Places</resTitle>
     </idCitation>
-    <idAbs>Not Yet Implemented - Find changes in eGIS data since last update and send those changes to Places</idAbs>
+    <idAbs>&lt;strong&gt;Not Yet Functional&lt;/strong&gt;&lt;p/&gt;Find changes in eGIS data since last update and send those changes to Places</idAbs>
     <idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
     <searchKeys>
       <keyword>NPMap</keyword>
