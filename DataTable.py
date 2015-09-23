@@ -5,6 +5,7 @@ class DataTable:
 
     valid_field_types = ['TEXT', 'FLOAT', 'DOUBLE', 'SHORT', 'LONG', 'DATE' 'BLOB' 'RASTER' 'GUID']
 
+    # Public - DataTables created/edited in make_upload_log() in osm2places; test() in self
     def __init__(self):
         self.fieldnames = None
         self.fieldtypes = None
@@ -47,12 +48,13 @@ class DataTable:
         """
         Exports the data table to an ArcGIS dataset path.
         Does nothing if ArcGIS (arcpy) is not available.
-        May throw arcpy exceptions.
         Will throw an exception if table exists and append == False
+        Will throw an exception if append == True and table does not exist
         will throw an exception if append == True and schemas are different
+        May throw other arcpy exceptions.
 
         :param workspace: A path (string) to an ArcGIS workspace
-        :param table_name: The name (string) of the table to create in the ArcGIS workspace.
+        :param table_name: The name (string) of the table to create/append in the ArcGIS workspace.
         :return: Method has no return value.
         :rtype : None
         """
