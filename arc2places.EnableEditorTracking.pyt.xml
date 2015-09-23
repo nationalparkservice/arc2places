@@ -1,1 +1,79 @@
-<metadata xml:lang="en"><Esri><CreaDate>20150921</CreaDate><CreaTime>13304900</CreaTime><ArcGISFormat>1.0</ArcGISFormat><SyncOnce>TRUE</SyncOnce><ModDate>20150921</ModDate><ModTime>14560100</ModTime><scaleRange><minScale>150000000</minScale><maxScale>5000</maxScale></scaleRange><ArcGISProfile>ItemDescription</ArcGISProfile></Esri><dataIdInfo><idCitation><resTitle>2) Enable Editor Tracking</resTitle></idCitation><idAbs>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Enables Editor Tracking.&lt;/SPAN&gt;&lt;/P&gt;&lt;P&gt;&lt;SPAN&gt;See System Toolboxes\Data Management Tools.tbx\Fields\Enable Editor Tracking for details.&lt;/SPAN&gt;&lt;/P&gt;&lt;P&gt;&lt;SPAN&gt;Dates will be recorded in UTC (Coordinated Universal Time).&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</idAbs><searchKeys><keyword>editor tracking</keyword></searchKeys></dataIdInfo><distInfo><distributor><distorFormat><formatName>ArcToolbox Tool</formatName></distorFormat></distributor></distInfo><tool name="EnableEditorTracking" displayname="2) Enable Editor Tracking" toolboxalias="Places" xmlns=""><parameters><param name="feature" displayname="Input Dataset" type="Required" direction="Input" datatype="Feature Layer" expression="feature"><dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The feature class, table, mosaic dataset, or raster catalog that will have editor tracking enabled.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;P&gt;&lt;SPAN /&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference><pythonReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The feature class, table, mosaic dataset, or raster catalog that will have editor tracking enabled.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</pythonReference></param><param name="creator" displayname="Creator Field" type="Optional" direction="Input" datatype="String" expression="{creator}"><dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The name of the field that will store the names of users who created features or records. If this field already exists, it must be a String field.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference><pythonReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The name of the field that will store the names of users who created features or records. If this field already exists, it must be a String field.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</pythonReference></param><param name="create_date" displayname="Creation Date Field" type="Optional" direction="Input" datatype="String" expression="{create_date}"><dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The name of the field that will store the dates features or records were created. If this field already exists, it must be a Date field.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference><pythonReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The name of the field that will store the dates features or records were created. If this field already exists, it must be a Date field.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</pythonReference></param><param name="editor" displayname="Last Editor Field" type="Optional" direction="Input" datatype="String" expression="{editor}"><dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The name of the field that will store the names of users who last edited features or records. If this field already exists, it must be a String field.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference><pythonReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;The name of the field that will store the names of users who last edited features or records. If this field already exists, it must be a String field.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</pythonReference></param><param name="edit_date" displayname="Last Edit Date Field" type="Optional" direction="Input" datatype="String" expression="{edit_date}"><dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The name of the field that will store the dates features or records were last edited. If this field already exists, it must be a Date field.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference><pythonReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;The name of the field that will store the dates features or records were last edited. If this field already exists, it must be a Date field.&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</pythonReference></param><param name="addfields" displayname="Add fields if they don't exist" type="Required" direction="Input" datatype="Boolean" expression="addfields"><dialogReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;Specifies whether to add fields if they don't already exist.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;UL&gt;&lt;LI&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;Unchecked—Fields will not be added. Fields specified must already exist in the input dataset. This is the default. &lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/LI&gt;&lt;LI&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;Checked—Fields will be added if they do not already exist. &lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/LI&gt;&lt;/UL&gt;&lt;P&gt;&lt;SPAN /&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</dialogReference><pythonReference>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;Specifies whether to add fields if they don't already exist.&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;UL&gt;&lt;LI&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;Unchecked—Fields will not be added. Fields specified must already exist in the input dataset. This is the default. &lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/LI&gt;&lt;LI&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;Checked—Fields will be added if they do not already exist. &lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;/LI&gt;&lt;/UL&gt;&lt;P&gt;&lt;SPAN /&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</pythonReference></param></parameters><summary>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;Enables Editor Tracking.&lt;/SPAN&gt;&lt;/P&gt;&lt;P&gt;&lt;SPAN&gt;See System Toolboxes\Data Management Tools.tbx\Fields\Enable Editor Tracking for details.&lt;/SPAN&gt;&lt;/P&gt;&lt;P&gt;&lt;SPAN&gt;Dates will be recorded in UTC (Coordinated Universal Time).&lt;/SPAN&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</summary><usage>&lt;DIV STYLE="text-align:Left;"&gt;&lt;DIV&gt;&lt;DIV&gt;&lt;P&gt;&lt;SPAN&gt;See System Toolboxes\Data Management Tools.tbx\Fields\Enable Editor Tracking for details&lt;/SPAN&gt;&lt;/P&gt;&lt;P&gt;&lt;SPAN&gt;&lt;SPAN&gt;Dates will be recorded in UTC (Coordinated Universal Time).&lt;/SPAN&gt;&lt;/SPAN&gt;&lt;/P&gt;&lt;P&gt;&lt;SPAN /&gt;&lt;/P&gt;&lt;/DIV&gt;&lt;/DIV&gt;&lt;/DIV&gt;</usage><arcToolboxHelpPath>c:\program files (x86)\arcgis\desktop10.3\Help\gp</arcToolboxHelpPath></tool><mdHrLv><ScopeCd value="005"/></mdHrLv></metadata>
+<?xml version="1.0"?>
+<metadata xml:lang="en">
+  <Esri>
+    <CreaDate>20150921</CreaDate>
+    <CreaTime>13304900</CreaTime>
+    <ArcGISFormat>1.0</ArcGISFormat>
+    <SyncOnce>TRUE</SyncOnce>
+    <ModDate>20150921</ModDate>
+    <ModTime>14560100</ModTime>
+    <scaleRange>
+      <minScale>150000000</minScale>
+      <maxScale>5000</maxScale>
+    </scaleRange>
+    <ArcGISProfile>ItemDescription</ArcGISProfile>
+  </Esri>
+  <dataIdInfo>
+    <idCitation>
+      <resTitle>Enable Editor Tracking</resTitle>
+    </idCitation>
+    <idAbs>Enables editor tracking.&lt;br/&gt;See System Toolboxes\Data Management Tools.tbx\Fields\Enable Editor Tracking for details.&lt;br/&gt;Dates will be recorded in UTC (Coordinated Universal Time).</idAbs>
+    <idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
+    <searchKeys>
+      <keyword>NPMap</keyword>
+      <keyword>Places</keyword>
+      <keyword>Park Tiles</keyword>
+      <keyword>eGIS</keyword>
+      <keyword>OSM</keyword>
+      <keyword>Open Street Map</keyword>
+      <keyword>Editor</keyword>
+      <keyword>Tracking</keyword>
+      <keyword>editdate</keyword>
+    </searchKeys>
+    <resConst>
+      <Consts>
+        <useLimit>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</useLimit>
+      </Consts>
+    </resConst>
+  </dataIdInfo>
+  <distInfo>
+    <distributor>
+      <distorFormat>
+        <formatName>ArcToolbox Tool</formatName>
+      </distorFormat>
+    </distributor>
+  </distInfo>
+  <tool xmlns="" name="EnableEditorTracking" displayname="2) Enable Editor Tracking" toolboxalias="Places">
+    <parameters>
+      <param name="feature" displayname="Input Dataset" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
+        <dialogReference>The feature class, table, mosaic dataset, or raster catalog that will have editor tracking enabled.</dialogReference>
+        <pythonReference>The feature class, table, mosaic dataset, or raster catalog that will have editor tracking enabled.</pythonReference>
+      </param>
+      <param name="creator" displayname="Creator Field" type="Optional" direction="Input" datatype="String" expression="{creator}">
+        <dialogReference>The name of the field that will store the names of users who created features or records. If this field already exists, it must be a String field.</dialogReference>
+        <pythonReference>The name of the field that will store the names of users who created features or records. If this field already exists, it must be a String field.</pythonReference>
+      </param>
+      <param name="create_date" displayname="Creation Date Field" type="Optional" direction="Input" datatype="String" expression="{create_date}">
+        <dialogReference>The name of the field that will store the dates features or records were created. If this field already exists, it must be a Date field.</dialogReference>
+        <pythonReference>The name of the field that will store the dates features or records were created. If this field already exists, it must be a Date field.</pythonReference>
+      </param>
+      <param name="editor" displayname="Last Editor Field" type="Optional" direction="Input" datatype="String" expression="{editor}">
+        <dialogReference>The name of the field that will store the names of users who last edited features or records. If this field already exists, it must be a String field.</dialogReference>
+        <pythonReference>The name of the field that will store the names of users who last edited features or records. If this field already exists, it must be a String field.</pythonReference>
+      </param>
+      <param name="edit_date" displayname="Last Edit Date Field" type="Optional" direction="Input" datatype="String" expression="{edit_date}">
+        <dialogReference>The name of the field that will store the dates features or records were last edited. If this field already exists, it must be a Date field.</dialogReference>
+        <pythonReference>The name of the field that will store the dates features or records were last edited. If this field already exists, it must be a Date field.</pythonReference>
+      </param>
+      <param name="addfields" displayname="Add fields if they don't exist" type="Required" direction="Input" datatype="Boolean" expression="addfields">
+        <dialogReference>Specifies whether to add fields if they don't already exist.&lt;UL&gt;&lt;LI&gt;Unchecked - Fields will not be added. Fields specified must already exist in the input dataset. This is the default. &lt;/LI&gt;&lt;LI&gt;Checked - Fields will be added if they do not already exist.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
+        <pythonReference>Specifies whether to add fields if they don't already exist.&lt;UL&gt;&lt;LI&gt;Unchecked - Fields will not be added. Fields specified must already exist in the input dataset. This is the default. &lt;/LI&gt;&lt;LI&gt;Checked - Fields will be added if they do not already exist.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
+      </param>
+    </parameters>
+    <summary>Enables editor tracking</summary>
+    <usage>Enables editor tracking</usage>
+  </tool>
+  <mdHrLv>
+    <ScopeCd value="005"/>
+  </mdHrLv>
+</metadata>

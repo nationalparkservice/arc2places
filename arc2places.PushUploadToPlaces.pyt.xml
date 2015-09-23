@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<metadata xml:lang="en">
+  <Esri>
+    <CreaDate>20150921</CreaDate>
+    <CreaTime>13305000</CreaTime>
+    <ArcGISFormat>1.0</ArcGISFormat>
+    <SyncOnce>TRUE</SyncOnce>
+    <ModDate>20150923</ModDate>
+    <ModTime>7132100</ModTime>
+    <scaleRange>
+      <minScale>150000000</minScale>
+      <maxScale>5000</maxScale>
+    </scaleRange>
+    <ArcGISProfile>ItemDescription</ArcGISProfile>
+  </Esri>
+  <dataIdInfo>
+    <idCitation>
+      <resTitle>Send Upload File to Places</resTitle>
+    </idCitation>
+    <idAbs>Send an upload file to Places</idAbs>
+    <idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
+    <searchKeys>
+      <keyword>NPMap</keyword>
+      <keyword>Places</keyword>
+      <keyword>Park Tiles</keyword>
+      <keyword>eGIS</keyword>
+      <keyword>OSM</keyword>
+      <keyword>Open Street Map</keyword>
+      <keyword>Send</keyword>
+      <keyword>Push</keyword>
+      <keyword>Update</keyword>
+      <keyword>Load</keyword>
+      <keyword>Upload</keyword>
+      <keyword>Populate</keyword>
+    </searchKeys>
+    <resConst>
+      <Consts>
+        <useLimit>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</useLimit>
+      </Consts>
+    </resConst>
+  </dataIdInfo>
+  <distInfo>
+    <distributor>
+      <distorFormat>
+        <formatName>ArcToolbox Tool</formatName>
+      </distorFormat>
+    </distributor>
+  </distInfo>
+  <tool xmlns="" name="PushUploadToPlaces" displayname="5) Send Upload File to Places" toolboxalias="Places">
+    <parameters>
+      <param name="upload" displayname="OSM Change File" type="Required" direction="Input" datatype="File" expression="upload">
+        <dialogReference>The full filename of an OSM change file.  This file is typically created with the 'Creates a Places Upload File' tool.  The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</dialogReference>
+        <pythonReference>The full filename of an OSM change file.  This file is typically created with the 'Creates a Places Upload File' tool.  The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</pythonReference>
+      </param>
+      <param name="workspace" displayname="Output Location" type="Required" direction="Input" datatype="Workspace" expression="workspace">
+        <dialogReference>The workspace in which to create the upload log.</dialogReference>
+        <pythonReference>The workspace in which to create the upload log.</pythonReference>
+      </param>
+      <param name="log_table" displayname="Upload Log Table" type="Required" direction="Input" datatype="String" expression="log_table">
+        <dialogReference>The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</dialogReference>
+        <pythonReference>The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</pythonReference>
+      </param>
+      <param name="testing" displayname="Upload to the testing version of Places" type="Required" direction="Input" datatype="Boolean" expression="testing">
+        <dialogReference>Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places.  They will not appear in Park Tiles.  This is the default.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
+        <pythonReference>Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places.  They will not appear in Park Tiles.  This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
+      </param>
+    </parameters>
+    <summary>Send an upload file to Places</summary>
+    <usage>Send an upload file to Places</usage>
+  </tool>
+  <mdHrLv>
+    <ScopeCd value="005"/>
+  </mdHrLv>
+</metadata>

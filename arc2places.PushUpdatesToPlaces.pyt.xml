@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<metadata xml:lang="en">
+  <Esri>
+    <CreaDate>20150921</CreaDate>
+    <CreaTime>13305100</CreaTime>
+    <ArcGISFormat>1.0</ArcGISFormat>
+    <SyncOnce>TRUE</SyncOnce>
+    <ModDate>20150923</ModDate>
+    <ModTime>7285400</ModTime>
+    <scaleRange>
+      <minScale>150000000</minScale>
+      <maxScale>5000</maxScale>
+    </scaleRange>
+    <ArcGISProfile>ItemDescription</ArcGISProfile>
+  </Esri>
+  <dataIdInfo>
+    <idCitation>
+      <resTitle>Send Updates to Places</resTitle>
+    </idCitation>
+    <idAbs>Not Yet Implemented - Find changes in eGIS data since last update and send those changes to Places</idAbs>
+    <idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
+    <searchKeys>
+      <keyword>NPMap</keyword>
+      <keyword>Places</keyword>
+      <keyword>Park Tiles</keyword>
+      <keyword>eGIS</keyword>
+      <keyword>OSM</keyword>
+      <keyword>Open Street Map</keyword>
+      <keyword>Synce</keyword>
+      <keyword>Update</keyword>
+      <keyword>Upload</keyword>
+    </searchKeys>
+    <resConst>
+      <Consts>
+        <useLimit>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</useLimit>
+      </Consts>
+    </resConst>
+  </dataIdInfo>
+  <distInfo>
+    <distributor>
+      <distorFormat>
+        <formatName>ArcToolbox Tool</formatName>
+      </distorFormat>
+    </distributor>
+  </distInfo>
+  <tool xmlns="" name="PushUpdatesToPlaces" displayname="Send Updates to Places" toolboxalias="Places">
+    <parameters>
+      <param name="feature" displayname="Input Feature" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
+        <dialogReference>Feature class that has changed data</dialogReference>
+        <pythonReference>Feature class that has changed data</pythonReference>
+      </param>
+    </parameters>
+    <summary>Not Yet Implemented - Find changes in eGIS data since last update and send those changes to Places</summary>
+    <usage>Not Yet Implemented - Find changes in eGIS data since last update and send those changes to Places</usage>
+  </tool>
+  <mdHrLv>
+    <ScopeCd value="005"/>
+  </mdHrLv>
+</metadata>

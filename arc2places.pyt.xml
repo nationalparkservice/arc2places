@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<metadata xml:lang="en">
+	<Esri>
+		<CreaDate>20150918</CreaDate>
+		<CreaTime>13595700</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+		<ModDate>20150923</ModDate>
+		<ModTime>093310</ModTime>
+		<scaleRange>
+			<minScale>150000000</minScale>
+			<maxScale>5000</maxScale>
+		</scaleRange>
+		<ArcGISProfile>ItemDescription</ArcGISProfile>
+	</Esri>
+	<dataIdInfo>
+		<idCitation>
+			<resTitle>arc2places</resTitle>
+		</idCitation>
+		<idPurp>Tools for uploading and syncing Places with feature class data</idPurp>
+		<idAbs>Tools for uploading and syncing Places with feature class data</idAbs>
+		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
+		<searchKeys>
+			<keyword>NPMap</keyword>
+			<keyword>Places</keyword>
+			<keyword>Park Tiles</keyword>
+			<keyword>eGIS</keyword>
+			<keyword>OSM</keyword>
+			<keyword>Open Street Map</keyword>
+			<keyword>Upload</keyword>
+			<keyword>Sync</keyword>
+			<keyword>Push</keyword>
+			<keyword>Populate</keyword>
+		</searchKeys>
+		<resConst>
+			<Consts>
+				<useLimit>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</useLimit>
+			</Consts>
+		</resConst>
+	</dataIdInfo>
+	<distInfo>
+		<distributor>
+			<distorFormat>
+				<formatName>ArcToolbox Toolbox</formatName>
+			</distorFormat>
+		</distributor>
+	</distInfo>
+	<toolbox name="arc2places" alias="Places">
+		<toolsets>
+			<toolset name="Seed Places Step by Step"/></toolsets>
+		<arcToolboxHelpPath>c:\program files (x86)\arcgis\desktop10.3\Help\gp</arcToolboxHelpPath></toolbox>
+	<mdHrLv>
+		<ScopeCd value="005"/>
+	</mdHrLv>
+</metadata>

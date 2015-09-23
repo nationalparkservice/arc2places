@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<metadata xml:lang="en">
+  <Esri>
+    <CreaDate>20150918</CreaDate>
+    <CreaTime>14000100</CreaTime>
+    <ArcGISFormat>1.0</ArcGISFormat>
+    <SyncOnce>TRUE</SyncOnce>
+    <ModDate>20150923</ModDate>
+    <ModTime>7264100</ModTime>
+    <scaleRange>
+      <minScale>150000000</minScale>
+      <maxScale>5000</maxScale>
+    </scaleRange>
+    <ArcGISProfile>ItemDescription</ArcGISProfile>
+  </Esri>
+  <dataIdInfo>
+    <idCitation>
+      <resTitle>Creates a Places Upload File</resTitle>
+    </idCitation>
+    <idAbs>Create a places upload file</idAbs>
+    <idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
+    <searchKeys>
+      <keyword>NPMap</keyword>
+      <keyword>Places</keyword>
+      <keyword>Park Tiles</keyword>
+      <keyword>eGIS</keyword>
+      <keyword>OSM</keyword>
+      <keyword>Open Street Map</keyword>
+      <keyword>Upload</keyword>
+      <keyword>Seed</keyword>
+      <keyword>Create</keyword>
+    </searchKeys>
+    <resConst>
+      <Consts>
+        <useLimit>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</useLimit>
+      </Consts>
+    </resConst>
+  </dataIdInfo>
+  <distInfo>
+    <distributor>
+      <distorFormat>
+        <formatName>ArcToolbox Tool</formatName>
+      </distorFormat>
+    </distributor>
+  </distInfo>
+  <tool xmlns="" name="CreatePlacesUpload" displayname="4) Creates a Places Upload File" toolboxalias="Places">
+    <parameters>
+      <param name="feature" displayname="Input Features" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
+        <dialogReference>The feature class to be converted to Places elements</dialogReference>
+        <pythonReference>The feature class to be converted to Places elements</pythonReference>
+      </param>
+      <param name="translator" displayname="Standard Translator" type="Required" direction="Input" datatype="String" expression="Buildings | Generic | Parking Lots | Points of Interest | Roads | Trails | Other">
+        <dialogReference>The translator specifies how to filter and convert GIS features into Places elements.</dialogReference>
+        <pythonReference>The translator specifies how to filter and convert GIS features into Places elements.</pythonReference>
+      </param>
+      <param name="alt_translator" displayname="Alternate Translator" type="Optional" direction="Input" datatype="String" expression="{alt_translator}">
+        <dialogReference>The name of a non-standard translator</dialogReference>
+        <pythonReference>The name of a non-standard translator</pythonReference>
+      </param>
+      <param name="folder" displayname="Output Folder" type="Required" direction="Input" datatype="Folder" expression="folder">
+        <dialogReference>Location (directory) for the generated file.</dialogReference>
+        <pythonReference>Location (directory) for the generated file.</pythonReference>
+      </param>
+      <param name="output" displayname="File Name" type="Required" direction="Input" datatype="String" expression="output">
+        <dialogReference>The name of the file to create.  It must not already exist.  It typically has an extension of ".osm"</dialogReference>
+        <pythonReference>The name of the file to create.  It must not already exist.  It typically has an extension of ".osm"</pythonReference>
+      </param>
+    </parameters>
+    <summary>Create a places upload file</summary>
+    <usage>Create a places upload file</usage>
+  </tool>
+  <mdHrLv>
+    <ScopeCd value="005"/>
+  </mdHrLv>
+</metadata>

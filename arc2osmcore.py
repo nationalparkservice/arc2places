@@ -58,7 +58,6 @@ def parsedata(options):
                  [f.name for f in arcpy.ListFields(src) if
                   f.name != shapefield]
     sr = arcpy.SpatialReference(4326)  # WGS84
-    # FIXME: need workaround for bug in da.cursor with SDE
     with arcpy.da.SearchCursor(src, fieldnames, None, sr) as cursor:
         for arcfeature in cursor:
             feature = options.translator.filter_feature(arcfeature, fieldnames, None)
