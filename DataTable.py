@@ -11,19 +11,27 @@ class DataTable:
         self.rows = []
 
     # Public - PushUploadToPlaces, SeedPlaces in arc2places.pyt, upload_osm_data() in osm2places; test() in self
-    def export_csv(self, filepath, header=True):
+    def export_csv(self, filepath, header=True, append=False):
         """
         Exports the data table to a CSV file.
+        With Python2.7, the CSV module does not support unicode, so all data must be ASCII
+        Header option is ignored, and set to False, when appending.
+        When appending, caller is responsible for ensuring that data schema matches the exisiting file.
         May throw IOError exceptions opening/writing file.
 
         :param filepath: A path (string) to the new file.
         :param header: flag (bool) to turn on adding a header line at the start of the file.
+        :param append: flag (bool) to add the data to the end of a file, otherwise an existing file is truncated.
         :return: Method has no return value.
         :rtype : None
         """
-        # FIXME: This will kill an existing table.  In some cases we may want to append (check field match)
+        if append:
+            mode = 'a'
+            header = False
+        else:
+            mode = 'w'
         # Note: python 2.7 csv module does not support unicode; this CSV file should be all ASCII
-        with open(filepath, 'w') as f:
+        with open(filepath, mode) as f:
             self.export_csv_fd(f, header)
 
     def export_csv_fd(self, fd, header=True):
@@ -70,6 +78,7 @@ def test():
     for row in [[1, 'a'], [2, 'b'], [3, 'c']]:
         data.rows.append(row)
     data.export_csv(r'./testdata/simpletable.csv')
+    data.export_csv(r'./testdata/simpletable.csv', append=True)
     data.export_arcgis('./testdata/test.gdb', 'simpletable')
     sde = os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde")
     data.export_arcgis(sde, 'simpletable')
