@@ -17,38 +17,15 @@ class UploadError(BaseException):
     pass
 
 
-def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
-    """
-
-    :param diff_result: byte array (string) with utf encoded xml
-    :param uploaddata:  unicode data
-    :param date:
-    :param cid:
-    :param user:
-    :param logger:
-    :return:
-    """
-    try:
-        logger.info("Create link table from upload data and response")
-    except AttributeError:
-        pass
+def make_upload_log_internal(resp_root, osm_root, date, cid, user):
     placesids = {}
-    try:
-        root = Et.fromstring(diff_result)
-    except Et.ParseError:
-        raise UploadError("Response from server is not valid XML.\nResponse:\n" + diff_result)
-    if root.tag != "diffResult":
-        raise UploadError("Response from server is not a diffResult\nResponse:\n" + diff_result)
-    for child in root:
+    for child in resp_root:
         version = None
         if 'new_version' in child.attrib:
             version = child.attrib['new_version']
         placesids[child.attrib['old_id']] = (child.attrib['new_id'], child.tag, version)
     gisids = {}
-    root = Et.fromstring(uploaddata.encode('utf-8'))
-    # this must be a valid osmChange file,
-    # or we wouldn't get this far, so proceed without error checking
-    for child in root:
+    for child in osm_root:
         action = child.tag  # create, delete, update
         for grandchild in child:
             source_id = None
@@ -70,6 +47,33 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
         diff = placesids[tempid]
         row = [date, user, cid, load[0], diff[1], diff[0], diff[2], load[1]]
         data.rows.append(row)
+    return data
+
+
+def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
+    """
+    :param diff_result: byte array (string) with utf encoded xml
+    :param uploaddata:  unicode data
+    :param date:
+    :param cid:
+    :param user:
+    :param logger:
+    :return:
+    """
+    try:
+        resp_root = Et.fromstring(diff_result)
+    except Et.ParseError:
+        raise UploadError("Response from server is not valid XML.\nResponse:\n" + diff_result)
+    if resp_root.tag != "diffResult":
+        raise UploadError("Response from server is not a diffResult\nResponse:\n" + diff_result)
+    # this must be a valid osmChange file,
+    # or we wouldn't get this far, so proceed without error checking
+    osm_root = Et.fromstring(uploaddata.encode('utf-8'))
+    try:
+        logger.info("Create link table from upload data and response")
+    except AttributeError:
+        pass
+    data = make_upload_log_internal(resp_root, osm_root, date, cid, user)
     try:
         logger.info("Created link table.")
     except AttributeError:
@@ -77,16 +81,64 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     return data
 
 
-def make_upload_log_from_files(upload_path, response_path, logger):
-    with open(upload_path, 'r', encoding='utf-8') as fr:
-        data = fr.read()
-    with open(response_path, 'r', encoding='utf-8') as fr:
-        resp = fr.read()
+# Public - called by CreateUploadLog in arc2places.pyt; TODO test(), cmdline() in self;
+def make_upload_log_from_files(upload_path, response_path, server, logger):
+    try:
+        osm_root = Et.parse(upload_path).getroot()
+    except IOError:
+        raise UploadError("Osm Change file is not found or readable.")
+    except Et.ParseError:
+        raise UploadError("Osm Change file is not valid XML.")
+    if osm_root.tag != "osmChange":
+        raise UploadError("Osm Change file is not valid OSM Change File")
+
+    try:
+        resp_root = Et.parse(response_path).getroot()
+    except IOError:
+        raise UploadError("Server Response file is not found or readable.")
+    except Et.ParseError:
+        raise UploadError("Server Response file is not valid XML.")
+    if resp_root.tag != "diffResult":
+        raise UploadError("Server Response file is not a diffResult")
+
+    # Get the type and id of the first element in the upload
+    try:
+        element_type = osm_root[0].tag
+        element_id = osm_root[0].attrib['new_id']
+    except (IndexError, AttributeError, KeyError):
+        raise UploadError("Server Response file does not a valid first element")
+
     # Assume there is only one changeset for the upload/response.
-    date = None  # FIXME: get this from the changeset of the first element in the response object
-    cid = None  # FIXME: get this from the changeset of the first element in the response object
-    user = None  # FIXME: get this from the changeset of the first element in the response object
-    return make_upload_log(data, resp, date, cid, user, logger)
+    # Get the full element info from the server
+    try:
+        logger.info("Requesting changeset info from server.")
+    except AttributeError:
+        pass
+    element = server.get_element(element_type, element_id)
+    if not element:
+        raise UploadError("Server failure requesting first element. " + server.error)
+    try:
+        element_root = Et.fromstring(element)
+    except Et.ParseError as e:
+        raise UploadError("Element info returned from server is invalid ({0}).".format(e.message))
+    if resp_root.tag != "osm":
+        raise UploadError("Element info returned from server is invalid (no root osm element).")
+    try:
+        cid = element_root[0].attrib['changeset']
+        user = element_root[0].attrib['user']
+        date = element_root[0].attrib['timestamp']
+    except (IndexError, AttributeError, KeyError) as e:
+        raise UploadError("Element info returned from server is invalid ({0}).".format(e.message))
+    try:
+        logger.info("Building link table from from input and changeset info.")
+    except AttributeError:
+        pass
+    table = make_upload_log_internal(resp_root, osm_root, date, cid, user)
+    try:
+        logger.info("Created link table.")
+    except AttributeError:
+        pass
+    return table
 
 
 def fixchangefile(cid, data):

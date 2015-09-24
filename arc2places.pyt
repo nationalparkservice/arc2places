@@ -496,7 +496,15 @@ class CreateUploadLog(object):
             datatype="GPString",
             parameterType="Required")
 
-        parameters = [upload, response, workspace, log_table]
+        testing = arcpy.Parameter(
+            name="testing",
+            displayName="The upload was on the Test version of Places",
+            direction="Input",
+            datatype="GPBoolean",
+            parameterType="Required")
+        testing.value = True
+
+        parameters = [upload, response, workspace, log_table, testing]
         return parameters
 
     def updateParameters(self, parameters):
@@ -540,8 +548,13 @@ class CreateUploadLog(object):
         response_path = parameters[1].valueAsText
         workspace = parameters[2].valueAsText
         table_name = parameters[3].valueAsText
+        testing = parameters[4].value
+        if testing:
+            server = test_places
+        else:
+            server = places
         table_path = os.path.join(workspace, table_name)
-        table = osm2places.make_upload_log_from_files(upload_path, response_path, places.logger)
+        table = osm2places.make_upload_log_from_files(upload_path, response_path, server, server.logger)
         ext = os.path.splitext(table_name)[1].lower()
         if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
             table.export_csv(table_path)
