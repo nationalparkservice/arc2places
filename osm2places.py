@@ -81,7 +81,7 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     return data
 
 
-# Public - called by CreateUploadLog in arc2places.pyt; test(), TODO  cmdline() in self;
+# Public - called by CreateUploadLog in arc2places.pyt; test()
 def make_upload_log_from_files(upload_path, response_path, server, logger):
     try:
         osm_root = Et.parse(upload_path).getroot()
@@ -318,10 +318,10 @@ def cmdline():
     usage = """%prog [Options] SRC DST
     or:    %prog --help
 
-    Uploads SRC to Places and saves the response in DST
+    Uploads SRC to an OSM API compatible server
     SRC is an OsmChange file
-    DST is a CSV file that relates the GIS ids in the change file
-    to the id numbers assigned in Places."""
+    DST is the XML response from the server - it must not exist.
+    The default server is the production NPS Places database."""
 
     parser = optparse.OptionParser(usage=usage)
 
@@ -330,12 +330,21 @@ def cmdline():
         "Defaults to None. When None, will load from " +
         "'USERNAME' environment variable."), default=None)
     parser.add_option("-s", "--server", dest="server", type=str, help=(
-        "Name of server to connect to. I.e. 'places', 'osm', 'osm-dev', 'local'." +
-        "Defaults to 'places'.  Name must be defined in the secrets file."), default='places')
+        "Name of server to connect to. I.e. 'places', 'test', 'osm', 'osm-dev', 'local'. " +
+        "Defaults to 'test' (the development version of Places). "
+        "Name must be defined in the secrets file."), default='test')
     parser.add_option("-c", "--comment", dest="comment", type=str, help=(
                       "A description of the contents of the changeset."), default=None)
-    parser.add_option("-v", "--verbose", dest="verbose", action="store_true")
-    parser.set_defaults(verbose=False)
+    parser.add_option("-l", "--upload_log", dest="log_file", type=str, help=(
+                      "A file to store the CSV table of the upload information. "
+                      "The log combines information from the source file and the server response. "
+                      "Any existing file at this path will be overwritten."),
+                      default=None)
+    parser.add_option("-v", "--verbose", dest="verbose", action="store_true",
+                      help="Prints helpful (or annoying) information on progress.")
+    parser.add_option("-d", "--debug", dest="debug", action="store_true",
+                      help="Prints additional diagnostic information - implies verbose.")
+    parser.set_defaults(verbose=False, debug=False)
 
     # Parse and process arguments
     (options, args) = parser.parse_args()
@@ -355,7 +364,7 @@ def cmdline():
     if options.server:
         api_server = OsmApiServer(options.server)
     else:
-        api_server = Places()
+        api_server = OsmApiServer('test')
     online = api_server.is_online()
     if api_server.error:
         print api_server.error
@@ -364,15 +373,21 @@ def cmdline():
         print "Server is not online right now, try again later."
         sys.exit(1)
     if not api_server.is_version_supported():
-        print "Server does not support version " + api_server.version + " of the OSM"
+        print "Server does not support version " + api_server.version + " of the OSM API"
         sys.exit(1)
+    if options.debug:
+        options.verbose = True
     if options.verbose:
         api_server.logger = Logger()
+    if options.debug:
+        api_server.logger.start_debug()
     if options.username:
         api_server.username = options.username
-    upload_osm_file(srcfile, api_server, options.comment, dstfile, api_server.logger)
+    upload_osm_file(srcfile, api_server, options.comment, csv_path=options.log_file, logger=api_server.logger,
+                    response_path=dstfile, return_log=False)
 
+# TODO: create cmdline program to create upload log from osm and and server response
 
 if __name__ == '__main__':
-    test()
-    # cmdline()
+    # test()
+    cmdline()
