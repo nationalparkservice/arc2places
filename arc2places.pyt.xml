@@ -48,8 +48,8 @@
 	<toolbox name="arc2places" alias="Places">
 		<toolsets>
 			<toolset name="Seed Places Step by Step"/>
-    </toolsets>
-  </toolbox>
+		</toolsets>
+	</toolbox>
 	<mdHrLv>
 		<ScopeCd value="005"/>
 	</mdHrLv>

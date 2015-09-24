@@ -1,69 +1,69 @@
 <?xml version="1.0"?>
 <metadata xml:lang="en">
-  <Esri>
-    <CreaDate>20150918</CreaDate>
-    <CreaTime>14000000</CreaTime>
-    <ArcGISFormat>1.0</ArcGISFormat>
-    <SyncOnce>TRUE</SyncOnce>
-    <ModDate>20150923</ModDate>
-    <ModTime>7251700</ModTime>
-    <scaleRange>
-      <minScale>150000000</minScale>
-      <maxScale>5000</maxScale>
-    </scaleRange>
-    <ArcGISProfile>ItemDescription</ArcGISProfile>
-  </Esri>
-  <dataIdInfo>
-    <idCitation>
-      <resTitle>Validate Data For Places</resTitle>
-    </idCitation>
-    <idAbs>Verify that data can be sent to Places, and if it is suitable for future syncing</idAbs>
-    <idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
-    <searchKeys>
-      <keyword>NPMap</keyword>
-      <keyword>Places</keyword>
-      <keyword>Park Tiles</keyword>
-      <keyword>eGIS</keyword>
-      <keyword>OSM</keyword>
-      <keyword>Open Street Map</keyword>
-      <keyword>Validate</keyword>
-      <keyword>Check</keyword>
-      <keyword>Verify</keyword>
-      <keyword>Sync</keyword>
-      <keyword>Upload</keyword>
-    </searchKeys>
-    <resConst>
-      <Consts>
-        <useLimit>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</useLimit>
-      </Consts>
-    </resConst>
-  </dataIdInfo>
-  <distInfo>
-    <distributor>
-      <distorFormat>
-        <formatName>ArcToolbox Tool</formatName>
-      </distorFormat>
-    </distributor>
-  </distInfo>
-  <tool xmlns="" name="ValidateForPlaces" displayname="1) Validate Data For Places" toolboxalias="Places">
-    <parameters>
-      <param name="feature" displayname="Feature Class" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
-        <dialogReference>&lt;p/&gt;The feature class to check. Any ArcGIS feature class can be checked.</dialogReference>
-        <pythonReference>&lt;p/&gt;The feature class to check. Any ArcGIS feature class can be checked.</pythonReference>
-      </param>
-      <param name="translator" displayname="Standard Translator" type="Optional" direction="Input" datatype="String" expression="{Buildings | Generic | Parking Lots | Points of Interest | Roads | Trails | Other}">
-        <dialogReference>&lt;p/&gt;The translator to apply to the feature class when it will be uploaded. The translator's feature filter is used to only check the features that will be uploaded.</dialogReference>
-        <pythonReference>&lt;p/&gt;The translator to apply to the feature class when it will be uploaded. The translator's feature filter is used to only check the features that will be uploaded.</pythonReference>
-      </param>
-      <param name="alt_translator" displayname="Alternate Translator" type="Optional" direction="Input" datatype="String" expression="{alt_translator}">
-        <dialogReference>&lt;p/&gt;The name of a non-standard translator</dialogReference>
-        <pythonReference>&lt;p/&gt;The name of a non-standard translator</pythonReference>
-      </param>
-    </parameters>
-    <summary>Verify that data can be sent to Places, and if it is suitable for future syncing</summary>
-    <usage>Verify that data can be sent to Places, and if it is suitable for future syncing</usage>
-  </tool>
-  <mdHrLv>
-    <ScopeCd value="005"/>
-  </mdHrLv>
+	<Esri>
+		<CreaDate>20150918</CreaDate>
+		<CreaTime>14000000</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+		<ModDate>20150923</ModDate>
+		<ModTime>7251700</ModTime>
+		<scaleRange>
+			<minScale>150000000</minScale>
+			<maxScale>5000</maxScale>
+		</scaleRange>
+		<ArcGISProfile>ItemDescription</ArcGISProfile>
+	</Esri>
+	<dataIdInfo>
+		<idCitation>
+			<resTitle>Validate Data For Places</resTitle>
+		</idCitation>
+		<idAbs>Verify that data can be sent to Places, and if it is suitable for future syncing</idAbs>
+		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
+		<searchKeys>
+			<keyword>NPMap</keyword>
+			<keyword>Places</keyword>
+			<keyword>Park Tiles</keyword>
+			<keyword>eGIS</keyword>
+			<keyword>OSM</keyword>
+			<keyword>Open Street Map</keyword>
+			<keyword>Validate</keyword>
+			<keyword>Check</keyword>
+			<keyword>Verify</keyword>
+			<keyword>Sync</keyword>
+			<keyword>Upload</keyword>
+		</searchKeys>
+		<resConst>
+			<Consts>
+				<useLimit>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</useLimit>
+			</Consts>
+		</resConst>
+	</dataIdInfo>
+	<distInfo>
+		<distributor>
+			<distorFormat>
+				<formatName>ArcToolbox Tool</formatName>
+			</distorFormat>
+		</distributor>
+	</distInfo>
+	<tool xmlns="" name="ValidateForPlaces" displayname="1) Validate Data For Places" toolboxalias="Places">
+		<parameters>
+			<param name="feature" displayname="Feature Class" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
+				<dialogReference>&lt;p/&gt;The feature class to check. Any ArcGIS feature class can be checked.</dialogReference>
+				<pythonReference>&lt;p/&gt;The feature class to check. Any ArcGIS feature class can be checked.</pythonReference>
+			</param>
+			<param name="translator" displayname="Standard Translator" type="Optional" direction="Input" datatype="String" expression="{Buildings | Generic | Parking Lots | Points of Interest | Roads | Trails | Other}">
+				<dialogReference>&lt;p/&gt;The translator to apply to the feature class when it will be uploaded. The translator's feature filter is used to only check the features that will be uploaded.</dialogReference>
+				<pythonReference>&lt;p/&gt;The translator to apply to the feature class when it will be uploaded. The translator's feature filter is used to only check the features that will be uploaded.</pythonReference>
+			</param>
+			<param name="alt_translator" displayname="Alternate Translator" type="Optional" direction="Input" datatype="String" expression="{alt_translator}">
+				<dialogReference>&lt;p/&gt;The name of a non-standard translator</dialogReference>
+				<pythonReference>&lt;p/&gt;The name of a non-standard translator</pythonReference>
+			</param>
+		</parameters>
+		<summary>Verify that data can be sent to Places, and if it is suitable for future syncing</summary>
+		<usage>Verify that data can be sent to Places, and if it is suitable for future syncing</usage>
+	</tool>
+	<mdHrLv>
+		<ScopeCd value="005"/>
+	</mdHrLv>
 </metadata>

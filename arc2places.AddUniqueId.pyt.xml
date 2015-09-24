@@ -1,63 +1,63 @@
 <?xml version="1.0"?>
 <metadata xml:lang="en">
-  <Esri>
-    <CreaDate>20150921</CreaDate>
-    <CreaTime>13304900</CreaTime>
-    <ArcGISFormat>1.0</ArcGISFormat>
-    <SyncOnce>TRUE</SyncOnce>
-    <ModDate>20150923</ModDate>
-    <ModTime>7255900</ModTime>
-    <scaleRange>
-      <minScale>150000000</minScale>
-      <maxScale>5000</maxScale>
-    </scaleRange>
-    <ArcGISProfile>ItemDescription</ArcGISProfile>
-  </Esri>
-  <dataIdInfo>
-    <idCitation>
-      <resTitle>Add and populate a unique feature id for syncing</resTitle>
-    </idCitation>
-    <idAbs>Add and populate a unique feature id for syncing</idAbs>
-    <idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
-    <searchKeys>
-      <keyword>NPMap</keyword>
-      <keyword>Places</keyword>
-      <keyword>Park Tiles</keyword>
-      <keyword>eGIS</keyword>
-      <keyword>OSM</keyword>
-      <keyword>Open Street Map</keyword>
-      <keyword>Add</keyword>
-      <keyword>Unique</keyword>
-      <keyword>Id</keyword>
-    </searchKeys>
-    <resConst>
-      <Consts>
-        <useLimit>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</useLimit>
-      </Consts>
-    </resConst>
-  </dataIdInfo>
-  <distInfo>
-    <distributor>
-      <distorFormat>
-        <formatName>ArcToolbox Tool</formatName>
-      </distorFormat>
-    </distributor>
-  </distInfo>
-  <tool xmlns="" name="AddUniqueId" displayname="3) Add and populate a unique feature id for syncing" toolboxalias="Places">
-    <parameters>
-      <param name="feature" displayname="Feature Class" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
-        <dialogReference>&lt;p/&gt;The feature class in need of a globally unique id for each feature</dialogReference>
-        <pythonReference>&lt;p/&gt;The feature class in need of a globally unique id for each feature</pythonReference>
-      </param>
-      <param name="guid_name" displayname="Name of Globally Unique Identifier Field" type="Required" direction="Input" datatype="String" expression="guid_name">
-        <dialogReference>&lt;p/&gt;The name of the field to store the unique id</dialogReference>
-        <pythonReference>&lt;p/&gt;The name of the field to store the unique id</pythonReference>
-      </param>
-    </parameters>
-    <summary>Add and populate a unique feature id for syncing</summary>
-    <usage>Add and populate a unique feature id for syncing</usage>
-  </tool>
-  <mdHrLv>
-    <ScopeCd value="005"/>
-  </mdHrLv>
+	<Esri>
+		<CreaDate>20150921</CreaDate>
+		<CreaTime>13304900</CreaTime>
+		<ArcGISFormat>1.0</ArcGISFormat>
+		<SyncOnce>TRUE</SyncOnce>
+		<ModDate>20150923</ModDate>
+		<ModTime>7255900</ModTime>
+		<scaleRange>
+			<minScale>150000000</minScale>
+			<maxScale>5000</maxScale>
+		</scaleRange>
+		<ArcGISProfile>ItemDescription</ArcGISProfile>
+	</Esri>
+	<dataIdInfo>
+		<idCitation>
+			<resTitle>Add and populate a unique feature id for syncing</resTitle>
+		</idCitation>
+		<idAbs>Add and populate a unique feature id for syncing</idAbs>
+		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
+		<searchKeys>
+			<keyword>NPMap</keyword>
+			<keyword>Places</keyword>
+			<keyword>Park Tiles</keyword>
+			<keyword>eGIS</keyword>
+			<keyword>OSM</keyword>
+			<keyword>Open Street Map</keyword>
+			<keyword>Add</keyword>
+			<keyword>Unique</keyword>
+			<keyword>Id</keyword>
+		</searchKeys>
+		<resConst>
+			<Consts>
+				<useLimit>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</useLimit>
+			</Consts>
+		</resConst>
+	</dataIdInfo>
+	<distInfo>
+		<distributor>
+			<distorFormat>
+				<formatName>ArcToolbox Tool</formatName>
+			</distorFormat>
+		</distributor>
+	</distInfo>
+	<tool xmlns="" name="AddUniqueId" displayname="3) Add and populate a unique feature id for syncing" toolboxalias="Places">
+		<parameters>
+			<param name="feature" displayname="Feature Class" type="Required" direction="Input" datatype="Feature Layer" expression="feature">
+				<dialogReference>&lt;p/&gt;The feature class in need of a globally unique id for each feature</dialogReference>
+				<pythonReference>&lt;p/&gt;The feature class in need of a globally unique id for each feature</pythonReference>
+			</param>
+			<param name="guid_name" displayname="Name of Globally Unique Identifier Field" type="Required" direction="Input" datatype="String" expression="guid_name">
+				<dialogReference>&lt;p/&gt;The name of the field to store the unique id</dialogReference>
+				<pythonReference>&lt;p/&gt;The name of the field to store the unique id</pythonReference>
+			</param>
+		</parameters>
+		<summary>Add and populate a unique feature id for syncing</summary>
+		<usage>Add and populate a unique feature id for syncing</usage>
+	</tool>
+	<mdHrLv>
+		<ScopeCd value="005"/>
+	</mdHrLv>
 </metadata>
