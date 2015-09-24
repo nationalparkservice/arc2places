@@ -6,7 +6,7 @@ class Logger:
         self._debug = False
 
     def debug(self, text):
-        if self._debug:
+        if not self._debug:
             return
         import datetime
         print('DEBUG', datetime.datetime.now(), text)
