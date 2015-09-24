@@ -13,10 +13,8 @@ from Translator import Translator
 
 places = Places()
 places.logger = ArcpyLogger()
-places.turn_verbose_on()
 test_places = OsmApiServer('test')
 test_places.logger = ArcpyLogger()
-test_places.turn_verbose_on()
 
 
 class TranslatorUtils(object):
@@ -365,8 +363,8 @@ class CreatePlacesUpload(object):
 class PushUploadToPlaces(object):
     def __init__(self):
         self.label = "5) Send Upload File to Places"
-        self.description = ("Sends an OsmChange File to Places and creates "
-                            "a CSV link table of Places Ids and EGIS Ids.")
+        self.description = ("Sends an OsmChange File to Places and saves "
+                            "the response in a file.")
         self.category = "Seed Places Step by Step"
 
     def getParameterInfo(self):
@@ -378,16 +376,16 @@ class PushUploadToPlaces(object):
             parameterType="Required")
         upload.filter.list = ["osm"]
 
-        workspace = arcpy.Parameter(
-            name="workspace",
-            displayName="Output Location",
+        folder = arcpy.Parameter(
+            name="folder",
+            displayName="Output Folder",
             direction="Input",
-            datatype="DEWorkspace",
+            datatype="DEFolder",
             parameterType="Required")
 
-        log_table = arcpy.Parameter(
-            name="log_table",
-            displayName="Upload Log Table",
+        output = arcpy.Parameter(
+            name="output",
+            displayName="File Name",
             direction="Input",
             datatype="GPString",
             parameterType="Required")
@@ -400,7 +398,7 @@ class PushUploadToPlaces(object):
             parameterType="Required")
         testing.value = True
 
-        parameters = [upload, workspace, log_table, testing]
+        parameters = [upload, folder, output, testing]
         return parameters
 
     def updateParameters(self, parameters):
@@ -408,52 +406,34 @@ class PushUploadToPlaces(object):
         if parameters[0].value and not parameters[1].altered:
             dir_name = os.path.dirname(parameters[0].valueAsText)
             parameters[1].value = dir_name
-        # Default table name
+        # Default filename
         if parameters[0].value and not parameters[2].altered:
-            base_name = os.path.basename(parameters[0].valueAsText)
-            base_name = os.path.splitext(base_name)[0]
-            table_name = base_name + '_upload_log'
-            if parameters[1].value:
-                if arcpy.Describe(parameters[1].valueAsText).workspaceType == 'FileSystem':
-                    table_name += '.csv'
-            parameters[2].value = table_name
-        # Ensure the table name is appropriate for the workspace
-        if parameters[1].value and parameters[2].value:
-            parameters[2].value = arcpy.ValidateTableName(parameters[2].valueAsText,
-                                                          parameters[1].valueAsText)
-            # undo conversion from '.csv' to '_csv'
-            if (arcpy.Describe(parameters[1].valueAsText).workspaceType == 'FileSystem' and
-                    parameters[2].valueAsText[-4:]) == '_csv':
-                parameters[2].value = parameters[2].valueAsText[:-4] + '.csv'
+            basename = os.path.splitext(os.path.basename(parameters[0].valueAsText))[0]
+            parameters[2].value = basename + '_response' + os.path.extsep + 'xml'
 
     def updateMessages(self, parameters):
         if parameters[1].value and parameters[2].value:
-            table_path = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
-            if arcpy.Exists(table_path):
-                parameters[2].setErrorMessage("Output {0:s} already exists".format(table_path))
+            path = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
+            if os.path.exists(path):
+                parameters[2].setErrorMessage("File {0:s} already exists.".format(path))
 
     def execute(self, parameters, messages):
         upload_path = parameters[0].valueAsText
-        workspace = parameters[1].valueAsText
-        table_name = parameters[2].valueAsText
+        folder = parameters[1].valueAsText
+        output_file = parameters[2].valueAsText
         testing = parameters[3].value
         if testing:
             server = test_places
         else:
             server = places
-        table_path = os.path.join(workspace, table_name)
+        response_path = os.path.join(folder, output_file)
         description = 'Upload of {0:s}.'.format(upload_path)
         table = None
         try:
-            table = osm2places.upload_osm_file(upload_path, server, description)
+            osm2places.upload_osm_file(upload_path, server, comment=description, logger=server.logger,
+                                       response_path=response_path, return_resp=False, return_log=False)
         except osm2places.UploadError as e:
             arcpy.AddError(e)
-        if table:
-            ext = os.path.splitext(table_name)[1].lower()
-            if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
-                table.export_csv(table_path)
-            else:
-                table.export_arcgis(workspace, table_name)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
@@ -554,12 +534,17 @@ class CreateUploadLog(object):
         else:
             server = places
         table_path = os.path.join(workspace, table_name)
-        table = osm2places.make_upload_log_from_files(upload_path, response_path, server, server.logger)
-        ext = os.path.splitext(table_name)[1].lower()
-        if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
-            table.export_csv(table_path)
-        else:
-            table.export_arcgis(workspace, table_name)
+        table = None
+        try:
+            table = osm2places.make_upload_log_from_files(upload_path, response_path, server, server.logger)
+        except osm2places.UploadError as e:
+            arcpy.AddError(e)
+        if table:
+            ext = os.path.splitext(table_name)[1].lower()
+            if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
+                table.export_csv(table_path)
+            else:
+                table.export_arcgis(workspace, table_name)
 
 
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal

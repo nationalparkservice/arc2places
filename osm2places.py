@@ -81,7 +81,7 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     return data
 
 
-# Public - called by CreateUploadLog in arc2places.pyt; TODO test(), cmdline() in self;
+# Public - called by CreateUploadLog in arc2places.pyt; test(), TODO  cmdline() in self;
 def make_upload_log_from_files(upload_path, response_path, server, logger):
     try:
         osm_root = Et.parse(upload_path).getroot()
@@ -103,8 +103,8 @@ def make_upload_log_from_files(upload_path, response_path, server, logger):
 
     # Get the type and id of the first element in the upload
     try:
-        element_type = osm_root[0].tag
-        element_id = osm_root[0].attrib['new_id']
+        element_type = resp_root[0].tag
+        element_id = resp_root[0].attrib['new_id']
     except (IndexError, AttributeError, KeyError):
         raise UploadError("Server Response file does not a valid first element")
 
@@ -121,7 +121,7 @@ def make_upload_log_from_files(upload_path, response_path, server, logger):
         element_root = Et.fromstring(element)
     except Et.ParseError as e:
         raise UploadError("Element info returned from server is invalid ({0}).".format(e.message))
-    if resp_root.tag != "osm":
+    if element_root.tag != "osm":
         raise UploadError("Element info returned from server is invalid (no root osm element).")
     try:
         cid = element_root[0].attrib['changeset']
@@ -148,7 +148,8 @@ def fixchangefile(cid, data):
 
 
 # Public - called by PushUploadToPlaces in arc2places.pyt; test(), cmdline() in self;
-def upload_osm_file(filepath, server, comment=None, csv_path=None, logger=None):
+def upload_osm_file(filepath, server, comment=None, csv_path=None, logger=None,
+                    response_path=None, return_resp=False, return_log=True):
     """
     Uploads an OsmChange file to an OSM API server and returns the upload details as a DataTable
 
@@ -161,15 +162,19 @@ def upload_osm_file(filepath, server, comment=None, csv_path=None, logger=None):
     :param comment: A string describing the contents of the changeset
     :param csv_path: A filesystem path to save the DataTable response as a CSV file
     :param logger: A Logger object for info/warning/debug/error output
-    :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset
-    :rtype : DataTable
+    :param response_path: A filesystem path to save the server response as a XML file
+    :param return_resp: A flag to return the server response as a XML file.
+    :param return_log: A flag to create/return the upload log as a DataTable.
+    :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset.
+    or an XML string or both, or None depending on values of return_resp and return_log
     """
     with open(filepath, 'r', encoding='utf-8') as fr:
-        return upload_osm_data(fr.read(), server, comment, csv_path, logger)
+        return upload_osm_data(fr.read(), server, comment, csv_path, logger, response_path, return_resp, return_log)
 
 
 # Public - called by SeedPlaces in arc2places.pyt; upload_osm_file() in self;
-def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
+def upload_osm_data(data, server, comment=None, csv_path=None, logger=None,
+                    response_path=None, return_resp=False, return_log=True):
     """
     Uploads contents of an OsmChange file to an OSM API server and returns the upload details as a DataTable
 
@@ -181,8 +186,11 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
     :param comment: A string describing the contents of the changeset
     :param csv_path: A filesystem path to save the DataTable response as a CSV file
     :param logger: A Logger object for info/warning/debug/error output
-    :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset
-    :rtype : DataTable
+    :param response_path: A filesystem path to save the server response as a XML file
+    :param return_resp: A flag to return the server response as a XML file.
+    :param return_log: A flag to create/return the upload log as a DataTable.
+    :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset,
+    or an XML string or both, or None depending on values of return_resp and return_log
     """
     cid = server.create_changeset('arc2places', comment)
     if not cid:
@@ -200,6 +208,10 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
             server.close_changeset(cid)
         finally:
             raise UploadError("Server did not accept the upload request.\n\tDetails: " + upload_error)
+    # save the repsonse
+    if resp and response_path:
+        with open(response_path, 'w', encoding='utf-8') as fw:
+            fw.write(resp)
     # optional debug output
     try:
         logger.debug('\n' + resp + '\n')
@@ -208,45 +220,47 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
 
     # if there is no error then first try to create the upload_log before closing the changeset
     # Closing the changeset may fail (time-out) when it actually succeeds (eventually).
-    try:
-        upload_log = make_upload_log(resp, data, timestamp, cid, server.username, logger)
-    except UploadError as e:
-        # response isn't valid
-        raise e
-    except Exception as e:
-        # response is valid, but there was an unexpected (programming?) error,
-        f = tempfile.NamedTemporaryFile(delete=False, prefix='osmchange_')
-        osm_filename = f.name
-        f.close()
-        f = tempfile.NamedTemporaryFile(delete=False, prefix='placesresp_')
-        resp_filename = f.name
-        f.close()
+    upload_log = None
+    if csv_path or return_log:
         try:
-            logger.warn('There was a problem creating the upload log.'
-                        '\nThe OSM Change file will be saved as "{0}".'
-                        '\nThe server response will be saved as "{1}".'
-                        '\nYou can use these to create the upload log'
-                        'once the outstanding issues have been resolved.'
-                        '\n\tDetails: {0}'.format(osm_filename, resp_filename, e))
-        except AttributeError:
-            pass
-        try:
-            with open(osm_filename, 'w', encoding='utf-8') as f:
-                f.write(data)
-        except IOError as e:
+            upload_log = make_upload_log(resp, data, timestamp, cid, server.username, logger)
+        except UploadError as e:
+            # response isn't valid
+            raise e
+        except Exception as e:
+            # response is valid, but there was an unexpected (programming?) error,
+            f = tempfile.NamedTemporaryFile(delete=False, prefix='osmchange_')
+            osm_filename = f.name
+            f.close()
+            f = tempfile.NamedTemporaryFile(delete=False, prefix='placesresp_')
+            resp_filename = f.name
+            f.close()
             try:
-                logger.error('Error saving the OSM Change file.\n' + e.message)
+                logger.warn('There was a problem creating the upload log.'
+                            '\nThe OSM Change file will be saved as "{0}".'
+                            '\nThe server response will be saved as "{1}".'
+                            '\nYou can use these to create the upload log'
+                            'once the outstanding issues have been resolved.'
+                            '\n\tDetails: {0}'.format(osm_filename, resp_filename, e))
             except AttributeError:
                 pass
-        try:
-            with open(resp_filename, 'w', encoding='utf-8') as f:
-                f.write(data)
-        except IOError as e:
             try:
-                logger.error('Error saving the server response.\n' + e.message)
-            except AttributeError:
-                pass
-        raise e
+                with open(osm_filename, 'w', encoding='utf-8') as f:
+                    f.write(data)
+            except IOError as e:
+                try:
+                    logger.error('Error saving the OSM Change file.\n' + e.message)
+                except AttributeError:
+                    pass
+            try:
+                with open(resp_filename, 'w', encoding='utf-8') as f:
+                    f.write(data)
+            except IOError as e:
+                try:
+                    logger.error('Error saving the server response.\n' + e.message)
+                except AttributeError:
+                    pass
+            raise e
     if csv_path and upload_log:
         upload_log.export_csv(csv_path)
         try:
@@ -275,19 +289,28 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None):
         except AttributeError:
             pass
 
-    return upload_log
+    if return_resp and return_log:
+        return resp, upload_log
+    elif return_resp:
+        return resp
+    elif return_log:
+        return upload_log
+    else:
+        return None
 
 
 def test():
     api_server = OsmApiServer('test')
-    api_server.turn_verbose_on()
     api_server.logger = Logger()
     api_server.logger.start_debug()
     upload_osm_file('./testdata/test_roads.osm', api_server, 'Testing upload OSM file function',
                     './testdata/test_roads_sync.csv', api_server.logger)
-    # table = upload_osm_file('./testdata/test_poi.osm', api_server, 'Testing upload OSM file function',
-    #                         None, api_server.logger)
-    # table.export_arcgis('./testdata/test.gdb', 'poi_sync')
+    upload_osm_file('./testdata/test_poi.osm', api_server, 'Testing upload OSM file function',
+                    logger=api_server.logger, response_path='./testdata/test_poi_response.xml', return_log=False)
+    upload_log = make_upload_log_from_files('./testdata/test_poi.osm', './testdata/test_poi_response.xml',
+                                            api_server, api_server.logger)
+    upload_log.export_csv('./testdata/test_poi_sync.csv')
+    upload_log.export_arcgis('./testdata/test.gdb', 'poi_sync')
 
 
 def cmdline():
@@ -345,7 +368,6 @@ def cmdline():
         sys.exit(1)
     if options.verbose:
         api_server.logger = Logger()
-        api_server.turn_verbose_on()
     if options.username:
         api_server.username = options.username
     upload_osm_file(srcfile, api_server, options.comment, dstfile, api_server.logger)
