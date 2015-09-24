@@ -100,7 +100,7 @@ class ValidateForPlaces(object):
         self.label = "1) Validate Data For Places"
         self.description = ("Checks if a feature class is suitable for "
                             "uploading and syncing to Places.")
-        self.category = "Seed Places Step by Step"
+        self.category = "Features to Places (Step by Step)"
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
@@ -157,10 +157,10 @@ class ValidateForPlaces(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class EnableEditorTracking(object):
     def __init__(self):
-        self.label = "2) Enable Editor Tracking"
+        self.label = "Enable Editor Tracking"
         self.description = ("Enables editor tracking. "
                             "Feature class must be in a Geodatabase.")
-        self.category = "Seed Places Step by Step"
+        self.category = "Useful Tools"
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
@@ -242,9 +242,9 @@ class EnableEditorTracking(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class AddUniqueId(object):
     def __init__(self):
-        self.label = "3) Add and populate a unique feature id for syncing"
+        self.label = "Add and populate a unique feature id for syncing"
         self.description = "Adds and populates a unique feature id (GUID) for syncing. "
-        self.category = "Seed Places Step by Step"
+        self.category = "Useful Tools"
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
@@ -284,10 +284,10 @@ class AddUniqueId(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class CreatePlacesUpload(object):
     def __init__(self):
-        self.label = "4) Creates a Places Upload File"
+        self.label = "2) Create an Upload File"
         self.description = ("Exports a feature class to a file "
                             "suitable for uploading to Places.")
-        self.category = "Seed Places Step by Step"
+        self.category = "Features to Places (Step by Step)"
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
@@ -362,10 +362,10 @@ class CreatePlacesUpload(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class PushUploadToPlaces(object):
     def __init__(self):
-        self.label = "5) Send Upload File to Places"
+        self.label = "3) Send Upload File to Places"
         self.description = ("Sends an OsmChange File to Places and saves "
                             "the response in a file.")
-        self.category = "Seed Places Step by Step"
+        self.category = "Features to Places (Step by Step)"
 
     def getParameterInfo(self):
         upload = arcpy.Parameter(
@@ -385,7 +385,7 @@ class PushUploadToPlaces(object):
 
         output = arcpy.Parameter(
             name="output",
-            displayName="File Name",
+            displayName="Server Response File",
             direction="Input",
             datatype="GPString",
             parameterType="Required")
@@ -439,11 +439,11 @@ class PushUploadToPlaces(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class CreateUploadLog(object):
     def __init__(self):
-        self.label = "6) Create Upload Log"
+        self.label = "4) Create Upload Log"
         self.description = ("Creates a table documenting the upload. "
                             "Table is built from the OSM Upload file and the Upload respons file. "
                             "Table is used and updated by future sync tasks")
-        self.category = "Seed Places Step by Step"
+        self.category = "Features to Places (Step by Step)"
 
     def getParameterInfo(self):
         upload = arcpy.Parameter(
@@ -455,7 +455,7 @@ class CreateUploadLog(object):
         upload.filter.list = ["osm"]
 
         response = arcpy.Parameter(
-            name="upload",
+            name="response",
             displayName="Server Response File",
             direction="Input",
             datatype="DEFile",
@@ -550,10 +550,10 @@ class CreateUploadLog(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class IntegratePlacesIds(object):
     def __init__(self):
-        self.label = "7) Add Places Ids to EGIS"
-        self.description = ("Populates the PlacesId in an EGIS dataset using "
+        self.label = "Add Places Ids to EGIS"
+        self.description = ("Populates the PLACESID in an EGIS dataset using the"
                             "upload log table which links Places Ids to EGIS Ids.")
-        self.category = "Seed Places Step by Step"
+        self.category = "Useful Tools"
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
@@ -636,10 +636,10 @@ class IntegratePlacesIds(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class SeedPlaces(object):
     def __init__(self):
-        self.label = "Seed Places with EGIS data"
-        self.description = ("Uploads a feature class to Places "
-                            "and adds synchronization data to the "
-                            "feature class")
+        self.label = "Features to Places"
+        self.description = ("Upload a feature class to Places "
+                            "and creates a log table for future synchronization")
+        self.category = "All in One Tools"
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
@@ -801,10 +801,11 @@ class SeedPlaces(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class GetUpdatesFromPlaces(object):
     def __init__(self):
-        self.label = "Get Updates from Places"
+        self.label = "Update Features"
         self.description = ("Query the Places system for new edits "
                             "and create a feature class or version "
                             "for reconciliation with master version.")
+        self.category = "All in One Tools"
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
@@ -831,9 +832,10 @@ class GetUpdatesFromPlaces(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class PushUpdatesToPlaces(object):
     def __init__(self):
-        self.label = "Send Updates to Places"
-        self.description = ("Find changes to the dataset used to seed "
+        self.label = "Update Places"
+        self.description = ("Find changes to a feature class "
                             "and push those changes to Places")
+        self.category = "All in One Tools"
 
     def getParameterInfo(self):
         feature = arcpy.Parameter(
