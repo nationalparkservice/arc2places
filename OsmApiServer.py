@@ -57,7 +57,10 @@ class OsmApiServer:
         self.name = name
         self.username = os.getenv('USERNAME')
 
-        self._baseurl = secrets[self.name]['url']
+        try:
+            self._baseurl = secrets[self.name]['url']
+        except KeyError:
+            self.error = "Server name '{0}' not found in secrets file".format(self.name)
         self._called_capabilities = False
         self._max_waynodes = None
         self._max_elements = None

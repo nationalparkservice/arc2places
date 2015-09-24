@@ -8,7 +8,7 @@ import sys
 import os
 import datetime
 import tempfile
-from OsmApiServer import OsmApiServer, Places
+from OsmApiServer import OsmApiServer
 from Logger import Logger
 from DataTable import DataTable
 
@@ -365,6 +365,9 @@ def cmdline():
         api_server = OsmApiServer(options.server)
     else:
         api_server = OsmApiServer('test')
+    if api_server.error:
+        print api_server.error
+        sys.exit(1)
     online = api_server.is_online()
     if api_server.error:
         print api_server.error
