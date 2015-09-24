@@ -59,19 +59,11 @@ class OsmApiServer:
 
         self._baseurl = secrets[self.name]['url']
         self._called_capabilities = False
-        self._debug = False
         self._max_waynodes = None
         self._max_elements = None
         self._oauth = None
         self._server_accepts_version = None
         self._status = None
-        self._verbose = False
-
-    def turn_verbose_on(self):
-        self._verbose = True
-        
-    def turn_verbose_off(self):
-        self._verbose = True
 
     def get_max_waynodes(self):
         if self._max_waynodes is None and not self._called_capabilities:
@@ -101,11 +93,15 @@ class OsmApiServer:
             self.error = "'" + self.name + "' is not a well known server name.  Add it to secrets.py"
             return
         capabilities_url = self._baseurl + '/api/capabilities'
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Getting capabilities from " + capabilities_url)
+        except AttributeError:
+            pass
         resp = requests.get(capabilities_url)
-        if self._debug and self.logger:
+        try:
             self.logger.debug('status ' + str(resp.status_code) + '\ntext ' + resp.text)
+        except AttributeError:
+            pass
         self._called_capabilities = True
         if resp.status_code != 200:
             baseerror = "Get cababilities failed. Status: {0}, Response: {0}"
@@ -134,8 +130,10 @@ class OsmApiServer:
             self.error = 'XML returned by get capabilities not in standard format'
             return
         self._server_accepts_version = min_version <= float(self.version) <= max_version
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Got capabilities")
+        except AttributeError:
+            pass
 
     def _connect(self):
         if not OAuth1Session:
@@ -150,11 +148,13 @@ class OsmApiServer:
 
         # Get Request Tokens
         request_url = self._baseurl + '/oauth/request_token'
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Getting Request Tokens from " + request_url)
-        if self._debug and self.logger:
             self.logger.debug("Client Token: " + client_token)
             self.logger.debug("Client Secret: " + client_secret)
+        except AttributeError:
+            pass
+
         resp = requests.post(request_url, None)
         if resp.status_code != 200:
             baseerror = "Request Error. Status: {0}, Response: {0}"
@@ -162,9 +162,11 @@ class OsmApiServer:
             self._oauth = None
 
         request_tokens = simplifydict(urlparse.parse_qs(resp.text))
-        if self._debug and self.logger:
+        try:
             self.logger.debug("Request Token: " + request_tokens['oauth_token'])
             self.logger.debug("Request Secret: " + request_tokens['oauth_token_secret'])
+        except AttributeError:
+            pass
 
         # Authorize User
         if self.name == 'places' or self.name == 'test':
@@ -176,8 +178,10 @@ class OsmApiServer:
 
         # Get Access Tokens
         access_url = self._baseurl + '/oauth/access_token'
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Getting Access Tokens from " + access_url)
+        except AttributeError:
+            pass
         auth = ('OAuth ' +
                 'oauth_token="' + request_tokens['oauth_token'] + '", ' +
                 'oauth_token_secret="' + request_tokens['oauth_token_secret'] + '"')
@@ -189,10 +193,11 @@ class OsmApiServer:
             return
 
         access_tokens = simplifydict(urlparse.parse_qs(res.text))
-        if self._debug and self.logger:
+        try:
             self.logger.debug("Access Token: " + access_tokens['oauth_token'])
             self.logger.debug("Access Secret: " + access_tokens['oauth_token_secret'])
-
+        except AttributeError:
+            pass
         # Initialize the Oauth object to create signed requests
         self._oauth = OAuth1Session(client_token,
                                     client_secret=client_secret,
@@ -201,8 +206,10 @@ class OsmApiServer:
         return
 
     def _authorize_npsuser(self, request_tokens):
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Authorizing NPS user")
+        except AttributeError:
+            pass
         auth_url = self._baseurl + '/oauth/add_active_directory_user'
         error, userid, username = self._get_npsuser_identity()
         if error:
@@ -227,16 +234,20 @@ class OsmApiServer:
             self.error = baseerror.format(res.status_code, res.text)
             self._oauth = None
             return False
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Authorized NPS user " + username)
+        except AttributeError:
+            pass
         return True
 
     def _get_npsuser_identity(self):
         if not self.username:
             return 'User Error', 0, 'No user given'
 
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Looking up id for user " + self.username)
+        except AttributeError:
+            pass
 
         req = 'http://insidemaps.nps.gov/user/lookup?query=' + self.username
         res = requests.get(req)
@@ -255,8 +266,10 @@ class OsmApiServer:
                    "Sign in at {0} to create your account.").format(
                 self.username, "https://insidemaps.nps.gov/account/logon/")
             return msg, None, None
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Found id " + userid)
+        except AttributeError:
+            pass
         return None, userid, displayname
 
     def create_changeset(self, application, comment=None):
@@ -279,8 +292,10 @@ class OsmApiServer:
         if not application:
             self.error = 'No application name provided for the changeset'
             return None
-        if self._verbose and self.logger:
+        try:
             self.logger.info('Create change set')
+        except AttributeError:
+            pass
         url = self._baseurl + '/api/' + self.version + '/changeset/create'
         osm_changeset_payload = ('<osm><changeset>'
                                  '<tag k="created_by" v="{0}"/>').format(application)
@@ -306,8 +321,10 @@ class OsmApiServer:
             return None
         else:
             cid = resp.text
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Created change set " + cid)
+        except AttributeError:
+            pass
         return cid
 
     def upload_changeset(self, cid, change):
@@ -324,8 +341,10 @@ class OsmApiServer:
         if not self._oauth:
             return None
         url = self._baseurl + '/api/' + self.version + '/changeset/' + cid + '/upload'
-        if self._verbose and self.logger:
+        try:
             self.logger.info('Upload to change set ' + cid)
+        except AttributeError:
+            pass
         try:
             resp = self._oauth.post(url, data=change.encode('utf-8'), headers={'Content-Type': 'text/xml'})
         except requests.ConnectionError as e:
@@ -343,8 +362,10 @@ class OsmApiServer:
         else:
             self.error = None
             data = resp.text
-            if self._verbose and self.logger:
+            try:
                 self.logger.info("Uploaded change set successfully")
+            except AttributeError:
+                pass
         return data
 
     def close_changeset(self, cid):
@@ -361,8 +382,10 @@ class OsmApiServer:
         if not cid:
             self.error = 'No changeset id provided'
             return
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Close change set " + cid)
+        except AttributeError:
+            pass
         url = self._baseurl + '/api/' + self.version + '/changeset/' + cid + '/close'
         try:
             resp = self._oauth.put(url)
@@ -385,8 +408,37 @@ class OsmApiServer:
             self.error = 'Unknown failure (' + str(resp.status_code) + ') closing changeset'
             return
         self.error = None
-        if self._verbose and self.logger:
+        try:
             self.logger.info("Closed change set successfully")
+        except AttributeError:
+            pass
+
+    def get_element(self, etype, eid):
+        """
+        Get the details as XML of the element from the server.
+
+        :param etype: String, The element type ('node', 'way', 'relation') to get
+        :param eid: String, The element id to get
+        :return: an XML string
+        """
+        if not self._baseurl:
+            self.error = "'" + self.name + "' is not a well known server name.  Add it to secrets.py"
+            return
+        url = self._baseurl + '/api/' + self.version + '/' + etype + '/' + eid
+        try:
+            self.logger.info("Getting element from " + url)
+        except AttributeError:
+            pass
+        resp = requests.get(url)
+        try:
+            self.logger.debug('status ' + str(resp.status_code) + '\ntext ' + resp.text)
+        except AttributeError:
+            pass
+        if resp.status_code != 200:
+            baseerror = "Get element failed. Status: {0}, Response: {0}"
+            self.error = baseerror.format(resp.status_code, resp.text)
+            return
+        return resp.text
 
 
 class Places(OsmApiServer):
@@ -402,9 +454,8 @@ class Osm(OsmApiServer):
 if __name__ == '__main__':
     import Logger
     places = Places()
-    places.turn_verbose_on()
     places.logger = Logger.Logger()
-    places._debug = True
+    places.logger.start_debug()
     online = places.is_online()
     if places.error is not None:
         print 'ERROR', places.error
