@@ -17,7 +17,7 @@
 		<idCitation>
 			<resTitle>Enable Editor Tracking</resTitle>
 		</idCitation>
-		<idAbs>Enables editor tracking.&lt;p/&gt;Feature class must be in a Geodatabase. See System Toolboxes -> Data Management Tools.tbx -> Fields -> Enable Editor Tracking for details.&lt;p/&gt;Dates will be recorded in UTC (Coordinated Universal Time).</idAbs>
+		<idAbs>Enables editor tracking.&lt;p/&gt;Feature class must be in a Geodatabase. See System Toolboxes -&gt; Data Management Tools.tbx -&gt; Fields -&gt; Enable Editor Tracking for details.&lt;p/&gt;Dates will be recorded in UTC (Coordinated Universal Time).</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>

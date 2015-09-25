@@ -45,28 +45,23 @@
 	</distInfo>
 	<tool name="CreateUploadLog" displayname="4) Create Upload Log" toolboxalias="Places" xmlns="">
 		<parameters>
-			<param name="upload" displayname="OSM Change File" type="Required" direction="Input" datatype="File"
-						 expression="upload">
+			<param name="upload" displayname="OSM Change File" type="Required" direction="Input" datatype="File" expression="upload">
 				<dialogReference>&lt;p/&gt;The full filename of an OSM change file.  This file is typically created with the 'Creates a Places Upload File' tool.  The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</dialogReference>
 				<pythonReference>&lt;p/&gt;The full filename of an OSM change file.  This file is typically created with the 'Creates a Places Upload File' tool.  The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</pythonReference>
 			</param>
-			<param name="response" displayname="Server Response File" type="Required" direction="Input" datatype="File"
-						 expression="response">
+			<param name="response" displayname="Server Response File" type="Required" direction="Input" datatype="File" expression="response">
 				<dialogReference>&lt;p/&gt;The full filename of a server response file from a Places upload.  This file is typically created with the 'Send Upload File to Places' tool.  The file format is documented on the &lt;a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Response_10"&gt;OSM website&lt;/a&gt;.</dialogReference>
 				<pythonReference>&lt;p/&gt;The full filename of a server response file from a Places upload.  This file is typically created with the 'Send Upload File to Places' tool.  The file format is documented on the &lt;a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Response_10"&gt;OSM website&lt;/a&gt;.</pythonReference>
 			</param>
-			<param name="workspace" displayname="Output Location" type="Required" direction="Input" datatype="Workspace"
-						 expression="workspace">
+			<param name="workspace" displayname="Output Location" type="Required" direction="Input" datatype="Workspace" expression="workspace">
 				<dialogReference>&lt;p/&gt;The workspace in which to create the upload log.</dialogReference>
 				<pythonReference>&lt;p/&gt;The workspace in which to create the upload log.</pythonReference>
 			</param>
-			<param name="log_table" displayname="Upload Log Table" type="Required" direction="Input" datatype="String"
-						 expression="log_table">
+			<param name="log_table" displayname="Upload Log Table" type="Required" direction="Input" datatype="String" expression="log_table">
 				<dialogReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</dialogReference>
 				<pythonReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</pythonReference>
 			</param>
-			<param name="testing" displayname="Created in the TEST database" type="Required"
-						 direction="Input" datatype="Boolean" expression="testing">
+			<param name="testing" displayname="Created in the TEST database" type="Required" direction="Input" datatype="Boolean" expression="testing">
 				<dialogReference>&lt;p/&gt;Which version of Places were these features sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features were created in the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features were created in the Test version of Places. This is the default.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
 				<pythonReference>&lt;p/&gt;Which version of Places were these features sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features were created in the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features were created in the Test version of Places. This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
 			</param>
