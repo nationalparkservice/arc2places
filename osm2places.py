@@ -199,7 +199,9 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None,
     timestamp = datetime.datetime.now()
 
     resp = server.upload_changeset(cid, fixchangefile(cid, data))
-
+    # TODO: upload may timeout.  Check resp.
+    # It is possible that the upload was done, but not the processing.
+    # We will not get the diff result back, but the server might have what we need
     if server.error:
         # Errors uploading the changeset are fatal
         # Ignore any error we got trying to close the changeset

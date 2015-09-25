@@ -502,14 +502,14 @@ class CreateUploadLog(object):
                 base_name = os.path.splitext(base_name)[0]
             else:
                 base_name = os.path.basename(parameters[1].valueAsText)
-                base_name = os.path.splitext(base_name)[1]
+                base_name = os.path.splitext(base_name)[0]
             table_name = base_name + '_upload_log'
             if parameters[2].value:
-                if arcpy.Describe(parameters[1].valueAsText).workspaceType == 'FileSystem':
+                if arcpy.Describe(parameters[2].valueAsText).workspaceType == 'FileSystem':
                     table_name += '.csv'
             parameters[3].value = table_name
         # Ensure the table name is appropriate for the workspace
-        if parameters[2].value and parameters[2].value:
+        if parameters[2].value and parameters[3].value:
             parameters[3].value = arcpy.ValidateTableName(parameters[3].valueAsText,
                                                           parameters[2].valueAsText)
             # undo conversion from '.csv' to '_csv'
