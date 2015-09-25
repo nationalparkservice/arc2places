@@ -17,7 +17,7 @@
 		<idCitation>
 			<resTitle>Add Places Ids to EGIS</resTitle>
 		</idCitation>
-		<idAbs>Add Places ID to the eGIS features.  This is no longer a required step.  If you want to add the Places ID to your feature classes you should temporarily turn off editor tracking, otherwise all the features will appear to have been changed and therefore require an update of the data in Places.</idAbs>
+		<idAbs>Populates the PLACESID in an EGIS dataset using the upload log table which links Places Ids to EGIS Ids.&lt;p/&gt;This is no longer a required step. If you want to add the Places ID to your feature classes you should temporarily turn off editor tracking, otherwise all the features will appear to have been changed and therefore require an update of the data in Places.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -71,8 +71,8 @@
 				<pythonReference>&lt;p/&gt;The name of the field in the Upload Log Table that has the id created in Places.</pythonReference>
 			</param>
 		</parameters>
-		<summary>Add Places ID to the eGIS features</summary>
-		<usage>Add Places ID to the eGIS features</usage>
+		<summary>Populates the PLACESID in an EGIS dataset using the upload log table which links Places Ids to EGIS Ids.</summary>
+		<usage>Populates the PLACESID in an EGIS dataset using the upload log table which links Places Ids to EGIS Ids.</usage>
 	</tool>
 	<mdHrLv>
 		<ScopeCd value="005"/>

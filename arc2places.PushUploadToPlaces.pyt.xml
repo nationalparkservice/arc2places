@@ -17,7 +17,7 @@
 		<idCitation>
 			<resTitle>Send Upload File to Places</resTitle>
 		</idCitation>
-		<idAbs>Send an upload file to Places</idAbs>
+		<idAbs>Sends an OsmChange file to Places and saves the response in a file.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -49,24 +49,24 @@
 	<tool xmlns="" name="PushUploadToPlaces" displayname="5) Send Upload File to Places" toolboxalias="Places">
 		<parameters>
 			<param name="upload" displayname="OSM Change File" type="Required" direction="Input" datatype="File" expression="upload">
-				<dialogReference>&lt;p/&gt;The full filename of an OSM change file.  This file is typically created with the 'Creates a Places Upload File' tool.  The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</dialogReference>
-				<pythonReference>&lt;p/&gt;The full filename of an OSM change file.  This file is typically created with the 'Creates a Places Upload File' tool.  The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</pythonReference>
+				<dialogReference>&lt;p/&gt;The full filename of an OSM change file. This file is typically created with the 'Create an Upload File' tool. The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</dialogReference>
+				<pythonReference>&lt;p/&gt;The full filename of an OSM change file. This file is typically created with the 'Create an Upload File' tool. The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</pythonReference>
 			</param>
-			<param name="workspace" displayname="Output Location" type="Required" direction="Input" datatype="Workspace" expression="workspace">
-				<dialogReference>&lt;p/&gt;The workspace in which to create the upload log.</dialogReference>
-				<pythonReference>&lt;p/&gt;The workspace in which to create the upload log.</pythonReference>
+			<param name="folder" displayname="Output Folder" type="Required" direction="Input" datatype="Folder" expression="folder">
+				<dialogReference>&lt;p/&gt;The folder in which to create the server response file.</dialogReference>
+				<pythonReference>&lt;p/&gt;The folder in which to create the server response file.</pythonReference>
 			</param>
-			<param name="log_table" displayname="Upload Log Table" type="Required" direction="Input" datatype="String" expression="log_table">
-				<dialogReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</dialogReference>
-				<pythonReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</pythonReference>
+			<param name="output" displayname="Server Response File" type="Required" direction="Input" datatype="String" expression="output">
+				<dialogReference>&lt;p/&gt;The name of the server response file. This file documents the Places ID of each new feature. This data is required to create the upload log table.</dialogReference>
+				<pythonReference>&lt;p/&gt;The name of the server response file. This file documents the Places ID of each new feature. This data is required to create the upload log table.</pythonReference>
 			</param>
 			<param name="testing" displayname="Upload to the testing version of Places" type="Required" direction="Input" datatype="Boolean" expression="testing">
-				<dialogReference>&lt;p/&gt;Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places.  They will not appear in Park Tiles.  This is the default.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
-				<pythonReference>&lt;p/&gt;Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places.  They will not appear in Park Tiles.  This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
+				<dialogReference>&lt;p/&gt;Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places. They will not appear in Park Tiles. This is the default.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
+				<pythonReference>&lt;p/&gt;Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places. They will not appear in Park Tiles. This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
 			</param>
 		</parameters>
-		<summary>Send an upload file to Places</summary>
-		<usage>Send an upload file to Places</usage>
+		<summary>Sends an OsmChange file to Places and saves the response in a file.</summary>
+		<usage>Sends an OsmChange file to Places and saves the response in a file.</usage>
 	</tool>
 	<mdHrLv>
 		<ScopeCd value="005"/>

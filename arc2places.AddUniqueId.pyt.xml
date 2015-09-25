@@ -15,9 +15,9 @@
 	</Esri>
 	<dataIdInfo>
 		<idCitation>
-			<resTitle>Add and populate a unique feature id for syncing</resTitle>
+			<resTitle>Add Unique ID for Syncing</resTitle>
 		</idCitation>
-		<idAbs>Add and populate a unique feature id for syncing</idAbs>
+		<idAbs>Adds and populates a unique feature id (GUID) for syncing.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -54,8 +54,8 @@
 				<pythonReference>&lt;p/&gt;The name of the field to store the unique id</pythonReference>
 			</param>
 		</parameters>
-		<summary>Add and populate a unique feature id for syncing</summary>
-		<usage>Add and populate a unique feature id for syncing</usage>
+		<summary>Adds and populates a unique feature id (GUID) for syncing.</summary>
+		<usage>Adds and populates a unique feature id (GUID) for syncing.</usage>
 	</tool>
 	<mdHrLv>
 		<ScopeCd value="005"/>

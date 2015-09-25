@@ -15,9 +15,9 @@
 	</Esri>
 	<dataIdInfo>
 		<idCitation>
-			<resTitle>Creates a Places Upload File</resTitle>
+			<resTitle>Create an Upload File</resTitle>
 		</idCitation>
-		<idAbs>Create a places upload file</idAbs>
+		<idAbs>Exports a feature class to an OsmChange file suitable for uploading to Places.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -66,8 +66,8 @@
 				<pythonReference>&lt;p/&gt;The name of the file to create.  It must not already exist.  It typically has an extension of ".osm"</pythonReference>
 			</param>
 		</parameters>
-		<summary>Create a places upload file</summary>
-		<usage>Create a places upload file</usage>
+		<summary>Exports a feature class to an OsmChange file suitable for uploading to Places.</summary>
+		<usage>Exports a feature class to an OsmChange file suitable for uploading to Places.</usage>
 	</tool>
 	<mdHrLv>
 		<ScopeCd value="005"/>

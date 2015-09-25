@@ -98,8 +98,8 @@ class Toolbox(object):
 class ValidateForPlaces(object):
     def __init__(self):
         self.label = "1) Validate Data For Places"
-        self.description = ("Checks if a feature class is suitable for "
-                            "uploading and syncing to Places.")
+        self.description = ("Verify that a feature class is suitable for "
+                            "uploading to Places and syncing changes.")
         self.category = "Features to Places (Step by Step)"
 
     def getParameterInfo(self):
@@ -242,8 +242,8 @@ class EnableEditorTracking(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class AddUniqueId(object):
     def __init__(self):
-        self.label = "Add and populate a unique feature id for syncing"
-        self.description = "Adds and populates a unique feature id (GUID) for syncing. "
+        self.label = "Add Unique ID for Syncing"
+        self.description = "Adds and populates a unique feature id (GUID) for syncing."
         self.category = "Useful Tools"
 
     def getParameterInfo(self):
@@ -285,7 +285,7 @@ class AddUniqueId(object):
 class CreatePlacesUpload(object):
     def __init__(self):
         self.label = "2) Create an Upload File"
-        self.description = ("Exports a feature class to a file "
+        self.description = ("Exports a feature class to an OsmChange file "
                             "suitable for uploading to Places.")
         self.category = "Features to Places (Step by Step)"
 
@@ -363,7 +363,7 @@ class CreatePlacesUpload(object):
 class PushUploadToPlaces(object):
     def __init__(self):
         self.label = "3) Send Upload File to Places"
-        self.description = ("Sends an OsmChange File to Places and saves "
+        self.description = ("Sends an OsmChange file to Places and saves "
                             "the response in a file.")
         self.category = "Features to Places (Step by Step)"
 
@@ -441,8 +441,8 @@ class CreateUploadLog(object):
     def __init__(self):
         self.label = "4) Create Upload Log"
         self.description = ("Creates a table documenting the upload. "
-                            "Table is built from the OSM Upload file and the Upload respons file. "
-                            "Table is used and updated by future sync tasks")
+                            "The table is built from the OsmChange file and the upload response file. "
+                            "The table is used and updated by future sync tasks.")
         self.category = "Features to Places (Step by Step)"
 
     def getParameterInfo(self):
@@ -478,7 +478,7 @@ class CreateUploadLog(object):
 
         testing = arcpy.Parameter(
             name="testing",
-            displayName="The upload was on the Test version of Places",
+            displayName="Created in the TEST database",
             direction="Input",
             datatype="GPBoolean",
             parameterType="Required")
@@ -638,7 +638,7 @@ class SeedPlaces(object):
     def __init__(self):
         self.label = "Features to Places"
         self.description = ("Upload a feature class to Places "
-                            "and creates a log table for future synchronization")
+                            "and creates a log table for future synchronization.")
         self.category = "All in One Tools"
 
     def getParameterInfo(self):

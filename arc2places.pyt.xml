@@ -5,8 +5,8 @@
 		<CreaTime>13595700</CreaTime>
 		<ArcGISFormat>1.0</ArcGISFormat>
 		<SyncOnce>TRUE</SyncOnce>
-		<ModDate>20150923</ModDate>
-		<ModTime>093310</ModTime>
+		<ModDate>20150924</ModDate>
+		<ModTime>153016</ModTime>
 		<scaleRange>
 			<minScale>150000000</minScale>
 			<maxScale>5000</maxScale>
@@ -47,9 +47,8 @@
 	</distInfo>
 	<toolbox name="arc2places" alias="Places">
 		<toolsets>
-			<toolset name="Seed Places Step by Step"/>
 		</toolsets>
-	</toolbox>
+		<arcToolboxHelpPath>c:\program files (x86)\arcgis\desktop10.3\Help\gp</arcToolboxHelpPath></toolbox>
 	<mdHrLv>
 		<ScopeCd value="005"/>
 	</mdHrLv>

@@ -17,7 +17,7 @@
 		<idCitation>
 			<resTitle>Validate Data For Places</resTitle>
 		</idCitation>
-		<idAbs>Verify that data can be sent to Places, and if it is suitable for future syncing</idAbs>
+		<idAbs>Verify that a feature class is suitable for uploading to Places and syncing changes.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -60,8 +60,8 @@
 				<pythonReference>&lt;p/&gt;The name of a non-standard translator</pythonReference>
 			</param>
 		</parameters>
-		<summary>Verify that data can be sent to Places, and if it is suitable for future syncing</summary>
-		<usage>Verify that data can be sent to Places, and if it is suitable for future syncing</usage>
+		<summary>Verify that a feature class is suitable for uploading to Places and syncing changes.</summary>
+		<usage>Verify that a feature class is suitable for uploading to Places and syncing changes.</usage>
 	</tool>
 	<mdHrLv>
 		<ScopeCd value="005"/>

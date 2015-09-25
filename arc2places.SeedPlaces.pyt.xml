@@ -15,9 +15,9 @@
 	</Esri>
 	<dataIdInfo>
 		<idCitation>
-			<resTitle>Seed Places with EGIS data</resTitle>
+			<resTitle>Features to Places</resTitle>
 		</idCitation>
-		<idAbs>Send a feature class to Places</idAbs>
+		<idAbs>Upload a feature class to Places and creates a log table for future synchronization.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -81,8 +81,8 @@
 				<pythonReference>&lt;p/&gt;Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places.  They will not appear in Park Tiles.  This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
 			</param>
 		</parameters>
-		<summary>Send a feature class to Places</summary>
-		<usage>Send a feature class to Places</usage>
+		<summary>Upload a feature class to Places and creates a log table for future synchronization.</summary>
+		<usage>Upload a feature class to Places and creates a log table for future synchronization.</usage>
 	</tool>
 	<mdHrLv>
 		<ScopeCd value="005"/>

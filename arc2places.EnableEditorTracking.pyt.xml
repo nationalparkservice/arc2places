@@ -17,7 +17,7 @@
 		<idCitation>
 			<resTitle>Enable Editor Tracking</resTitle>
 		</idCitation>
-		<idAbs>Enables editor tracking.&lt;p/&gt;See System Toolboxes\Data Management Tools.tbx\Fields\Enable Editor Tracking for details.&lt;p/&gt;Dates will be recorded in UTC (Coordinated Universal Time).</idAbs>
+		<idAbs>Enables editor tracking.&lt;p/&gt;Feature class must be in a Geodatabase. See System Toolboxes -> Data Management Tools.tbx -> Fields -> Enable Editor Tracking for details.&lt;p/&gt;Dates will be recorded in UTC (Coordinated Universal Time).</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -70,8 +70,8 @@
 				<pythonReference>&lt;p/&gt;Specifies whether to add fields if they don't already exist.&lt;UL&gt;&lt;LI&gt;Unchecked - Fields will not be added. Fields specified must already exist in the input dataset. This is the default. &lt;/LI&gt;&lt;LI&gt;Checked - Fields will be added if they do not already exist.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
 			</param>
 		</parameters>
-		<summary>Enables editor tracking</summary>
-		<usage>Enables editor tracking</usage>
+		<summary>Enables editor tracking. Feature class must be in a Geodatabase.</summary>
+		<usage>Enables editor tracking. Feature class must be in a Geodatabase.</usage>
 	</tool>
 	<mdHrLv>
 		<ScopeCd value="005"/>
