@@ -183,7 +183,7 @@ def test():
     translator = Translator.get_translator('parkinglots')
     api_server = OsmApiServer('test')
     api_server.logger = logger
-    api_server.turn_verbose_on()
+    api_server.logger.start_debug()
     xml = None
     try:
         xml = arc_build_osm_change_xml(featureclass, logtable, translator, api_server, logger)

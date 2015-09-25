@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <metadata xml:lang="en">
 	<Esri>
 		<CreaDate>20150924</CreaDate>
@@ -70,6 +71,6 @@
 		<usage>Creates a table documenting the upload. The table is built from the OsmChange file and the upload response file. The table is used and updated by future sync tasks</usage>
 	</tool>
 	<mdHrLv>
-		<ScopeCd value="005"></ScopeCd>
+		<ScopeCd value="005"/>
 	</mdHrLv>
 </metadata>
