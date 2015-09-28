@@ -124,9 +124,9 @@ def make_upload_log_from_files(upload_path, response_path, server, logger):
     if element_root.tag != "osm":
         raise UploadError("Element info returned from server is invalid (no root osm element).")
     try:
-        cid = element_root[0].attrib['changeset']
+        cid = int(element_root[0].attrib['changeset'])
         user = element_root[0].attrib['user']
-        date = element_root[0].attrib['timestamp']
+        date = datetime.datetime.strptime(element_root[0].attrib['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
     except (IndexError, AttributeError, KeyError) as e:
         raise UploadError("Element info returned from server is invalid ({0}).".format(e.message))
     try:
