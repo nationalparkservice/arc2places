@@ -172,7 +172,7 @@ class OsmApiServer:
             pass
 
         # Authorize User
-        if self.name == 'places' or self.name == 'test':
+        if secrets[self.name]['npmap_oauth']:
             if not self._authorize_npsuser(request_tokens):
                 return
         else:
