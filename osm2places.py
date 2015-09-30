@@ -149,7 +149,7 @@ def fixchangefile(cid, data):
 
 # Public - called by PushUploadToPlaces in arc2places.pyt; test(), cmdline() in self;
 def upload_osm_file(filepath, server, comment=None, csv_path=None, logger=None,
-                    response_path=None, return_resp=False, return_log=True):
+                    response_path=None, return_resp=False, return_log=True, async=False):
     """
     Uploads an OsmChange file to an OSM API server and returns the upload details as a DataTable
 
@@ -165,16 +165,18 @@ def upload_osm_file(filepath, server, comment=None, csv_path=None, logger=None,
     :param response_path: A filesystem path to save the server response as a XML file
     :param return_resp: A flag to return the server response as a XML file.
     :param return_log: A flag to create/return the upload log as a DataTable.
+    :param async: flag to call async upload/close changeset api; returns the changeset id.
     :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset.
     or an XML string or both, or None depending on values of return_resp and return_log
     """
     with open(filepath, 'r', encoding='utf-8') as fr:
-        return upload_osm_data(fr.read(), server, comment, csv_path, logger, response_path, return_resp, return_log)
+        return upload_osm_data(fr.read(), server, comment, csv_path, logger,
+                               response_path, return_resp, return_log, async)
 
 
 # Public - called by SeedPlaces in arc2places.pyt; upload_osm_file() in self;
 def upload_osm_data(data, server, comment=None, csv_path=None, logger=None,
-                    response_path=None, return_resp=False, return_log=True):
+                    response_path=None, return_resp=False, return_log=True, async=False):
     """
     Uploads contents of an OsmChange file to an OSM API server and returns the upload details as a DataTable
 
@@ -189,6 +191,7 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None,
     :param response_path: A filesystem path to save the server response as a XML file
     :param return_resp: A flag to return the server response as a XML file.
     :param return_log: A flag to create/return the upload log as a DataTable.
+    :param async: flag to call async upload/close changeset api; returns the changeset id.
     :return: a DataTable object that can be saved as a CSV file or an ArcGIS table dataset,
     or an XML string or both, or None depending on values of return_resp and return_log
     """
@@ -198,7 +201,12 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None,
                           "and your permissions.\n\tDetails: " + server.error)
     timestamp = datetime.datetime.now()
 
-    resp = server.upload_changeset(cid, fixchangefile(cid, data))
+    resp = server.upload_changeset(cid, fixchangefile(cid, data), async=async)
+    if async:
+        if server.error:
+            raise UploadError("Failed to send the upload request to the server.\n\tDetails: " + server.error)
+        return cid
+
     # TODO: upload may timeout.  Check resp.
     # It is possible that the upload was done, but not the processing.
     # We will not get the diff result back, but the server might have what we need
@@ -302,9 +310,12 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None,
 
 
 def test():
-    api_server = OsmApiServer('test')
+    api_server = OsmApiServer('mac')
     api_server.logger = Logger()
     api_server.logger.start_debug()
+    cid = upload_osm_file('c:/tmp/places/buildings.osm', api_server, 'Testing upload OSM file function',
+                          async=True, logger=api_server.logger)
+    print 'Changeset', cid, 'has been queued on the server for processing'
     upload_osm_file('./testdata/test_roads.osm', api_server, 'Testing upload OSM file function',
                     './testdata/test_roads_sync.csv', api_server.logger)
     upload_osm_file('./testdata/test_poi.osm', api_server, 'Testing upload OSM file function',
