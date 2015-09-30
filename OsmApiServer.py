@@ -330,12 +330,13 @@ class OsmApiServer:
             pass
         return cid
 
-    def upload_changeset(self, cid, change):
+    def upload_changeset(self, cid, change, async=False):
         """
         Uploads an osm changefile to an open changest (cid)
 
         :param cid: string - the id of the open changeset
         :param change: unicode - the content of an osm change file
+        :param async: flag to call async api.
         :return: returns the api upload response xml or None on error
         """
 
@@ -344,6 +345,8 @@ class OsmApiServer:
         if not self._oauth:
             return None
         url = self._baseurl + '/api/' + self.version + '/changeset/' + cid + '/upload'
+        if async:
+            url += '_async'
         try:
             self.logger.info('Upload to change set ' + cid)
         except AttributeError:
