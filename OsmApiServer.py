@@ -446,6 +446,33 @@ class OsmApiServer:
             return
         return resp.text
 
+    def get_sourceids_for_changeset(self, cid):
+        """
+        Get the upload details as XML for the changeset from the server.
+
+        :param cid: Int or String (of Int); The changeset id to get
+        :return: an XML string
+        """
+        if not self._baseurl:
+            self.error = "'" + self.name + "' is not a well known server name.  Add it to secrets.py"
+            return
+        url = self._baseurl + '/api/data/source/{0}'.format(cid)
+        try:
+            self.logger.info("Getting changeset from " + url)
+        except AttributeError:
+            pass
+        resp = requests.get(url)
+        try:
+            self.logger.debug('status ' + str(resp.status_code) + '\ntext ' + resp.text)
+        except AttributeError:
+            pass
+        if resp.status_code != 200:
+            # TODO distinguish between not ready and other errors (needs server support)
+            baseerror = "Changeset not found. Status: {0}, Response: {0}"
+            self.error = baseerror.format(resp.status_code, resp.text)
+            return
+        return resp.text
+
 
 class Places(OsmApiServer):
     def __init__(self):

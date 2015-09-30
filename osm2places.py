@@ -40,13 +40,51 @@ def make_upload_log_internal(resp_root, osm_root, date, cid, user):
                 tempid = grandchild.attrib['id']
                 gisids[tempid] = (action, source_id)
     data = DataTable()
-    data.fieldnames = ['date', 'user', 'changeset', 'action', 'element', 'places_id', 'version_id', 'source_id']
+    data.fieldnames = ['date', 'user', 'changeset', 'action', 'element', 'places_id', 'version', 'source_id']
     data.fieldtypes = ['DATE', 'TEXT', 'LONG', 'TEXT', 'TEXT', 'TEXT', 'LONG', 'TEXT']
     for tempid in gisids:
         load = gisids[tempid]
         diff = placesids[tempid]
         row = [date, user, cid, load[0], diff[1], diff[0], diff[2], load[1]]
         data.rows.append(row)
+    return data
+
+
+def make_upload_log_from_changeset_id(cid, server, logger):
+    try:
+        logger.info("Requesting changeset info from server.")
+    except AttributeError:
+        pass
+    elements = server.get_sourceids_for_changeset(cid)
+    if not elements:
+        raise UploadError("Server failure requesting source ids for changeset. " + server.error)
+    try:
+        element_root = Et.fromstring(elements)
+    except Et.ParseError as e:
+        raise UploadError("Info returned from server is invalid ({0}).".format(e.message))
+    if element_root.tag != "osm":
+        raise UploadError("Info returned from server is invalid (no root osm element).")
+    try:
+        logger.info("Building link table.")
+    except AttributeError:
+        pass
+    data = DataTable()
+    data.fieldnames = ['date', 'user', 'changeset', 'action', 'element', 'places_id', 'version', 'source_id']
+    data.fieldtypes = ['DATE', 'TEXT', 'LONG', 'TEXT', 'TEXT', 'TEXT', 'LONG', 'TEXT']
+    try:
+        for element in element_root:
+            cid = int(element.attrib['changeset_id'])
+            version = int(element.attrib['version'])
+            date = datetime.datetime.strptime(element.attrib['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+            row = [date, element.attrib['user'], cid, element.attrib['action'],
+                   element.attrib['element'], element.attrib['places_id'], version, element.attrib['gis_id']]
+            data.rows.append(row)
+    except (IndexError, AttributeError, KeyError) as e:
+        raise UploadError("Element info returned from server is invalid ({0}).".format(e.message))
+    try:
+        logger.info("Created link table.")
+    except AttributeError:
+        pass
     return data
 
 
@@ -130,7 +168,7 @@ def make_upload_log_from_files(upload_path, response_path, server, logger):
     except (IndexError, AttributeError, KeyError) as e:
         raise UploadError("Element info returned from server is invalid ({0}).".format(e.message))
     try:
-        logger.info("Building link table from from input and changeset info.")
+        logger.info("Building link table from input and changeset info.")
     except AttributeError:
         pass
     table = make_upload_log_internal(resp_root, osm_root, date, cid, user)
@@ -316,6 +354,9 @@ def test():
     cid = upload_osm_file('c:/tmp/places/buildings.osm', api_server, 'Testing upload OSM file function',
                           async=True, logger=api_server.logger)
     print 'Changeset', cid, 'has been queued on the server for processing'
+    # TODO: sleep until changeset is ready
+    upload_log = make_upload_log_from_changeset_id(cid, api_server, api_server.logger)
+    upload_log.export_csv('c:/tmp/places/building_sync.csv')
     upload_osm_file('./testdata/test_roads.osm', api_server, 'Testing upload OSM file function',
                     './testdata/test_roads_sync.csv', api_server.logger)
     upload_osm_file('./testdata/test_poi.osm', api_server, 'Testing upload OSM file function',
