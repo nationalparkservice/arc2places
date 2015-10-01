@@ -169,10 +169,10 @@ def make_upload_log_from_files(upload_path, response_path, server, logger):
         cid = int(element_root[0].attrib['changeset'])
         user = element_root[0].attrib['user']
         try:
-            date = datetime.datetime.strptime(element.attrib['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+            date = datetime.datetime.strptime(element_root[0].attrib['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
         except ValueError:
             # on rare occassions, there are no partial seconds, and the format is truncated
-            date = datetime.datetime.strptime(element.attrib['timestamp'], "%Y-%m-%dT%H:%M:%SZ")
+            date = datetime.datetime.strptime(element_root[0].attrib['timestamp'], "%Y-%m-%dT%H:%M:%SZ")
     except (IndexError, AttributeError, KeyError) as e:
         raise UploadError("Element info returned from server is invalid ({0}).".format(e.message))
     try:
