@@ -40,7 +40,7 @@ def make_upload_log_internal(resp_root, osm_root, date, cid, user):
                 tempid = grandchild.attrib['id']
                 gisids[tempid] = (action, source_id)
     data = DataTable()
-    data.fieldnames = ['date', 'user', 'changeset', 'action', 'element', 'places_id', 'version', 'source_id']
+    data.fieldnames = ['date_time', 'user_name', 'changeset', 'action', 'element', 'places_id', 'version', 'source_id']
     data.fieldtypes = ['DATE', 'TEXT', 'LONG', 'TEXT', 'TEXT', 'TEXT', 'LONG', 'TEXT']
     for tempid in gisids:
         load = gisids[tempid]
@@ -69,7 +69,7 @@ def make_upload_log_from_changeset_id(cid, server, logger):
     except AttributeError:
         pass
     data = DataTable()
-    data.fieldnames = ['date', 'user', 'changeset', 'action', 'element', 'places_id', 'version', 'source_id']
+    data.fieldnames = ['date_time', 'user_name', 'changeset', 'action', 'element', 'places_id', 'version', 'source_id']
     data.fieldtypes = ['DATE', 'TEXT', 'LONG', 'TEXT', 'TEXT', 'TEXT', 'LONG', 'TEXT']
     try:
         for element in element_root:
