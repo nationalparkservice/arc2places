@@ -88,6 +88,7 @@ class Toolbox(object):
                       CreatePlacesUpload,
                       PushUploadToPlaces,
                       CreateUploadLog,
+                      CreateUploadLog2,
                       IntegratePlacesIds,
                       SeedPlaces,
                       GetUpdatesFromPlaces,
@@ -439,7 +440,7 @@ class PushUploadToPlaces(object):
 # noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
 class CreateUploadLog(object):
     def __init__(self):
-        self.label = "4) Create Upload Log"
+        self.label = "4a) Create Upload Log From Response"
         self.description = ("Creates a table documenting the upload. "
                             "The table is built from the OsmChange file and the upload response file. "
                             "The table is used and updated by future sync tasks.")
@@ -537,6 +538,80 @@ class CreateUploadLog(object):
         table = None
         try:
             table = osm2places.make_upload_log_from_files(upload_path, response_path, server, server.logger)
+        except osm2places.UploadError as e:
+            arcpy.AddError(e)
+        if table:
+            ext = os.path.splitext(table_name)[1].lower()
+            if arcpy.Describe(workspace).workspaceType == 'FileSystem' and ext in ['.csv', '.txt']:
+                table.export_csv(table_path)
+            else:
+                table.export_arcgis(workspace, table_name)
+
+
+# noinspection PyPep8Naming,PyMethodMayBeStatic,PyUnusedLocal
+class CreateUploadLog2(object):
+    def __init__(self):
+        self.label = "4b) Create Upload Log From Changeset"
+        self.description = ("Creates a table documenting the upload. "
+                            "The table is built from the information in the Places server. "
+                            "It requires a Changeset ID from step 3.")
+        self.category = "Features to Places (Step by Step)"
+
+    def getParameterInfo(self):
+        upload = arcpy.Parameter(
+            name="changeset",
+            displayName="Changeset",
+            direction="Input",
+            datatype="GPLong",
+            parameterType="Required")
+
+        workspace = arcpy.Parameter(
+            name="workspace",
+            displayName="Output Location",
+            direction="Input",
+            datatype="DEWorkspace",
+            parameterType="Required")
+
+        log_table = arcpy.Parameter(
+            name="log_table",
+            displayName="Upload Log Table",
+            direction="Input",
+            datatype="GPString",
+            parameterType="Required")
+
+        testing = arcpy.Parameter(
+            name="testing",
+            displayName="Created in the TEST database",
+            direction="Input",
+            datatype="GPBoolean",
+            parameterType="Required")
+        testing.value = True
+
+        parameters = [upload, workspace, log_table, testing]
+        return parameters
+
+    def updateParameters(self, parameters):
+        pass
+
+    def updateMessages(self, parameters):
+        if parameters[2].value and parameters[3].value:
+            table_path = os.path.join(parameters[2].valueAsText, parameters[3].valueAsText)
+            if arcpy.Exists(table_path):
+                parameters[3].setErrorMessage("Output {0:s} already exists".format(table_path))
+
+    def execute(self, parameters, messages):
+        changeset_id = int(parameters[0].valueAsText)
+        workspace = parameters[1].valueAsText
+        table_name = parameters[2].valueAsText
+        testing = parameters[3].value
+        if testing:
+            server = test_places
+        else:
+            server = places
+        table_path = os.path.join(workspace, table_name)
+        table = None
+        try:
+            table = osm2places.make_upload_log_from_changeset_id(changeset_id, server, server.logger)
         except osm2places.UploadError as e:
             arcpy.AddError(e)
         if table:

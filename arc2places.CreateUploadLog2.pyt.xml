@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <metadata xml:lang="en">
 	<Esri>
-		<CreaDate>20150924</CreaDate>
-		<CreaTime>15303700</CreaTime>
+		<CreaDate>20151001</CreaDate>
+		<CreaTime>08063000</CreaTime>
 		<ArcGISFormat>1.0</ArcGISFormat>
 		<SyncOnce>TRUE</SyncOnce>
-		<ModDate>20150924</ModDate>
-		<ModTime>15383400</ModTime>
+		<ModDate>20151001</ModDate>
+		<ModTime>8183400</ModTime>
 		<scaleRange>
 			<minScale>150000000</minScale>
 			<maxScale>5000</maxScale>
@@ -15,9 +15,9 @@
 	</Esri>
 	<dataIdInfo>
 		<idCitation>
-			<resTitle>4a) Create Upload Log From Response</resTitle>
+			<resTitle>4b) Create Upload Log From Changeset</resTitle>
 		</idCitation>
-		<idAbs>Creates a table documenting the upload. The table is built from the OsmChange file and the upload response file. The upload table is used (and updated) when syncing ArcGIS with Places.</idAbs>
+		<idAbs>Creates a table documenting the upload. The table is built from the Changeset ID created during the upload process (step 3).  The Changeset ID can also be provided by the NPMap team (npmap@nps.gov) after a dataset is uploaded. The upload table is used (and updated) when syncing ArcGIS with Places.&lt;p/&gt;This tool will fail if the Changeset ID does not exist, or is not yet avaialble. This can happen when the changeset has been loaded in the background, and has not finished processing. If you think this is the case, wait a few minutes and try again.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -44,15 +44,12 @@
 			</distorFormat>
 		</distributor>
 	</distInfo>
-	<tool name="CreateUploadLog" displayname="4) Create Upload Log" toolboxalias="Places" xmlns="">
+	<tool name="CreateUploadLog2" displayname="4b) Create Upload Log From Changeset" toolboxalias="Places" xmlns="">
+		<arcToolboxHelpPath>c:\program files (x86)\arcgis\desktop10.3\Help\gp</arcToolboxHelpPath>
 		<parameters>
-			<param name="upload" displayname="OSM Change File" type="Required" direction="Input" datatype="File" expression="upload">
-				<dialogReference>&lt;p/&gt;The full filename of an OSM change file.  This file is typically created with the 'Creates a Places Upload File' tool.  The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</dialogReference>
-				<pythonReference>&lt;p/&gt;The full filename of an OSM change file.  This file is typically created with the 'Creates a Places Upload File' tool.  The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</pythonReference>
-			</param>
-			<param name="response" displayname="Server Response File" type="Required" direction="Input" datatype="File" expression="response">
-				<dialogReference>&lt;p/&gt;The full filename of a server response file from a Places upload.  This file is typically created with the 'Send Upload File to Places' tool.  The file format is documented on the &lt;a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Response_10"&gt;OSM website&lt;/a&gt;.</dialogReference>
-				<pythonReference>&lt;p/&gt;The full filename of a server response file from a Places upload.  This file is typically created with the 'Send Upload File to Places' tool.  The file format is documented on the &lt;a href="http://wiki.openstreetmap.org/wiki/API_v0.6#Response_10"&gt;OSM website&lt;/a&gt;.</pythonReference>
+			<param name="changeset" displayname="Changeset" type="Required" direction="Input" datatype="Long" expression="changeset">
+				<dialogReference>&lt;p/&gt;The Changeset ID (a number) created during the upload process (step 3) or provided by the NPMap team if they did the upload. When using the 'Create an Upload File' tool, the Changeset ID is printed as a message in the geoprocessing toolbox window.  If you have background processing turned on, or you did not record the Changeset ID, you can use the geoprocessing results window to see previous messages.&lt;p/&gt;The Changeset ID can also be obtained by contacting the NPMap team (npmap@nps.gov) with details on when the upload occured.</dialogReference>
+				<pythonReference>&lt;p/&gt;The Changeset ID (a number) created during the upload process (step 3) or provided by the NPMap team if they did the upload. When using the 'Create an Upload File' tool, the Changeset ID is printed as a message in the geoprocessing toolbox window.  If you have background processing turned on, or you did not record the Changeset ID, you can use the geoprocessing results window to see previous messages.&lt;p/&gt;The Changeset ID can also be obtained by contacting the NPMap team (npmap@nps.gov) with details on when the upload occured.</pythonReference>
 			</param>
 			<param name="workspace" displayname="Output Location" type="Required" direction="Input" datatype="Workspace" expression="workspace">
 				<dialogReference>&lt;p/&gt;The workspace in which to create the upload log.</dialogReference>
@@ -67,10 +64,13 @@
 				<pythonReference>&lt;p/&gt;Which version of Places were these features sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features were created in the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features were created in the Test version of Places. This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
 			</param>
 		</parameters>
-		<summary>Creates a table documenting the upload. The table is built from the OsmChange file and the upload response file. The upload table is used (and updated) when syncing ArcGIS with Places.</summary>
-		<usage>Creates a table documenting the upload. The table is built from the OsmChange file and the upload response file. The upload table is used (and updated) when syncing ArcGIS with Places.</usage>
+		<summary>Creates a table documenting the upload. The table is built from the Changeset ID created during the upload process (step 3). The upload table is used (and updated) when syncing ArcGIS with Places.</summary>
+		<usage>Creates a table documenting the upload. The table is built from the Changeset ID created during the upload process (step 3). The upload table is used (and updated) when syncing ArcGIS with Places.</usage>
 	</tool>
 	<mdHrLv>
 		<ScopeCd value="005"/>
 	</mdHrLv>
 </metadata>
+
+
+
