@@ -17,7 +17,7 @@
 		<idCitation>
 			<resTitle>Features to Places</resTitle>
 		</idCitation>
-		<idAbs>Upload a feature class to Places and creates a log table for future synchronization.</idAbs>
+		<idAbs>Upload a feature class to Places and creates a log table for future synchronization.&lt;p/&gt;Only suitable for smaller (less than 10,000 vertices) datasets.  If the upload fails, take note of the Changeset Id, and use that to create the upload log table.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
