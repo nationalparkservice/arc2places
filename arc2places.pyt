@@ -377,19 +377,27 @@ class PushUploadToPlaces(object):
             parameterType="Required")
         upload.filter.list = ["osm"]
 
+        async = arcpy.Parameter(
+            name="async",
+            displayName="Upload in the Background",
+            direction="Input",
+            datatype="GPBoolean",
+            parameterType="Required")
+        async.value = True
+
         folder = arcpy.Parameter(
             name="folder",
             displayName="Output Folder",
             direction="Input",
             datatype="DEFolder",
-            parameterType="Required")
+            parameterType="Optional")
 
         output = arcpy.Parameter(
             name="output",
             displayName="Server Response File",
             direction="Input",
             datatype="GPString",
-            parameterType="Required")
+            parameterType="Optional")
 
         testing = arcpy.Parameter(
             name="testing",
@@ -399,30 +407,42 @@ class PushUploadToPlaces(object):
             parameterType="Required")
         testing.value = True
 
-        parameters = [upload, folder, output, testing]
+        parameters = [upload, async, folder, output, testing]
         return parameters
 
     def updateParameters(self, parameters):
+        # Hide uneeded fields
+        parameters[2].enabled = not parameters[1].value
+        parameters[3].enabled = not parameters[1].value
         # Default output workspace
-        if parameters[0].value and not parameters[1].altered:
+        if not parameters[1].value and parameters[0].value and not parameters[2].altered:
             dir_name = os.path.dirname(parameters[0].valueAsText)
-            parameters[1].value = dir_name
+            parameters[2].value = dir_name
         # Default filename
-        if parameters[0].value and not parameters[2].altered:
+        if not parameters[1].value and parameters[0].value and not parameters[3].altered:
             basename = os.path.splitext(os.path.basename(parameters[0].valueAsText))[0]
-            parameters[2].value = basename + '_response' + os.path.extsep + 'xml'
+            parameters[3].value = basename + '_response' + os.path.extsep + 'xml'
 
     def updateMessages(self, parameters):
-        if parameters[1].value and parameters[2].value:
-            path = os.path.join(parameters[1].valueAsText, parameters[2].valueAsText)
+        if parameters[1].value:
+            parameters[2].clearMessage()
+            parameters[3].clearMessage()
+        if not parameters[1].value:
+            if not parameters[2].value:
+                parameters[2].setErrorMessage("Parameter is required.")
+            if not parameters[3].value:
+                parameters[3].setErrorMessage("Parameter is required.")
+        if parameters[2].value and parameters[3].value:
+            path = os.path.join(parameters[2].valueAsText, parameters[3].valueAsText)
             if os.path.exists(path):
-                parameters[2].setErrorMessage("File {0:s} already exists.".format(path))
+                parameters[3].setErrorMessage("File {0:s} already exists.".format(path))
 
     def execute(self, parameters, messages):
         upload_path = parameters[0].valueAsText
-        folder = parameters[1].valueAsText
-        output_file = parameters[2].valueAsText
-        testing = parameters[3].value
+        async = parameters[1].value
+        folder = parameters[2].valueAsText
+        output_file = parameters[3].valueAsText
+        testing = parameters[4].value
         if testing:
             server = test_places
         else:
@@ -432,7 +452,8 @@ class PushUploadToPlaces(object):
         table = None
         try:
             osm2places.upload_osm_file(upload_path, server, comment=description, logger=server.logger,
-                                       response_path=response_path, return_resp=False, return_log=False)
+                                       response_path=response_path, return_resp=False, return_log=False,
+                                       async=async)
         except osm2places.UploadError as e:
             arcpy.AddError(e)
 

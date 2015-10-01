@@ -17,7 +17,7 @@
 		<idCitation>
 			<resTitle>Send Upload File to Places</resTitle>
 		</idCitation>
-		<idAbs>Sends an OsmChange file to Places and saves the response in a file.</idAbs>
+		<idAbs>Sends an OsmChange file to Places and for small data sets saves the response in a file.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -52,6 +52,10 @@
 				<dialogReference>&lt;p/&gt;The full filename of an OSM change file. This file is typically created with the 'Create an Upload File' tool. The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</dialogReference>
 				<pythonReference>&lt;p/&gt;The full filename of an OSM change file. This file is typically created with the 'Create an Upload File' tool. The file format is document on the &lt;a href="http://wiki.openstreetmap.org/wiki/OsmChange"&gt;OSM website&lt;/a&gt;. The changeset id must be "-1" - It will get replaced with the actually changeset id during the upload.</pythonReference>
 			</param>
+			<param name="async" displayname="Upload in the Background" type="Required" direction="Input" datatype="Boolean" expression="async">
+				<dialogReference>&lt;p/&gt;Upload in the Background?&lt;UL&gt;&lt;LI&gt;Unchecked - Upload and wait for server side processing to finish.  The server returns a file documenting the upload which is used to create the upload log table in step 4a. This is only suitable for small (less than 5000 vertices) data sets.&lt;/LI&gt;&lt;LI&gt;Checked - Upload but do not wait for server side processing to finish.  You will need check back with the server in a few minutes to get the upload results (step 4b) to build the upload log table.  This is suitable for any dataset, especially large datasets. This is the default.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
+				<pythonReference>&lt;p/&gt;Upload in the Background?&lt;UL&gt;&lt;LI&gt;Unchecked - Upload and wait for server side processing to finish.  The server returns a file documenting the upload which is used to create the upload log table in step 4a. This is only suitable for small (less than 5000 vertices) data sets.&lt;/LI&gt;&lt;LI&gt;Checked - Upload but do not wait for server side processing to finish.  You will need check back with the server in a few minutes to get the upload results (step 4b) to build the upload log table.  This is suitable for any dataset, especially large datasets. This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
+			</param>
 			<param name="folder" displayname="Output Folder" type="Required" direction="Input" datatype="Folder" expression="folder">
 				<dialogReference>&lt;p/&gt;The folder in which to create the server response file.</dialogReference>
 				<pythonReference>&lt;p/&gt;The folder in which to create the server response file.</pythonReference>
@@ -65,8 +69,8 @@
 				<pythonReference>&lt;p/&gt;Which version of Places should the data be sent to?&lt;UL&gt;&lt;LI&gt;Unchecked - Features will be sent to the Official version of Places.&lt;/LI&gt;&lt;LI&gt;Checked - Features will be sent to the test version of Places. They will not appear in Park Tiles. This is the default.&lt;/LI&gt;&lt;/UL&gt;</pythonReference>
 			</param>
 		</parameters>
-		<summary>Sends an OsmChange file to Places and saves the response in a file.</summary>
-		<usage>Sends an OsmChange file to Places and saves the response in a file.</usage>
+		<summary>Sends an OsmChange file to Places and for small data sets saves the response in a file.</summary>
+		<usage>Sends an OsmChange file to Places and for small data sets saves the response in a file.</usage>
 	</tool>
 	<mdHrLv>
 		<ScopeCd value="005"/>
