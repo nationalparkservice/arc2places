@@ -447,7 +447,10 @@ class PushUploadToPlaces(object):
             server = test_places
         else:
             server = places
-        response_path = os.path.join(folder, output_file)
+        if async:
+            response_path = None
+        else:
+            response_path = os.path.join(folder, output_file)
         description = 'Upload of {0:s}.'.format(upload_path)
         table = None
         try:
