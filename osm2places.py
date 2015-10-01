@@ -75,7 +75,11 @@ def make_upload_log_from_changeset_id(cid, server, logger):
         for element in element_root:
             cid = int(element.attrib['changeset_id'])
             version = int(element.attrib['version'])
-            date = datetime.datetime.strptime(element.attrib['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+            try:
+                date = datetime.datetime.strptime(element.attrib['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+            except ValueError:
+                # on rare occassions, there are no partial seconds, and the format is truncated
+                date = datetime.datetime.strptime(element.attrib['timestamp'], "%Y-%m-%dT%H:%M:%SZ")
             row = [date, element.attrib['user'], cid, element.attrib['action'],
                    element.attrib['element'], element.attrib['places_id'], version, element.attrib['gis_id']]
             data.rows.append(row)
@@ -164,7 +168,11 @@ def make_upload_log_from_files(upload_path, response_path, server, logger):
     try:
         cid = int(element_root[0].attrib['changeset'])
         user = element_root[0].attrib['user']
-        date = datetime.datetime.strptime(element_root[0].attrib['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+        try:
+            date = datetime.datetime.strptime(element.attrib['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
+        except ValueError:
+            # on rare occassions, there are no partial seconds, and the format is truncated
+            date = datetime.datetime.strptime(element.attrib['timestamp'], "%Y-%m-%dT%H:%M:%SZ")
     except (IndexError, AttributeError, KeyError) as e:
         raise UploadError("Element info returned from server is invalid ({0}).".format(e.message))
     try:
