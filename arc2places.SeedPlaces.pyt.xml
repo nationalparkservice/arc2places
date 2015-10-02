@@ -17,7 +17,7 @@
 		<idCitation>
 			<resTitle>Features to Places</resTitle>
 		</idCitation>
-		<idAbs>Upload a feature class to Places and creates a log table for future synchronization.&lt;p/&gt;Only suitable for smaller (less than 10,000 vertices) datasets.  If the upload fails, take note of the Changeset Id, and use that to create the upload log table.</idAbs>
+		<idAbs>Upload a feature class to Places and create an upload log table to enable synchronization.&lt;p/&gt;It is recommended that you use the tools in the 'Features to Places (Step by Step)' toolkit until you are familiar with the process and suitability of your data.&lt;p/&gt;&lt;strong&gt;Note:&lt;/strong&gt; This tool may fail to create an upload log table for larger datasets (more than ~10,000 vertices), reporting that the changeset is not ready.  In that case, make note of the Changeset Id, and use it to create the upload log table using the 'Create Upload Log From Changeset' tool in the 'Features to Places (Step by Step)' toolkit.</idAbs>
 		<idCredit>Regan Sarwas, Alaska Region GIS Team, National Park Service</idCredit>
 		<searchKeys>
 			<keyword>NPMap</keyword>
@@ -65,8 +65,8 @@
 				<pythonReference>&lt;p/&gt;The workspace in which to create the upload log.</pythonReference>
 			</param>
 			<param name="log_table" displayname="Upload Log Table" type="Required" direction="Input" datatype="String" expression="log_table">
-				<dialogReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</dialogReference>
-				<pythonReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, and what thier Places id is.</pythonReference>
+				<dialogReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, as well as the Places ID.</dialogReference>
+				<pythonReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, as well as the Places ID.</pythonReference>
 			</param>
 			<param name="ignore_sync_warnings" displayname="Ignore warnings about future syncing" type="Required" direction="Input" datatype="Boolean" expression="ignore_sync_warnings">
 				<dialogReference>&lt;p/&gt;Should the upload proceed if there are issues?&lt;UL&gt;&lt;LI&gt;Unchecked - Data will not be uploaded if there are known problems with syncing. This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Proceed with the upload despite the warnings.  The warnings will need to be addressed and corrected before syncing will work.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
