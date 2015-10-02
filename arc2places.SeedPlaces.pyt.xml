@@ -65,8 +65,8 @@
 				<pythonReference>&lt;p/&gt;The workspace in which to create the upload log.</pythonReference>
 			</param>
 			<param name="log_table" displayname="Upload Log Table" type="Required" direction="Input" datatype="String" expression="log_table">
-				<dialogReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, as well as the Places ID.</dialogReference>
-				<pythonReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places, as well as the Places ID.</pythonReference>
+				<dialogReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places as well as thier Places IDs.</dialogReference>
+				<pythonReference>&lt;p/&gt;The name of the upload log.  This table will document when and which features were uploaded to Places as well as thier Places IDs.</pythonReference>
 			</param>
 			<param name="ignore_sync_warnings" displayname="Ignore warnings about future syncing" type="Required" direction="Input" datatype="Boolean" expression="ignore_sync_warnings">
 				<dialogReference>&lt;p/&gt;Should the upload proceed if there are issues?&lt;UL&gt;&lt;LI&gt;Unchecked - Data will not be uploaded if there are known problems with syncing. This is the default.&lt;/LI&gt;&lt;LI&gt;Checked - Proceed with the upload despite the warnings.  The warnings will need to be addressed and corrected before syncing will work.&lt;/LI&gt;&lt;/UL&gt;</dialogReference>
