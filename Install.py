@@ -21,7 +21,7 @@ if sys.version_info.major == 3:
     if len(exes) > 1:
         print('You have multiple versions of python 2.7 installed {0:s}.'.format(exes))
         print('You must pick the one that matches the version of ArcGIS you are using.')
-        print('The installer is not prepared for this configuration, contact regan_sarwas@nps.gov for assitance.')
+        print('The installer is not prepared for this configuration, contact regan_sarwas@nps.gov for assistance.')
         sys.exit()
     if len(exes) < 1:
         print('You have no versions of Python 2.7.  Installing for Python 3.4.')

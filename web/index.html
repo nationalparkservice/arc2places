@@ -71,8 +71,8 @@
       <h2 class="section-heading">About arc2places</h2>
     </a>
 
-    <p><strong>arc2places</strong> is a suite of tools for uploading National Park Service GIS data
-      in ESRI data format to the <a href="http://insidemaps.nps.gov/places/">NPS Places system</a>.
+    <p><strong>arc2places</strong> is a suite of tools for uploading National Park Service ArcGIS data
+      to the <a href="http://insidemaps.nps.gov/places/">NPS Places system</a>.
       It was built to support the <a href="http://insidemaps.nps.gov/places/data-call">centennial data call</a>.
     </p>
 
@@ -87,25 +87,33 @@
       <h2 class="section-heading">Installing</h2>
     </a>
 
-    <h3>Assumptions</h3>
+    <h3>Install Prerequisites</h3>
+    arc2places requires an extension to Python not provided by the standard ArcGIS Python installation.
+    This extension handles the authentication with the Places server.  Installation of the extension requires
+    a tool that is also not provided by ESRI.  To complicate this further, ESRI puts python in a different
+    location on each release, and they also provide multiple versions of python with each release.
+    The installaller provided is fairly simple and may not work in all cases.  If you run into trouble,
+    please contact us for installation <a href="#support">support</a>.
+
+    <h4>Assumptions</h4>
 
     <ul>
-      <li>You have ArcGIS 10.1sp1 or greater installed on your computer, with python installed in the default location.</li>
+      <li>You have ArcGIS 10.1sp1 or greater installed on your computer with python installed in the default location.</li>
       <li>You have administrative permissions on your computer (at least write permission to the python folder).</li>
-      <li>That windows knows how to open python files (*.py) with the python interpreter (typical with ArcGIS install).</li>
-      <li>If you have <a href="https://pip.pypa.io">pip</a> installed, it is a current, working installation.</li>
-      <li>You do not have multiple versions of python installed.</li>
+      <li>Windows knows how to open python files (*.py) with the Python interpreter ArcGIS will use (true for standard ArcGIS install).</li>
+      <li>You do not have 64bit background geoprocessing enabled.  It can be installed, but if it is enabled, then
+      you will need to repeat the prerequisite installation for both the 32bit and 64bit versions of Python.</li>
     </ul>
 
-    <h3>Instructions</h3>
+    <h4>Instructions</h4>
     <ol>
-      <li>Download <a href="http://akrgis.nps.gov/apps/arc2places/arc2places.zip">arc2places</a>.  If the clicking the
-        link does not download the zip file, then right click on the link and select 'Save link as...'</li>
-      <li>Unzip the download and put it in a location easily accessible to ArcCatalog.</li>
-      <li>Use windows explorer to browse to the extraction location of <em>arc2places.zip</em>.</li>
+      <li>Download the arc2places <a href="http://akrgis.nps.gov/apps/arc2places/pre-installer.zip">pre-installer.zip</a>
+        (if clicking the link does not download a zip file, then right click on the link and select 'Save link as...').</li>
+      <li>Extract/unzip <em>pre-installer.zip</em> to a temporary location that is easily accessible.</li>
+      <li>Use windows explorer to browse to the extraction location.</li>
       <li>If you are feeling lucky
         <ul>
-          <li>Double click on <strong>install.py</strong></li>
+          <li>Double click on <strong>install.py</strong> in the extraction location.</li>
         </ul>
       </li>
       <li>Otherwise:
@@ -113,19 +121,36 @@
           <li>Right click on <strong>install.py</strong> and select <em>Edit with IDLE</em>.</li>
           <li>In the IDLE Editor, select <em>Run -> Run Module</em> from the menu (or press <kbd>F5</kbd>).</li>
           <li>This should open another window that runs the installation program and displays diagnostic output.</li>
-          <li>If you see error messages in the IDLE window, send them to
-            <a href="mailto:regan_sarwas@nps.gov?subject=arc2places install">regan_sarwas@nps.gov</a>
-            for installation support.</li>
-          <li>Close both IDLE windows</li>
+          <li>If you see error messages in the IDLE window, contact us for installation <a href="#support">support</a>.
+          <li>Close both IDLE windows.</li>
         </ol>
       </li>
-      <li>Open ArcCatalog and browse to the extraction location of arc2places</li>
+      <li>Proceed to instruction for <strong>Install/Update Toolbox</strong>.</li>
+      <li>If everything works, you can delete <em>pre-installer.zip</em> and the extraction location.</li>
+    </ol>
+
+    <h3>Install/Update Toolbox</h3>
+    The arc2places tool and the translators it uses are still changing quite a bit.  Please make sure you are
+    using the most recent version, and check back here for updates before doing a large data upload.
+
+    <ol>
+      <li>Download <a href="http://akrgis.nps.gov/apps/arc2places/arc2places.zip">arc2places.zip</a> (updated 2015-10-02).</li>
+      <li>Extract/unzip <em>arc2places.zip</em> to a local folder that is accessible to ArcCatalog.</li>
+      <li>If you are updating, you should unzip 'on top of' and replace files in the existing
+        installation.  You will need to stop and restart ArcCatalog to use the new version.
+        Do not try running ArcCatalog with two versions of arc2places installed in two different locations,
+        it just gets confused.</li>
+      <li>Open ArcCatalog and browse to the extraction location of arc2places.</li>
       <li>Try and expand the arc2places toolbox
       <ul>
-        <li>If it opens and you see the contents of the toolbox, installation was successful.</li>
-        <li>If there is a red x on the toolbox icon, or it does not expand, then contact
-          <a href="mailto:regan_sarwas@nps.gov?subject=arc2places install">regan_sarwas@nps.gov</a></li>
+        <li>If it opens and you see the contents of the toolbox, installation was probably successful.  (It may still
+        fail when executing the tool if you have 64bit background geoprocessing enabled.  See the installation
+          prerequisites for more information.)</li>
+        <li>If there is a red x on the toolbox icon, or it does not expand, there was a most likely a problem
+          installing the prerequisites.  Please try again or contact us for installation <a href="#support">support</a>.</li>
       </ul>
+      <li>It is recommended that you turn off background geoprocessing while first using arc2places so that
+        you can see any diagnostice warnings or errors.</li>
       </li>
     </ol>
 
@@ -136,7 +161,7 @@
 
     <p>The toolbox can be used in ArcCatalog and ArcMap.
       The documentation below is based on ArcCatalog.
-      The toolbox has only been tested on ArcGIS 10.3.
+      The toolbox has only been tested on ArcGIS 10.3.x
       It should work on ArcGIS 10.1 sp1 or higher.
       It does not yet work with ArcGIS Pro.</p>
 
@@ -145,41 +170,43 @@
       Testing should be done with the test version of the Places database.  The tools have a checkbox
       to select publishing to test vs. production.
       View the test version of Places at
-      <a href="http://insidemaps.nps.gov/dist_dev/index.html">http://insidemaps.nps.gov/dist_dev/index.html</a>.
-      You should verify that sensitive features were not sent, and that the items got the correct tags/symbology.</p>
-
-    <p>During testing you are also encouraged to use the tools under 'Seed Places Step by Step'.  The 2nd and 3rd tool
-      are optional based on the results of the validation check.  Step 6 is also not required.
-      Steps 1,4 and 5 (and optionally 6) are combined into a single tool called 'See Places with eGIS Data'
+      <a href="http://insidemaps.nps.gov/dev/index.html">http://insidemaps.nps.gov/dev/index.html</a>.
+      You should verify that sensitive features were not sent, and that the items got the correct tags.
+      You can also check the symbology and labels, however features may appear different when rendered in
+      Park Tiles.</p>
+    <p>During testing you are encouraged to use the tools under 'Features to Places (Step by Step)' toolkit.  If there are
+      validation problems, the tools in the 'Useful Tools' toolkit may be useful.  Once you are comfortable with the process,
+      and the fitness of your data, you can use 'All in One Tools/Features to Places' to eliminate some of the steps.
     </p>
 
-    <h3>Initial Upload</h3>
+    <h3>Features to Places</h3>
 
-    <p>Takes the features in an ArcGIS dataset, and sends them to Places if appropriate.</p>
-
-    <h4>I'm feeling lucky</h4>
-
-    <p>If you are impatient and have confidence in the tool and your data then this is the
-      path for you. It can result in situations which must be repaired by NPMap staff, so use with
-      caution. You are strongly encouraged to start with the step by step upload</p>
-
-    <h4>Step by Step Upload</h4>
-
-    <p>Uploading step by step gives you more information in what is happening in the upload processing,
-      and allows you to respond more easily if something goes wrong.</p>
+    <p><em>Send the public features in your ArcGIS dataset to Places.</em></p>
+    <p>Translators are provided for:</p>
+    <ul>
+      <li>Buildings (footprints)</li>
+      <li>Points of Interest</li>
+      <li>Parking Lots (footprints)</li>
+      <li>Trails</li>
+      <li>Roads</li>
+    </ul>
+    <p>The translators assume the data is largely compliant with the eGIS data standards,
+      however they make a good attempt to support reasonable variants.
+      It is possible (and even pretty easy) to modify the translators to support other datasets or non-standard data.</p>
+    <p>...</p>
 
 
 
     <h3>Update Places</h3>
 
-    <p>Find changes in the eGIS data since the last upload and send them to places.</p>
+    <p><em>Find changes in your ArcGIS features since the upload (or last update) and send them to Places.</em></p>
     <p><strong>This tool is not available yet.</strong></p>
 
 
 
-    <h3>Update GIS</h3>
+    <h3>Update Features</h3>
 
-    <p>Find changes in the Places data since the last download and integrate them to GIS.</p>
+    <p><em>Find changes in Places since the last update and integrate them into your ArcGIS features.</em></p>
     <p><strong>This tool is not available yet.</strong></p>
 
 
