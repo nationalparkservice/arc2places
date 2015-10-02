@@ -11,6 +11,7 @@ import tempfile
 from OsmApiServer import OsmApiServer
 from Logger import Logger
 from DataTable import DataTable
+import time
 
 
 class UploadError(BaseException):
@@ -50,14 +51,33 @@ def make_upload_log_internal(resp_root, osm_root, date, cid, user):
     return data
 
 
+# Public - called by CreateUploadLog2, SeedPlaces in arc2places.pyt; test() in self
 def make_upload_log_from_changeset_id(cid, server, logger):
     try:
-        logger.info("Requesting changeset info from server.")
+        logger.info("Requesting info on changeset {} from server.".format(cid))
     except AttributeError:
         pass
-    elements = server.get_sourceids_for_changeset(cid)
+
+    # busy wait on server for changeset info
+    elements = None
+    countdown = 10  # times 3 seconds = 30 seconds before giving up.
+    while countdown:
+        elements = server.get_sourceids_for_changeset(cid)
+        if elements:
+            break
+        else:
+            if "404" in server.error:
+                try:
+                    logger.info("Changeset not found or not ready.  Waiting...")
+                except AttributeError:
+                    pass
+                time.sleep(3)
+                countdown -= 1
+            else:
+                raise UploadError("Server failure requesting source ids for changeset. " + server.error)
     if not elements:
-        raise UploadError("Server failure requesting source ids for changeset. " + server.error)
+        raise UploadError("Changeset not found.  It may not be ready yet, try again in a little while.")
+
     try:
         element_root = Et.fromstring(elements)
     except Et.ParseError as e:
@@ -254,6 +274,8 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None,
         return cid
 
     # TODO: upload may timeout.  Check resp.
+    # FIXME: closing a changeset now is pretty fast.  All the time is on the upload processing
+    # TODO: simplify now that we have a solution to failed uploads.
     # It is possible that the upload was done, but not the processing.
     # We will not get the diff result back, but the server might have what we need
     if server.error:
@@ -362,7 +384,7 @@ def test():
     cid = upload_osm_file('c:/tmp/places/buildings.osm', api_server, 'Testing upload OSM file function',
                           async=True, logger=api_server.logger)
     print 'Changeset', cid, 'has been queued on the server for processing'
-    # TODO: sleep until changeset is ready
+    # cid = 34237697  # exists for testing
     upload_log = make_upload_log_from_changeset_id(cid, api_server, api_server.logger)
     upload_log.export_csv('c:/tmp/places/building_sync.csv')
     upload_osm_file('./testdata/test_roads.osm', api_server, 'Testing upload OSM file function',
@@ -451,8 +473,8 @@ def cmdline():
     upload_osm_file(srcfile, api_server, options.comment, csv_path=options.log_file, logger=api_server.logger,
                     response_path=dstfile, return_log=False)
 
-# TODO: create cmdline program to create upload log from osm and and server response
+# TODO: create cmdline program to create upload log from osm and and server response; or changeset id
 
 if __name__ == '__main__':
-    # test()
-    cmdline()
+    test()
+    # cmdline()

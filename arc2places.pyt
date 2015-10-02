@@ -876,7 +876,8 @@ class SeedPlaces(object):
                     description = 'Initial upload of {0:s} translated with {1:s}'.format(featureclass, translator.name)
                     table = None
                     try:
-                        table = osm2places.upload_osm_data(changefile, server, description)
+                        cid = osm2places.upload_osm_data(changefile, server, description, async=True)
+                        table = osm2places.make_upload_log_from_changeset_id(cid, server, server.logger)
                     except osm2places.UploadError as e:
                         arcpy.AddError(e)
                     if table:
