@@ -1,6 +1,18 @@
 import os
 
 
+def from_csv(filepath):
+    import csv
+    # Note: python 2.7 csv module does not support unicode; this CSV file should be all ASCII
+    new_table = DataTable()
+    with open(filepath) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            new_table.rows.append(row)
+    new_table.fieldnames = reader.fieldnames
+    return new_table
+
+
 class DataTable:
 
     valid_field_types = ['TEXT', 'FLOAT', 'DOUBLE', 'SHORT', 'LONG', 'DATE' 'BLOB' 'RASTER' 'GUID']
@@ -89,6 +101,10 @@ def test():
     sde = os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde")
     data.export_arcgis(sde, 'simpletable')
     data.export_arcgis(sde, 'simpletable', append=True)
+    new_data = from_csv(r'./testdata/simpletable.csv')
+    print new_data.fieldnames
+    for row in new_data.rows:
+        print row
 
 
 if __name__ == '__main__':
