@@ -395,9 +395,9 @@ def build(osm_change, upload_log, server, logger=None):
 
 
 def test():
-    osm_change_file = './testdata/update_test1.osm'
-    update_log_csv = './testdata/update_test1.csv'
-    new_change_file = './testdata/update_test1_out.osm'
+    osm_change_file = './testdata/update_test2.osm'
+    update_log_csv = './testdata/update_test2.csv'
+    new_change_file = './testdata/update_test2_out.osm'
 
     osm_change = Et.parse(osm_change_file).getroot()
     update_log = DataTable.from_csv(update_log_csv)

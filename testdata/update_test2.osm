@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<osmChange generator="arc2places" version="0.6">
+  <create>
+    <node changeset="-1" id="-1" lat="62" lon="-145" version="1" visible="true" comment="old node with tags - IGNORE">
+      <tag k="name" v="ignore" />
+      <tag k="nps:edit_date" v="2015-09-01 11:00:00" />
+      <tag k="nps:source_system_key_value" v="1" />
+    </node>
+    <node changeset="-1" id="-2" lat="62" lon="-145" version="1" visible="true" comment="new node with tags - ADD">
+      <tag k="name" v="add" />
+      <tag k="nps:edit_date" v="2015-09-01 13:00:00" />
+      <tag k="nps:source_system_key_value" v="2" />
+    </node>
+    <node changeset="-1" id="-3" lat="62" lon="-145" version="1" visible="true" comment="unref node without tags - IGNORE"/>
+    <node changeset="-1" id="-7" lat="62" lon="-145" version="1" visible="true" comment="ref node in old way - IGNORE" />
+    <node changeset="-1" id="-8" lat="62" lon="-145" version="1" visible="true" comment="ref node in old and new way - ADD ONCE" />
+    <node changeset="-1" id="-9" lat="62" lon="-145" version="1" visible="true" comment="ref node in new way - ADD" />
+    <node changeset="-1" id="-10" lat="62" lon="-145" version="1" visible="true" comment="ref node in 2 new ways - ADD ONCE" />
+    <node changeset="-1" id="-11" lat="62" lon="-145" version="1" visible="true" comment="ref node in unref way without tags - IGNORE" />
+    <node changeset="-1" id="-12" lat="62" lon="-145" version="1" visible="true" comment="ref node in unref way without tags - IGNORE" />
+    <node changeset="-1" id="-13" lat="62" lon="-145" version="1" visible="true" comment="ref node in unref way without tags - IGNORE" />
+
+    <node changeset="-1" id="-18" lat="62" lon="-145" version="1" visible="true" comment="node in way in old relation - IGNORE" />
+    <node changeset="-1" id="-20" lat="62" lon="-145" version="1" visible="true" comment="node in way in old relation - IGNORE" />
+    <node changeset="-1" id="-21" lat="62" lon="-145" version="1" visible="true" comment="node in way in old relation - IGNORE" />
+
+    <node changeset="-1" id="-22" lat="62" lon="-145" version="1" visible="true" comment="node in way in old refed relation - ADD" />
+    <node changeset="-1" id="-24" lat="62" lon="-145" version="1" visible="true" comment="node in way in old refed relation - ADD" />
+    <node changeset="-1" id="-25" lat="62" lon="-145" version="1" visible="true" comment="node in way in old refed relation - ADD" />
+
+    <node changeset="-1" id="-26" lat="62" lon="-145" version="1" visible="true" comment="node in 2 relations - ADD ONCE" />
+    <node changeset="-1" id="-28" lat="62" lon="-145" version="1" visible="true" comment="node in way in 2 relations - ADD ONCE" />
+    <node changeset="-1" id="-29" lat="62" lon="-145" version="1" visible="true" comment="node in way in 2 relations - ADD ONCE" />
+    <way changeset="-1" id="-4" version="1" visible="true" comment="old unref way with tags - IGNORE">
+      <nd ref="-7"/>
+      <nd ref="-8"/>
+      <tag k="name" v="ignore node"/>
+      <tag k="nps:edit_date" v="2015-09-01 11:00:00"/>
+      <tag k="nps:source_system_key_value" v="4"/>
+    </way>
+    <way changeset="-1" id="-5" version="1" visible="true" comment="new unref way with tags - ADD">
+      <nd ref="-8"/>
+      <nd ref="-9"/>
+      <nd ref="-10"/>
+      <nd ref="-8"/>
+      <tag k="name" v="add way1"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:edit_date" v="2015-09-01 13:00:00"/>
+      <tag k="nps:source_system_key_value" v="5"/>
+    </way>
+    <way changeset="-1" id="-6" version="1" visible="true" comment="old ref way with tags - ADD">
+      <nd ref="-10"/>
+      <nd ref="-8"/>
+      <tag k="name" v="add way2 with dup nodes"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:edit_date" v="2015-09-01 11:00:00"/>
+      <tag k="nps:source_system_key_value" v="6"/>
+    </way>
+    <way changeset="-1" id="-30" version="1" visible="true" comment="unref way with no tags - IGNORE">
+      <nd ref="-11"/>
+      <nd ref="-12"/>
+      <nd ref="-13"/>
+    </way>
+    <way changeset="-1" id="-19" version="1" visible="true" comment="ref by only unadded relation - IGNORE">
+      <nd ref="-20"/>
+      <nd ref="-21"/>
+    </way>
+    <way changeset="-1" id="-23" version="1" visible="true" comment="ref by only one added relation - ADD">
+      <nd ref="-24"/>
+      <nd ref="-25"/>
+    </way>
+    <way changeset="-1" id="-27" version="1" visible="true" comment="ref by multiple added relation - ADD ONCE">
+      <nd ref="-28"/>
+      <nd ref="-29"/>
+    </way>
+    <relation changeset="-1" id="-14" version="1" visible="true" comment="old relation - IGNORE">
+      <member ref="-18" role="outer" type="node"/>
+      <member ref="-19" role="inner" type="way"/>
+      <tag k="name" v="ignore relation"/>
+      <tag k="nps:edit_date" v="2015-09-01 11:00:00"/>
+      <tag k="nps:source_system_key_value" v="14"/>
+    </relation>
+    <relation changeset="-1" id="-15" version="1" visible="true" comment="old reffed relation - ADD">
+      <member ref="-22" role="outer" type="node"/>
+      <member ref="-23" role="inner" type="way"/>
+      <tag k="name" v="add relation"/>
+      <tag k="nps:edit_date" v="2015-09-01 11:00:00"/>
+      <tag k="nps:source_system_key_value" v="15"/>
+    </relation>
+    <relation changeset="-1" id="-16" version="1" visible="true" comment="new relation - ADD">
+      <member ref="-26" role="outer" type="node"/>
+      <member ref="-6" role="inner" type="way"/>
+      <member ref="-27" role="inner" type="way"/>
+      <tag k="name" v="new relation with redundant node and way"/>
+      <tag k="nps:edit_date" v="2015-09-01 13:00:00"/>
+      <tag k="nps:source_system_key_value" v="16"/>
+    </relation>
+    <relation changeset="-1" id="-17" version="1" visible="true" comment="new super relation - ADD">
+      <member ref="-26" role="outer" type="node"/>
+      <member ref="-27" role="inner" type="way"/>
+      <member ref="-15" role="inner" type="relation"/>
+      <tag k="name" v="super relation with redundant node and way"/>
+      <tag k="nps:edit_date" v="2015-09-01 13:00:00"/>
+      <tag k="nps:source_system_key_value" v="17"/>
+    </relation>
+  </create>
+</osmChange>
