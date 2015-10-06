@@ -1,0 +1,18 @@
+date_time,user_name,changeset,action,element,places_id,version,source_id
+2015-09-01 12:00:00.00,RESarwas,1,create,node,11,1,1
+2015-08-01 12:00:00.00,RESarwas,1,create,node,12,1,2
+2015-08-01 12:00:00.00,RESarwas,1,create,node,13,1,3
+2015-09-01 12:00:00.00,RESarwas,1,create,node,15,1,5
+2015-08-01 12:00:00.00,RESarwas,1,create,node,16,1,6
+2015-08-01 12:00:00.00,RESarwas,1,create,node,17,1,7
+2015-08-01 12:00:00.00,RESarwas,1,create,node,21,1,11
+2015-08-01 12:00:00.00,RESarwas,1,create,node,22,1,12
+2015-09-01 12:00:00.00,RESarwas,1,create,node,121,1,21
+2015-08-01 12:00:00.00,RESarwas,1,create,node,122,1,22
+2015-08-01 12:00:00.00,RESarwas,1,create,node,123,1,33
+2015-09-01 12:00:00.00,RESarwas,1,modify,node,12,1,2
+2015-09-01 12:00:00.00,RESarwas,1,delete,node,13,1,3
+2015-09-01 12:00:00.00,RESarwas,1,modify,node,16,1,6
+2015-09-01 12:00:00.00,RESarwas,1,delete,node,17,1,7
+2015-09-01 12:00:00.00,RESarwas,1,modify,node,122,1,22
+2015-09-01 12:00:00.00,RESarwas,1,delete,node,123,1,23

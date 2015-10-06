@@ -1,0 +1,58 @@
+<osm generator="arc2places" version="0.6">
+  <create>
+    <node changeset="-1" id="-1" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="edit date less than create date" />
+      <tag k="nps:edit_date" v="2015-09-01 11:00:00" />
+      <tag k="nps:source_system_key_value" v="1" />
+    </node>
+    <node changeset="-1" id="-2" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="edit date less than modify date" />
+      <tag k="nps:edit_date" v="2015-09-01 11:00:00" />
+      <tag k="nps:source_system_key_value" v="2" />
+    </node>
+    <node changeset="-1" id="-3" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="edit date less than delete date" />
+      <tag k="nps:edit_date" v="2015-09-01 11:00:00" />
+      <tag k="nps:source_system_key_value" v="3" />
+    </node>
+    <node changeset="-1" id="-4" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="not in upload log (create)" />
+      <tag k="nps:edit_date" v="2015-09-01 12:00:00" />
+      <tag k="nps:source_system_key_value" v="4" />
+    </node>
+    <node changeset="-1" id="-5" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="edit date greater than create date" />
+      <tag k="nps:edit_date" v="2015-09-01 13:00:00" />
+      <tag k="nps:source_system_key_value" v="5" />
+    </node>
+    <node changeset="-1" id="-6" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="edit date greater than modify date" />
+      <tag k="nps:edit_date" v="2015-09-01 13:00:00" />
+      <tag k="nps:source_system_key_value" v="6" />
+    </node>
+    <node changeset="-1" id="-7" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="edit date greater than delete date" />
+      <tag k="nps:edit_date" v="2015-09-01 13:00:00" />
+      <tag k="nps:source_system_key_value" v="7" />
+    </node>
+    <node changeset="-1" id="-8" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="no id" />
+      <tag k="nps:edit_date" v="2015-09-01 12:00:00" />
+    </node>
+    <node changeset="-1" id="-11" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="no date" />
+      <tag k="nps:source_system_key_value" v="11" />
+    </node>
+    <node changeset="-1" id="-12" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="date with partial seconds" />
+      <tag k="nps:edit_date" v="2015-09-01 12:00:00.01" />
+      <tag k="nps:source_system_key_value" v="12" />
+    </node>
+    <node changeset="-1" id="-13" lat="62" lon="-145" version="1" visible="true">
+      <tag k="name" v="date without minutes" />
+      <tag k="nps:edit_date" v="2015-09-01 12:00" />
+      <tag k="nps:source_system_key_value" v="13" />
+    </node>
+    <node changeset="-1" id="-100" lat="62" lon="-145" version="1" visible="true" />
+  </create>
+</osm>

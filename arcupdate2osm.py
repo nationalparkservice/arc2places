@@ -37,9 +37,9 @@ Matrix for Update Actions
 +--------+------------------+------------------+---------------+
 | Delete |     Restore[1]   |     Restore      |    Ignore     |
 +--------+------------------+------------------+---------------+
-|  Not   |                  |                  |     Not       |
-| Found  |      Create      |     Create       |  Applicable   |
-| in log |                  |                  |               |
+|  Not   |                                     |     Not       |
+| Found  |                Create               |  Applicable   |
+| in log |                                     |               |
 +--------+------------------+------------------+---------------+
 
 Create: Feature has never been uploaded to Places, so create in Places
@@ -96,7 +96,7 @@ def copy_root(osm_change):
     return new_change
 
 
-def make_upload_log_hash(data, date_format='%Y-%m-%d %H:%M:%S.%f', logger=None):
+def make_upload_log_hash(data, date_format='%Y-%m-%d %H:%M:%S.%f'):
     """
     Creates a dictionary from data; data must have the following schema:
     data.fieldnames = ['date_time', 'user_name', 'changeset', 'action', 'element', 'places_id', 'version', 'source_id']
@@ -116,7 +116,7 @@ def make_upload_log_hash(data, date_format='%Y-%m-%d %H:%M:%S.%f', logger=None):
         else:
             date = datetime.datetime.strptime(row['date_time'], date_format)
         if gis_id in upload_data:
-            if date < row[gis_id][1]:
+            if date < upload_data[gis_id][1]:
                 continue
         action = row['action']
         places_id = row['places_id']
@@ -167,7 +167,7 @@ def make_feature_hash(osm_change_create_node, id_key='nps:source_system_key_valu
                 break
         if date_str is None:
             try:
-                msg = "Feature {0}: No edit_date '{1}' tag. Assuming edited recently."
+                msg = "Feature {0}: No '{1}' tag. Assuming edited recently."
                 logger.warn(msg.format(gis_id, date_key))
             except AttributeError:
                 pass
@@ -197,6 +197,8 @@ def create(new_change, thing, element, logger=None):
     :param element: the element in the osmChange to copy to newChange
     :return: None
     """
+    # print 'create'
+    # Et.dump(element)
     if element.tag == 'relation':
         rid = element.get('id')
         if rid not in thing.added_relations:
@@ -205,14 +207,14 @@ def create(new_change, thing, element, logger=None):
                 mtype = member.get('type')
                 mid = member.get('ref')
                 if mtype == 'relation':
-                    element = thing.relations[mid]
+                    subelement = thing.relations[mid]
                 elif mtype == 'way':
-                    element = thing.ways[mid]
+                    subelement = thing.ways[mid]
                 else:
-                    element = thing.nodes[mid]
-                create(new_change, thing, element, logger)
+                    subelement = thing.nodes[mid]
+                create(new_change, thing, subelement, logger)
             # Add the relation and all it's references/tags
-            new_change.insert(element, len(thing.added_nodes) + len(thing.added_ways) + len(thing.added_relations))
+            new_change.insert(len(thing.added_nodes) + len(thing.added_ways) + len(thing.added_relations), element)
             thing.added_relations.append(rid)
 
     if element.tag == 'way':
@@ -222,17 +224,17 @@ def create(new_change, thing, element, logger=None):
             for node in element.findall('nd'):
                 nid = node.get('ref')
                 if nid not in thing.added_nodes:
-                    element = thing.nodes[nid]
-                    new_change.insert(element, len(thing.added_nodes))
+                    subelement = thing.nodes[nid]
+                    new_change.insert(len(thing.added_nodes), subelement)
                     thing.added_nodes.append(nid)
             # add the way
-            new_change.insert(element, len(thing.added_nodes) + len(thing.added_ways))
+            new_change.insert(len(thing.added_nodes) + len(thing.added_ways), element)
             thing.added_ways.append(wid)
 
     if element.tag == 'node':
         nid = element.get('id')
         if nid not in thing.added_nodes:
-            new_change.insert(element, len(thing.added_nodes))
+            new_change.insert(len(thing.added_nodes), element)
             thing.added_nodes.append(nid)
     return
 
@@ -269,7 +271,7 @@ def delete(new_change, thing, pserver, ptype, pid, pversion, logger=None):
     """
 
     # FIXME: Implement
-    print 'delete', ptype, pid, pversion
+    # print 'delete', ptype, pid, pversion
     return
 
 
@@ -289,8 +291,8 @@ def restore(new_change, thing, element, pserver, ptype, pid, pversion, logger=No
     """
 
     # FIXME: Implement
-    print 'restore', ptype, pid
-    Et.dump(element)
+    # print 'restore', ptype, pid
+    # Et.dump(element)
     return
 
 
@@ -325,24 +327,23 @@ def modify(new_change, thing, element, pserver, ptype, pid, pversion, logger=Non
     """
 
     # FIXME: Implement
-    print 'modify', ptype, pid
-    Et.dump(element)
+    # print 'modify', ptype, pid
+    # Et.dump(element)
     return
 
 
 def build(osm_change, upload_log, server, logger=None):
     new_change = copy_root(osm_change)
-    #Et.dump(new_change)
+    # Et.dump(new_change)
     osm_change_create_node = osm_change[0]
     new_change_create_node = new_change[0]
     new_change_modify_node = new_change[1]
     new_change_delete_node = new_change[2]
     thing = Thing(osm_change_create_node)
-    #Et.dump(osm_change_create_node)
+    # Et.dump(osm_change_create_node)
     features = make_feature_hash(osm_change_create_node, logger=logger)
     # print features
-    # print upload_log.fieldnames
-    updates = make_upload_log_hash(upload_log, logger=logger)
+    updates = make_upload_log_hash(upload_log)
     # print updates
     for gis_id in features:
         if gis_id not in updates:
@@ -368,7 +369,7 @@ def build(osm_change, upload_log, server, logger=None):
                         server, updates[gis_id][2], updates[gis_id][3], updates[gis_id][4], logger)
             if updates[gis_id][0] in ['create', 'modify']:
                 if (updates[gis_id][1] is None or features[gis_id][1] is None
-                    or updates[gis_id][1] <= features[gis_id][1]):
+                        or updates[gis_id][1] <= features[gis_id][1]):
                     if features[gis_id][0] != updates[gis_id][2]:
                         msg = "Cannot update id '{0} from a {1} to a {2}"
                         msg = msg.format(gis_id, features[gis_id][0], updates[gis_id][2])
@@ -394,9 +395,9 @@ def build(osm_change, upload_log, server, logger=None):
 
 
 def test():
-    osm_change_file = './testdata/plots.osm'
-    update_log_csv = './testdata/plots_sync.csv'
-    new_change_file = './testdata/plots_update.osm'
+    osm_change_file = './testdata/update_test1.osm'
+    update_log_csv = './testdata/update_test1.csv'
+    new_change_file = './testdata/update_test1_out.osm'
 
     osm_change = Et.parse(osm_change_file).getroot()
     update_log = DataTable.from_csv(update_log_csv)
