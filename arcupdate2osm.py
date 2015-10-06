@@ -96,11 +96,12 @@ def copy_root(osm_change):
     return new_change
 
 
-def make_upload_log_hash(data):
+def make_upload_log_hash(data, date_format='%Y-%m-%d %H:%M:%S.%f', logger=None):
     """
     Creates a dictionary from data; data must have the following schema:
     data.fieldnames = ['date_time', 'user_name', 'changeset', 'action', 'element', 'places_id', 'version', 'source_id']
-    data.fieldtypes = ['DATE', 'TEXT', 'LONG', 'TEXT', 'TEXT', 'TEXT', 'LONG', 'TEXT']
+    data.fieldtypes = ['DATE', 'TEXT', 'LONG', 'TEXT', 'TEXT', 'TEXT', 'LONG', 'TEXT'] or all text if from CSV
+    There is no error checking in this routine; if the input does not have the expected schema it will crash
 
     :param data: DataTable with well known schema
     :return: a dictionary of {gis_id: (action, date, places_type, places_id, places_version)}
@@ -110,14 +111,20 @@ def make_upload_log_hash(data):
     upload_data = {}
     for row in data.rows:
         gis_id = row['source_id']
-        date = row['date_time']
+        if type(row['date_time']) == datetime.datetime:
+            date = row['date_time']
+        else:
+            date = datetime.datetime.strptime(row['date_time'], date_format)
         if gis_id in upload_data:
             if date < row[gis_id][1]:
                 continue
         action = row['action']
         places_id = row['places_id']
         places_type = row['element']
-        places_version = row['version']
+        if type(row['version']) == int:
+            places_version = row['version']
+        else:
+            places_version = int(row['version'])
         upload_data[gis_id] = (action, date, places_type, places_id, places_version)
     return upload_data
 
@@ -138,31 +145,45 @@ def make_feature_hash(osm_change_create_node, id_key='nps:source_system_key_valu
 
     feature_data = {}
     for element in osm_change_create_node:
+        tags = element.findall('tag')
+        if not tags:
+            continue
         ptype = element.tag
-        # FIXME: need to search tags not attributes
-        gis_id = element.get(id_key)
+        gis_id = None
+        for tag in tags:
+            if tag.attrib['k'] == id_key:
+                gis_id = tag.attrib['v']
+                break
         if gis_id is None:
             try:
                 logger.warn("Skipping element without a source_id '{0}' tag".format(id_key))
             except AttributeError:
                 pass
             continue
-        # FIXME: need to search tags not attributes
-        date_str = element.get(date_key)
+        date_str = None
+        for tag in tags:
+            if tag.attrib['k'] == date_key:
+                date_str = tag.attrib['v']
+                break
         if date_str is None:
             try:
-                logger.warn("Skipping {0}; has no edit_date '{0}' tag".format(gis_id, date_key))
+                msg = "Feature {0}: No edit_date '{1}' tag. Assuming edited recently."
+                logger.warn(msg.format(gis_id, date_key))
             except AttributeError:
                 pass
-            continue
-        try:
-            date = datetime.datetime.strptime(date_str, date_format)
-        except ValueError:
+            date = None
+        else:
             try:
-                logger.warn("Skipping {0}; unexpected date format '{0}'".format(gis_id, date_str))
-            except AttributeError:
-                pass
-            continue
+                # TODO: make date handling more robust
+                date_str = date_str.split('.')[0]  # remove optional trailing spaces
+                date = datetime.datetime.strptime(date_str, date_format)
+            except ValueError:
+                try:
+                    msg = "Feature {0}: Unexpected date format '{1}'. Assuming edited recently."
+                    logger.warn(msg.format(gis_id, date_str))
+                except AttributeError:
+                    pass
+                date = None
         feature_data[gis_id] = (ptype, date, element)
     return feature_data
 
@@ -318,11 +339,11 @@ def build(osm_change, upload_log, server, logger=None):
     new_change_delete_node = new_change[2]
     thing = Thing(osm_change_create_node)
     #Et.dump(osm_change_create_node)
-    features = make_feature_hash(osm_change_create_node)
-    print features
+    features = make_feature_hash(osm_change_create_node, logger=logger)
+    # print features
     # print upload_log.fieldnames
-    updates = make_upload_log_hash(upload_log)
-    print updates
+    updates = make_upload_log_hash(upload_log, logger=logger)
+    # print updates
     for gis_id in features:
         if gis_id not in updates:
             create(new_change_create_node, thing, features[gis_id][2], logger)
@@ -346,7 +367,8 @@ def build(osm_change, upload_log, server, logger=None):
                 restore(new_change_modify_node, thing, features[gis_id][2],
                         server, updates[gis_id][2], updates[gis_id][3], updates[gis_id][4], logger)
             if updates[gis_id][0] in ['create', 'modify']:
-                if updates[gis_id][1] <= features[gis_id][1]:
+                if (updates[gis_id][1] is None or features[gis_id][1] is None
+                    or updates[gis_id][1] <= features[gis_id][1]):
                     if features[gis_id][0] != updates[gis_id][2]:
                         msg = "Cannot update id '{0} from a {1} to a {2}"
                         msg = msg.format(gis_id, features[gis_id][0], updates[gis_id][2])
