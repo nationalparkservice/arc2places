@@ -89,10 +89,12 @@ class DataTable:
 
 
 def test():
+    import datetime
     data = DataTable()
-    data.fieldnames = ['id', 'name']
-    data.fieldtypes = ['LONG', 'TEXT']
-    for row in [[1, 'a'], [2, 'b'], [3, 'c']]:
+    now = datetime.datetime.now()
+    data.fieldnames = ['id', 'name', 'float', 'when']
+    data.fieldtypes = ['LONG', 'TEXT', 'DOUBLE', 'DATE']
+    for row in [[1, 'a', 3.2, now], [2, 'b', 4.76, now], [3, 'c', 5.0, now]]:
         data.rows.append(row)
     data.export_csv(r'./testdata/simpletable.csv')
     data.export_csv(r'./testdata/simpletable.csv', append=True)
