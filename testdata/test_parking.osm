@@ -1,1 +1,237 @@
-<osmChange generator="arc2places" version="0.6"><create><node changeset="-1" id="-2" lat="61.203739148" lon="-149.918182136" version="1" visible="true" /><node changeset="-1" id="-3" lat="61.204012602" lon="-149.917435076" version="1" visible="true" /><node changeset="-1" id="-4" lat="61.203536839" lon="-149.917294518" version="1" visible="true" /><node changeset="-1" id="-6" lat="61.205509085" lon="-149.915000069" version="1" visible="true" /><node changeset="-1" id="-7" lat="61.205841488" lon="-149.914518274" version="1" visible="true" /><node changeset="-1" id="-8" lat="61.20559344" lon="-149.913814491" version="1" visible="true" /><node changeset="-1" id="-9" lat="61.20526104" lon="-149.91429629" version="1" visible="true" /><node changeset="-1" id="-11" lat="61.204460072" lon="-149.91380319" version="1" visible="true" /><node changeset="-1" id="-12" lat="61.204465691" lon="-149.913313875" version="1" visible="true" /><node changeset="-1" id="-13" lat="61.204352388" lon="-149.913178088" version="1" visible="true" /><node changeset="-1" id="-14" lat="61.204361205" lon="-149.913958932" version="1" visible="true" /><node changeset="-1" id="-15" lat="61.204770074" lon="-149.913678667" version="1" visible="true" /><node changeset="-1" id="-16" lat="61.204705544" lon="-149.913601329" version="1" visible="true" /><node changeset="-1" id="-18" lat="61.204870594" lon="-149.9134656" version="1" visible="true" /><node changeset="-1" id="-19" lat="61.204469623" lon="-149.912971374" version="1" visible="true" /><node changeset="-1" id="-21" lat="61.203343714" lon="-149.916425779" version="1" visible="true" /><node changeset="-1" id="-22" lat="61.203735444" lon="-149.916207148" version="1" visible="true" /><node changeset="-1" id="-23" lat="61.20338446" lon="-149.915717773" version="1" visible="true" /><node changeset="-1" id="-25" lat="61.203777712" lon="-149.915390056" version="1" visible="true" /><node changeset="-1" id="-27" lat="61.204808945" lon="-149.919177275" version="1" visible="true" /><node changeset="-1" id="-28" lat="61.204332864" lon="-149.919268135" version="1" visible="true" /><node changeset="-1" id="-29" lat="61.204345498" lon="-149.920018791" version="1" visible="true" /><node changeset="-1" id="-30" lat="61.204837489" lon="-149.919985289" version="1" visible="true" /><node changeset="-1" id="-33" lat="61.204712773" lon="-149.91966179" version="1" visible="true" /><node changeset="-1" id="-34" lat="61.204784044" lon="-149.919667482" version="1" visible="true" /><node changeset="-1" id="-35" lat="61.204792215" lon="-149.919864403" version="1" visible="true" /><node changeset="-1" id="-36" lat="61.204718728" lon="-149.919863945" version="1" visible="true" /><node changeset="-1" id="-38" lat="61.204471913" lon="-149.919804584" version="1" visible="true" /><node changeset="-1" id="-39" lat="61.204456151" lon="-149.919430468" version="1" visible="true" /><node changeset="-1" id="-40" lat="61.204668364" lon="-149.919393306" version="1" visible="true" /><node changeset="-1" id="-41" lat="61.204680566" lon="-149.919807476" version="1" visible="true" /><node changeset="-1" id="-43" lat="61.205113563" lon="-149.917005132" version="1" visible="true" /><node changeset="-1" id="-44" lat="61.205082544" lon="-149.917400116" version="1" visible="true" /><node changeset="-1" id="-45" lat="61.20527674" lon="-149.917394953" version="1" visible="true" /><node changeset="-1" id="-46" lat="61.205287962" lon="-149.917052005" version="1" visible="true" /><node changeset="-1" id="-48" lat="61.205508236" lon="-149.916805916" version="1" visible="true" /><node changeset="-1" id="-49" lat="61.204949187" lon="-149.916655065" version="1" visible="true" /><node changeset="-1" id="-50" lat="61.204859072" lon="-149.917859429" version="1" visible="true" /><node changeset="-1" id="-51" lat="61.205431488" lon="-149.917820506" version="1" visible="true" /><node changeset="-1" id="-54" lat="61.205355567" lon="-149.917657036" version="1" visible="true" /><node changeset="-1" id="-55" lat="61.204983704" lon="-149.917665236" version="1" visible="true" /><node changeset="-1" id="-56" lat="61.205010797" lon="-149.916815421" version="1" visible="true" /><node changeset="-1" id="-57" lat="61.205407253" lon="-149.916917885" version="1" visible="true" /><node changeset="-1" id="-59" lat="61.204604633" lon="-149.92051851" version="1" visible="true" /><node changeset="-1" id="-60" lat="61.204611781" lon="-149.921002618" version="1" visible="true" /><node changeset="-1" id="-61" lat="61.204832499" lon="-149.920771352" version="1" visible="true" /><node changeset="-1" id="-63" lat="61.204838887" lon="-149.9209883" version="1" visible="true" /><node changeset="-1" id="-64" lat="61.204963434" lon="-149.921595916" version="1" visible="true" /><node changeset="-1" id="-65" lat="61.205009831" lon="-149.92115937" version="1" visible="true" /><way changeset="-1" id="-1" version="1" visible="true"><nd ref="-2" /><nd ref="-3" /><nd ref="-4" /><nd ref="-2" /><tag k="nps:parkinglot_name" v="triangle" /><tag k="amenity" v="parking" /><tag k="name" v="triangle" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{31C66E6F-C66F-4450-978D-D926C3E60B4C}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></way><way changeset="-1" id="-5" version="1" visible="true"><nd ref="-6" /><nd ref="-7" /><nd ref="-8" /><nd ref="-9" /><nd ref="-6" /><tag k="nps:parkinglot_name" v="square" /><tag k="amenity" v="parking" /><tag k="name" v="square" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{58D89E44-E51B-466A-8C28-72F15E2DB353}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></way><way changeset="-1" id="-10" version="1" visible="true"><nd ref="-11" /><nd ref="-12" /><nd ref="-13" /><nd ref="-14" /><nd ref="-15" /><nd ref="-16" /><nd ref="-11" /><tag k="nps:parkinglot_name" v="overlapping triangles" /><tag k="amenity" v="parking" /><tag k="name" v="overlapping triangles" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{2046C0C2-7A07-40B3-89CF-E94AFC889C4D}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></way><way changeset="-1" id="-17" version="1" visible="true"><nd ref="-12" /><nd ref="-16" /><nd ref="-18" /><nd ref="-19" /><nd ref="-12" /><tag k="nps:parkinglot_name" v="overlapping triangles" /><tag k="amenity" v="parking" /><tag k="name" v="overlapping triangles" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{2046C0C2-7A07-40B3-89CF-E94AFC889C4D}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></way><way changeset="-1" id="-20" version="1" visible="true"><nd ref="-21" /><nd ref="-22" /><nd ref="-23" /><nd ref="-21" /><tag k="nps:parkinglot_name" v="shared 1" /><tag k="amenity" v="parking" /><tag k="name" v="shared 1" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{DC10736F-1F96-4E8A-B749-CA41D8530913}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></way><way changeset="-1" id="-24" version="1" visible="true"><nd ref="-23" /><nd ref="-22" /><nd ref="-25" /><nd ref="-23" /><tag k="nps:parkinglot_name" v="shared 2" /><tag k="amenity" v="parking" /><tag k="name" v="shared 2" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{6398203F-54DA-4580-A4A6-E4D65AB25289}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></way><way changeset="-1" id="-26" version="1" visible="true"><nd ref="-27" /><nd ref="-28" /><nd ref="-29" /><nd ref="-30" /><nd ref="-27" /></way><way changeset="-1" id="-32" version="1" visible="true"><nd ref="-33" /><nd ref="-34" /><nd ref="-35" /><nd ref="-36" /><nd ref="-33" /></way><way changeset="-1" id="-37" version="1" visible="true"><nd ref="-38" /><nd ref="-39" /><nd ref="-40" /><nd ref="-41" /><nd ref="-38" /></way><way changeset="-1" id="-42" version="1" visible="true"><nd ref="-43" /><nd ref="-44" /><nd ref="-45" /><nd ref="-46" /><nd ref="-43" /><tag k="nps:parkinglot_name" v="one hole with island" /><tag k="amenity" v="parking" /><tag k="name" v="one hole with island" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{6EB9BF02-9FF9-4D08-9EF5-4ABC3EDEA964}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></way><way changeset="-1" id="-47" version="1" visible="true"><nd ref="-48" /><nd ref="-49" /><nd ref="-50" /><nd ref="-51" /><nd ref="-48" /></way><way changeset="-1" id="-53" version="1" visible="true"><nd ref="-54" /><nd ref="-55" /><nd ref="-56" /><nd ref="-57" /><nd ref="-54" /></way><way changeset="-1" id="-58" version="1" visible="true"><nd ref="-59" /><nd ref="-60" /><nd ref="-61" /><nd ref="-59" /><tag k="nps:parkinglot_name" v="multipoly" /><tag k="amenity" v="parking" /><tag k="name" v="multipoly" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{E5AD4A0E-27EA-4574-9D81-878FE51FA157}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></way><way changeset="-1" id="-62" version="1" visible="true"><nd ref="-63" /><nd ref="-64" /><nd ref="-65" /><nd ref="-63" /><tag k="nps:parkinglot_name" v="multipoly" /><tag k="amenity" v="parking" /><tag k="name" v="multipoly" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{E5AD4A0E-27EA-4574-9D81-878FE51FA157}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></way><relation changeset="-1" id="-31" version="1" visible="true"><member ref="-26" role="outer" type="way" /><member ref="-32" role="inner" type="way" /><member ref="-37" role="inner" type="way" /><tag k="type" v="multipolygon" /><tag k="nps:parkinglot_name" v="two holes" /><tag k="amenity" v="parking" /><tag k="name" v="two holes" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{50713328-5EB3-407C-B7C4-3AF9257AE47A}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></relation><relation changeset="-1" id="-52" version="1" visible="true"><member ref="-47" role="outer" type="way" /><member ref="-53" role="inner" type="way" /><tag k="type" v="multipolygon" /><tag k="nps:parkinglot_name" v="one hole with island" /><tag k="amenity" v="parking" /><tag k="name" v="one hole with island" /><tag k="area" v="yes" /><tag k="nps:source_system_key_value" v="{6EB9BF02-9FF9-4D08-9EF5-4ABC3EDEA964}" /><tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py" /><tag k="nps:source_system_key" v="GEOMETRYID" /></relation></create></osmChange>
+<?xml version="1.0"?>
+<osmChange generator="arc2places" version="0.6">
+  <create>
+    <node changeset="-1" id="-2" lat="61.203739148" lon="-149.918182136" version="1" visible="true"/>
+    <node changeset="-1" id="-3" lat="61.204012602" lon="-149.917435076" version="1" visible="true"/>
+    <node changeset="-1" id="-4" lat="61.203536839" lon="-149.917294518" version="1" visible="true"/>
+    <node changeset="-1" id="-6" lat="61.205509085" lon="-149.915000069" version="1" visible="true"/>
+    <node changeset="-1" id="-7" lat="61.205841488" lon="-149.914518274" version="1" visible="true"/>
+    <node changeset="-1" id="-8" lat="61.20559344" lon="-149.913814491" version="1" visible="true"/>
+    <node changeset="-1" id="-9" lat="61.20526104" lon="-149.91429629" version="1" visible="true"/>
+    <node changeset="-1" id="-11" lat="61.204460072" lon="-149.91380319" version="1" visible="true"/>
+    <node changeset="-1" id="-12" lat="61.204465691" lon="-149.913313875" version="1" visible="true"/>
+    <node changeset="-1" id="-13" lat="61.204352388" lon="-149.913178088" version="1" visible="true"/>
+    <node changeset="-1" id="-14" lat="61.204361205" lon="-149.913958932" version="1" visible="true"/>
+    <node changeset="-1" id="-15" lat="61.204770074" lon="-149.913678667" version="1" visible="true"/>
+    <node changeset="-1" id="-16" lat="61.204705544" lon="-149.913601329" version="1" visible="true"/>
+    <node changeset="-1" id="-18" lat="61.204870594" lon="-149.9134656" version="1" visible="true"/>
+    <node changeset="-1" id="-19" lat="61.204469623" lon="-149.912971374" version="1" visible="true"/>
+    <node changeset="-1" id="-21" lat="61.203343714" lon="-149.916425779" version="1" visible="true"/>
+    <node changeset="-1" id="-22" lat="61.203735444" lon="-149.916207148" version="1" visible="true"/>
+    <node changeset="-1" id="-23" lat="61.20338446" lon="-149.915717773" version="1" visible="true"/>
+    <node changeset="-1" id="-25" lat="61.203777712" lon="-149.915390056" version="1" visible="true"/>
+    <node changeset="-1" id="-27" lat="61.204808945" lon="-149.919177275" version="1" visible="true"/>
+    <node changeset="-1" id="-28" lat="61.204332864" lon="-149.919268135" version="1" visible="true"/>
+    <node changeset="-1" id="-29" lat="61.204345498" lon="-149.920018791" version="1" visible="true"/>
+    <node changeset="-1" id="-30" lat="61.204837489" lon="-149.919985289" version="1" visible="true"/>
+    <node changeset="-1" id="-33" lat="61.204712773" lon="-149.91966179" version="1" visible="true"/>
+    <node changeset="-1" id="-34" lat="61.204784044" lon="-149.919667482" version="1" visible="true"/>
+    <node changeset="-1" id="-35" lat="61.204792215" lon="-149.919864403" version="1" visible="true"/>
+    <node changeset="-1" id="-36" lat="61.204718728" lon="-149.919863945" version="1" visible="true"/>
+    <node changeset="-1" id="-38" lat="61.204471913" lon="-149.919804584" version="1" visible="true"/>
+    <node changeset="-1" id="-39" lat="61.204456151" lon="-149.919430468" version="1" visible="true"/>
+    <node changeset="-1" id="-40" lat="61.204668364" lon="-149.919393306" version="1" visible="true"/>
+    <node changeset="-1" id="-41" lat="61.204680566" lon="-149.919807476" version="1" visible="true"/>
+    <node changeset="-1" id="-43" lat="61.205113563" lon="-149.917005132" version="1" visible="true"/>
+    <node changeset="-1" id="-44" lat="61.205082544" lon="-149.917400116" version="1" visible="true"/>
+    <node changeset="-1" id="-45" lat="61.20527674" lon="-149.917394953" version="1" visible="true"/>
+    <node changeset="-1" id="-46" lat="61.205287962" lon="-149.917052005" version="1" visible="true"/>
+    <node changeset="-1" id="-48" lat="61.205508236" lon="-149.916805916" version="1" visible="true"/>
+    <node changeset="-1" id="-49" lat="61.204949187" lon="-149.916655065" version="1" visible="true"/>
+    <node changeset="-1" id="-50" lat="61.204859072" lon="-149.917859429" version="1" visible="true"/>
+    <node changeset="-1" id="-51" lat="61.205431488" lon="-149.917820506" version="1" visible="true"/>
+    <node changeset="-1" id="-54" lat="61.205355567" lon="-149.917657036" version="1" visible="true"/>
+    <node changeset="-1" id="-55" lat="61.204983704" lon="-149.917665236" version="1" visible="true"/>
+    <node changeset="-1" id="-56" lat="61.205010797" lon="-149.916815421" version="1" visible="true"/>
+    <node changeset="-1" id="-57" lat="61.205407253" lon="-149.916917885" version="1" visible="true"/>
+    <node changeset="-1" id="-59" lat="61.204604633" lon="-149.92051851" version="1" visible="true"/>
+    <node changeset="-1" id="-60" lat="61.204611781" lon="-149.921002618" version="1" visible="true"/>
+    <node changeset="-1" id="-61" lat="61.204832499" lon="-149.920771352" version="1" visible="true"/>
+    <node changeset="-1" id="-63" lat="61.204838887" lon="-149.9209883" version="1" visible="true"/>
+    <node changeset="-1" id="-64" lat="61.204963434" lon="-149.921595916" version="1" visible="true"/>
+    <node changeset="-1" id="-65" lat="61.205009831" lon="-149.92115937" version="1" visible="true"/>
+    <way changeset="-1" id="-1" version="1" visible="true">
+      <nd ref="-2"/>
+      <nd ref="-3"/>
+      <nd ref="-4"/>
+      <nd ref="-2"/>
+      <tag k="nps:parkinglot_name" v="triangle"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="triangle"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{31C66E6F-C66F-4450-978D-D926C3E60B4C}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-5" version="1" visible="true">
+      <nd ref="-6"/>
+      <nd ref="-7"/>
+      <nd ref="-8"/>
+      <nd ref="-9"/>
+      <nd ref="-6"/>
+      <tag k="nps:parkinglot_name" v="square"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="square"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{58D89E44-E51B-466A-8C28-72F15E2DB353}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-10" version="1" visible="true">
+      <nd ref="-11"/>
+      <nd ref="-12"/>
+      <nd ref="-13"/>
+      <nd ref="-14"/>
+      <nd ref="-15"/>
+      <nd ref="-16"/>
+      <nd ref="-11"/>
+      <tag k="nps:parkinglot_name" v="overlapping triangles"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="overlapping triangles"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{2046C0C2-7A07-40B3-89CF-E94AFC889C4D}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-17" version="1" visible="true">
+      <nd ref="-12"/>
+      <nd ref="-16"/>
+      <nd ref="-18"/>
+      <nd ref="-19"/>
+      <nd ref="-12"/>
+      <tag k="nps:parkinglot_name" v="overlapping triangles"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="overlapping triangles"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{2046C0C2-7A07-40B3-89CF-E94AFC889C4D}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-20" version="1" visible="true">
+      <nd ref="-21"/>
+      <nd ref="-22"/>
+      <nd ref="-23"/>
+      <nd ref="-21"/>
+      <tag k="nps:parkinglot_name" v="shared 1"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="shared 1"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{DC10736F-1F96-4E8A-B749-CA41D8530913}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-24" version="1" visible="true">
+      <nd ref="-23"/>
+      <nd ref="-22"/>
+      <nd ref="-25"/>
+      <nd ref="-23"/>
+      <tag k="nps:parkinglot_name" v="shared 2"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="shared 2"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{6398203F-54DA-4580-A4A6-E4D65AB25289}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-26" version="1" visible="true">
+      <nd ref="-27"/>
+      <nd ref="-28"/>
+      <nd ref="-29"/>
+      <nd ref="-30"/>
+      <nd ref="-27"/>
+    </way>
+    <way changeset="-1" id="-32" version="1" visible="true">
+      <nd ref="-33"/>
+      <nd ref="-34"/>
+      <nd ref="-35"/>
+      <nd ref="-36"/>
+      <nd ref="-33"/>
+    </way>
+    <way changeset="-1" id="-37" version="1" visible="true">
+      <nd ref="-38"/>
+      <nd ref="-39"/>
+      <nd ref="-40"/>
+      <nd ref="-41"/>
+      <nd ref="-38"/>
+    </way>
+    <way changeset="-1" id="-42" version="1" visible="true">
+      <nd ref="-43"/>
+      <nd ref="-44"/>
+      <nd ref="-45"/>
+      <nd ref="-46"/>
+      <nd ref="-43"/>
+      <tag k="nps:parkinglot_name" v="one hole with island"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="one hole with island"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{6EB9BF02-9FF9-4D08-9EF5-4ABC3EDEA964}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-47" version="1" visible="true">
+      <nd ref="-48"/>
+      <nd ref="-49"/>
+      <nd ref="-50"/>
+      <nd ref="-51"/>
+      <nd ref="-48"/>
+    </way>
+    <way changeset="-1" id="-53" version="1" visible="true">
+      <nd ref="-54"/>
+      <nd ref="-55"/>
+      <nd ref="-56"/>
+      <nd ref="-57"/>
+      <nd ref="-54"/>
+    </way>
+    <way changeset="-1" id="-58" version="1" visible="true">
+      <nd ref="-59"/>
+      <nd ref="-60"/>
+      <nd ref="-61"/>
+      <nd ref="-59"/>
+      <tag k="nps:parkinglot_name" v="multipoly"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="multipoly"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{E5AD4A0E-27EA-4574-9D81-878FE51FA157}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <way changeset="-1" id="-62" version="1" visible="true">
+      <nd ref="-63"/>
+      <nd ref="-64"/>
+      <nd ref="-65"/>
+      <nd ref="-63"/>
+      <tag k="nps:parkinglot_name" v="multipoly"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="multipoly"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{E5AD4A0E-27EA-4574-9D81-878FE51FA157}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+    <relation changeset="-1" id="-31" version="1" visible="true">
+      <member ref="-26" role="outer" type="way"/>
+      <member ref="-32" role="inner" type="way"/>
+      <member ref="-37" role="inner" type="way"/>
+      <tag k="type" v="multipolygon"/>
+      <tag k="nps:parkinglot_name" v="two holes"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="two holes"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{50713328-5EB3-407C-B7C4-3AF9257AE47A}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </relation>
+    <relation changeset="-1" id="-52" version="1" visible="true">
+      <member ref="-47" role="outer" type="way"/>
+      <member ref="-53" role="inner" type="way"/>
+      <tag k="type" v="multipolygon"/>
+      <tag k="nps:parkinglot_name" v="one hole with island"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="name" v="one hole with island"/>
+      <tag k="area" v="yes"/>
+      <tag k="nps:source_system_key_value" v="{6EB9BF02-9FF9-4D08-9EF5-4ABC3EDEA964}"/>
+      <tag k="nps:source_system" v="./testdata/test.gdb/PARKINGLOTS_py"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </relation>
+  </create>
+</osmChange>
