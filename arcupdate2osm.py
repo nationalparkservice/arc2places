@@ -66,6 +66,9 @@ class Thing:
         self.added_nodes = []
         self.added_ways = []
         self.added_relations = []
+        self.deleted_nodes = []
+        self.deleted_ways = []
+        self.deleted_relations = []
         self.nodes = {}
         self.ways = {}
         self.relations = {}
@@ -253,25 +256,71 @@ def delete(new_change, thing, pserver, ptype, pid, pversion, logger=None):
     :return:
     """
 
-    """
-    delete_xml = Et.Element('delete')
-    for [(element_type, places_id)]:
-        delete_xml = create delete node
-        for element_type, places_id in [(element_type, places_id)]:
-           element_xml = places.get_element_xml('http://10.147.153.193/api/0.6/{{element_type}}/{{places_id}}/full')
-                # removes ways from relation if they are in other relations
-                #   if get /api/0.6/way/#id/relations > 1
-                # removes nodes if they are in other ways or relations (maybe only check first/last nodes):
-                #   if get http://10.147.153.193/api/0.6/node/{node}/ways > 1
-                #
-                # alternative (less load on server) support DELETE /api/0.6/[node|way|relation]/#id
-                #   nice to remove version from payload, and skip sub-elements which are in use or interesting
-    delete_xml.append(element_xml)
-    xml.append(delete_xml)
-    """
-
-    # FIXME: Implement
     # print 'delete', ptype, pid, pversion
+    # FIXME: add method to api server (use node/id or way/id/uniteresting and relation/id/uninteresting
+    element_str = pserver.get_element_with_uninteresting_parts(ptype,pid)
+    if element_str is None:
+        try:
+            msg = "{0} {1} not found on Places Server '{2}'. Skipping delete."
+            logger.error(msg.format(ptype, pid, pserver.name))
+        except AttributeError:
+            pass
+        return
+    element_xml = Et.fromstring(element_str)
+    element = element_xml[0]
+    version = element.attrib['version']
+    if version != pversion:
+        try:
+            user = element.attrib['user']
+            msg = "{0} {1}v{2} found expected v{3}. Deleting edits by {4}."
+            logger.warn(msg.format(ptype, pid, version, pversion, user))
+        except AttributeError:
+            pass
+    element.set('changeset', '-1')
+
+    delete_internal(new_change, thing, element, logger=logger)
+    return
+
+
+def delete_internal(new_change, thing, element, logger=None):
+    if element.tag == 'relation':
+        rid = element.get('id')
+        if rid not in thing.deleted_relations:
+            # recursively add all the sub elements of a relation
+            for member in element.findall('member'):
+                mtype = member.get('type')
+                mid = member.get('ref')
+                if mtype == 'relation':
+                    subelement = thing.relations[mid]
+                elif mtype == 'way':
+                    subelement = thing.ways[mid]
+                else:
+                    subelement = thing.nodes[mid]
+                delete_internal(new_change, thing, subelement, logger)
+            # Add the relation and all it's references/tags
+            new_change.insert((len(thing.deleted_nodes) + len(thing.deleted_ways) +
+                               len(thing.deleted_relations)), element)
+            thing.deleted_relations.append(rid)
+
+    if element.tag == 'way':
+        wid = element.get('id')
+        if wid not in thing.deleted_ways:
+            # add all the nodes of a way
+            for node in element.findall('nd'):
+                nid = node.get('ref')
+                if nid not in thing.deleted_nodes:
+                    subelement = thing.nodes[nid]
+                    new_change.insert(len(thing.deleted_nodes), subelement)
+                    thing.deleted_nodes.append(nid)
+            # add the way
+            new_change.insert(len(thing.deleted_nodes) + len(thing.deleted_ways), element)
+            thing.deleted_ways.append(wid)
+
+    if element.tag == 'node':
+        nid = element.get('id')
+        if nid not in thing.deleted_nodes:
+            new_change.insert(len(thing.deleted_nodes), element)
+            thing.deleted_nodes.append(nid)
     return
 
 
@@ -471,7 +520,7 @@ def cmdline():
         print "Server does not support version " + api_server.version + " of the OSM"
         sys.exit(1)
 
-    #verbose/debug
+    # verbose/debug
     if options.verbose or options.debug:
         logger = Logger()
         if options.debug:
