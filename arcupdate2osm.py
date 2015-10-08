@@ -256,9 +256,8 @@ def delete(new_change, thing, pserver, ptype, pid, pversion, logger=None):
     :return:
     """
 
-    # print 'delete', ptype, pid, pversion
-    # FIXME: add method to api server (use node/id or way/id/uniteresting and relation/id/uninteresting
-    element_str = pserver.get_element_with_uninteresting_parts(ptype,pid)
+    print 'delete', ptype, pid, pversion
+    element_str = pserver.get_element(ptype, pid, 'uninteresting')
     if element_str is None:
         try:
             msg = "{0} {1} not found on Places Server '{2}'. Skipping delete."
@@ -281,7 +280,8 @@ def delete(new_change, thing, pserver, ptype, pid, pversion, logger=None):
     delete_internal(new_change, thing, element, logger=logger)
     return
 
-
+# TODO: consider supporting in places-api for 'if-unused' attribute in delete block; per 0.6 api
+#       this will simplify the creation of the delete block just merge all GET /api/0.6/#type/#id/full
 def delete_internal(new_change, thing, element, logger=None):
     if element.tag == 'relation':
         rid = element.get('id')
@@ -298,6 +298,7 @@ def delete_internal(new_change, thing, element, logger=None):
                     subelement = thing.nodes[mid]
                 delete_internal(new_change, thing, subelement, logger)
             # Add the relation and all it's references/tags
+            element.set('changeset', '-1')
             new_change.insert((len(thing.deleted_nodes) + len(thing.deleted_ways) +
                                len(thing.deleted_relations)), element)
             thing.deleted_relations.append(rid)
@@ -309,16 +310,20 @@ def delete_internal(new_change, thing, element, logger=None):
             for node in element.findall('nd'):
                 nid = node.get('ref')
                 if nid not in thing.deleted_nodes:
+                    # FIXME: node and way lists in 'thing' do not contain sub elements of element to delete
                     subelement = thing.nodes[nid]
+                    subelement.set('changeset', '-1')
                     new_change.insert(len(thing.deleted_nodes), subelement)
                     thing.deleted_nodes.append(nid)
             # add the way
+            element.set('changeset', '-1')
             new_change.insert(len(thing.deleted_nodes) + len(thing.deleted_ways), element)
             thing.deleted_ways.append(wid)
 
     if element.tag == 'node':
         nid = element.get('id')
         if nid not in thing.deleted_nodes:
+            element.set('changeset', '-1')
             new_change.insert(len(thing.deleted_nodes), element)
             thing.deleted_nodes.append(nid)
     return
@@ -444,13 +449,13 @@ def build(osm_change, upload_log, server, logger=None):
 
 
 def test():
-    osm_change_file = './testdata/update_test2.osm'
-    update_log_csv = './testdata/update_test2.csv'
-    new_change_file = './testdata/update_test2_out.osm'
+    osm_change_file = './testdata/test_roads2.osm'
+    update_log_csv = './testdata/test_roads_sync.csv'
+    new_change_file = './testdata/test_roads2_out.osm'
 
     osm_change = Et.parse(osm_change_file).getroot()
     update_log = DataTable.from_csv(update_log_csv)
-    api_server = OsmApiServer('test')
+    api_server = OsmApiServer('mac')
     api_server.logger = Logger()
     api_server.logger.start_debug()
 
