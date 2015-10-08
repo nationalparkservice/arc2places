@@ -1,1 +1,73 @@
-<osmChange generator="arc2places" version="0.6" />
+<osmChange generator="arc2places" version="0.6"><delete>
+<node changeset="-1" id="3758553917" lat="61.2073462" lon="-149.9197914" timestamp="2015-10-07T13:50:22.055Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
+<node changeset="-1" id="3758553918" lat="61.2071856" lon="-149.9220042" timestamp="2015-10-07T13:50:22.056Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
+ <node changeset="-1" id="3758553919" lat="61.2060953" lon="-149.922922" timestamp="2015-10-07T13:50:22.057Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
+
+  <way changeset="-1" id="372297299" timestamp="2015-10-07T13:50:22.089Z" uid="-2" user="Regan Sarwas" version="1" visible="true">
+    <nd ref="3758553916" />
+    <nd ref="3758553917" />
+    <nd ref="3758553918" />
+    <nd ref="3758553919" />
+    <nd ref="3758553914" />
+    <tag k="access" v="no" />
+    <tag k="highway" v="proposed" />
+    <tag k="lanes" v="2" />
+    <tag k="nps:distribute" v="Public" />
+    <tag k="nps:is_extant" v="No" />
+    <tag k="nps:restriction" v="Unrestricted" />
+    <tag k="nps:road_class" v="Primary" />
+    <tag k="nps:road_maintainer" v="NPS" />
+    <tag k="nps:road_status" v="Proposed" />
+    <tag k="nps:route_number" v="2" />
+    <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\ROADS_ln" />
+    <tag k="nps:source_system_key" v="GEOMETRYID" />
+    <tag k="nps:source_system_key_value" v="{93CB94D6-FFD1-49DD-9231-E035B067B045}" />
+    <tag k="official_name" v="road2" />
+    <tag k="oneway" v="yes" />
+    <tag k="proposed" v="primary" />
+    <tag k="surface" v="cobblestone" />
+  </way>
+  <way changeset="-1" id="372297301" timestamp="2015-10-07T13:50:22.091Z" uid="-2" user="Regan Sarwas" version="1" visible="true">
+    <nd ref="3758553915" />
+    <nd ref="3758553921" />
+    <tag k="access" v="no" />
+    <tag k="highway" v="proposed" />
+    <tag k="name" v="Ἑλλάς" />
+    <tag k="nps:distribute" v="Public" />
+    <tag k="nps:is_extant" v="Other" />
+    <tag k="nps:restriction" v="Unrestricted" />
+    <tag k="nps:road_class" v="Private" />
+    <tag k="nps:road_maintainer" v="NPS" />
+    <tag k="nps:road_status" v="Planned" />
+    <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\ROADS_ln" />
+    <tag k="nps:source_system_key" v="GEOMETRYID" />
+    <tag k="nps:source_system_key_value" v="{549F9377-B1FF-4CCE-BCCB-B86A41633EFC}" />
+    <tag k="official_name" v="road4" />
+    <tag k="proposed" v="road" />
+    <tag k="surface" v="sand" />
+  </way>
+<way changeset="-1" id="372297298" timestamp="2015-10-07T13:50:22.089Z" uid="-2" user="Regan Sarwas" version="1" visible="true">
+    <nd ref="3758553914" />
+    <nd ref="3758553915" />
+    <nd ref="3758553916" />
+    <tag k="alt_name" v="regan's road" />
+    <tag k="highway" v="secondary" />
+    <tag k="lanes" v="1" />
+    <tag k="name" v="drive me" />
+    <tag k="nps:distribute" v="Public" />
+    <tag k="nps:is_extant" v="Yes" />
+    <tag k="nps:map_method" v="Differential GPS" />
+    <tag k="nps:region_code" v="AKR" />
+    <tag k="nps:restriction" v="Unrestricted" />
+    <tag k="nps:road_class" v="Secondary" />
+    <tag k="nps:road_maintainer" v="NPS" />
+    <tag k="nps:road_status" v="Existing" />
+    <tag k="nps:route_number" v="1" />
+    <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\ROADS_ln" />
+    <tag k="nps:source_system_key" v="GEOMETRYID" />
+    <tag k="nps:source_system_key_value" v="{04599ADE-9BE2-46F2-84A2-F5FEBE490AD0}" />
+    <tag k="nps:unit_code" v="AKRO" />
+    <tag k="official_name" v="road1" />
+    <tag k="surface" v="asphalt" />
+  </way>
+</delete></osmChange>

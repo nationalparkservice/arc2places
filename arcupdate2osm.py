@@ -111,6 +111,7 @@ class Thing:
     def conditional_add(self, element, to):
         etype = element.tag
         eid = element.get('id')
+        # print 'adding', etype, eid, to
         if eid in self.added[to][etype]:
             return False
         index = len(self.added[to]['node'])
@@ -154,10 +155,8 @@ def make_upload_log_hash(data, date_format='%Y-%m-%d %H:%M:%S.%f'):
         action = row['action']
         places_id = row['places_id']
         places_type = row['element']
-        if type(row['version']) == int:
-            places_version = row['version']
-        else:
-            places_version = int(row['version'])
+        # All versions returned by server are strings, so use string to simplify
+        places_version = str(row['version'])
         upload_data[gis_id] = (action, date, places_type, places_id, places_version)
     return upload_data
 
@@ -233,8 +232,9 @@ def get_element_from_server_as_xml(pserver, ptype, pid, logger=None, details=Non
         except AttributeError:
             pass
         return
-    element_xml = Et.fromstring(element_str)
-    element = element_xml[0]
+    # FIXME: check all request responses; they are always unicode
+    element_xml = Et.fromstring(element_str.encode('utf-8'))
+    element = element_xml
     return element
 
 
@@ -246,8 +246,12 @@ def create(thing, element, logger=None):
     :param element: the element in the osmChange to add to the create block
     :return: None
     """
-    print 'create', element.get('id')
-    Et.dump(element)
+    try:
+        logger.debug('create {0}'.format(element.get('id')))
+        # Et.dump(element)
+    except AttributeError:
+        pass
+
     added = thing.conditional_add(element, to='create')
     if element.tag == 'way' and added:
         for node_ref in element.findall('nd'):
@@ -279,29 +283,35 @@ def delete(thing, pserver, ptype, pid, pversion, logger=None):
     :param logger:
     :return:
     """
-
-    print 'delete', ptype, pid, pversion
-    return
+    try:
+        logger.debug('delete {0} {1} {2}'.format(ptype, pid, pversion))
+    except AttributeError:
+        pass
+    #return
 
     def delete_element(element):
         added = thing.conditional_add(element, to='delete')
         if element.tag == 'way' and added:
             for node_ref in element.findall('nd'):
                 nid = node_ref.get('ref')
-                node = elements['node'][nid]
-                thing.conditional_add(node, to='delete')
+                node = elements['node'].get(nid)
+                # node may not exist because it is interesting (i.e. it has tags or is being used)
+                if node is not None:
+                    thing.conditional_add(node, to='delete')
         if element.tag == 'relation' and added:
             # recursively add all the sub elements of a relation
             for member in element.findall('member'):
                 mtype = member.get('type')
                 mid = member.get('ref')
-                subelement = thing.elements[mtype][mid]
-                delete_element(subelement)
+                subelement = thing.elements[mtype].get(mid)
+                if subelement is not None:
+                    delete_element(subelement)
 
 
     # FIXME: This only works on places-api servers
     # TODO: on real 0.6 API servers get full details and use 'if-unused' attribute in delete block
     # TODO: investigate adding 'if-unused' support to places-api
+    # TODO: places-api algorithm may leave orphans.  e.g. if way1 and way2 both use a node, and they are deleted together
     # places-api does not support 'if-unused' however, it does have a special 'uninteresting' call instead
     osm = get_element_from_server_as_xml(pserver, ptype, pid, logger=logger, details='uninteresting')
     main_element = osm[0]
@@ -317,10 +327,10 @@ def delete(thing, pserver, ptype, pid, pversion, logger=None):
     # build dicts of elements by id for easy reference
     elements = {
         'node': {},
-        'ways': {},
-        'relations': {}
+        'way': {},
+        'relation': {}
     }
-    for osm_element in osm:
+    for osm_element in osm.findall('./'):
         etype = osm_element.tag
         eid = osm_element.get('id')
         elements[etype][eid] = osm_element
@@ -342,10 +352,14 @@ def restore(thing, element, pserver, ptype, pid, pversion, logger=None):
     :param logger:
     :return:
     """
+    try:
+        logger.debug('restore {0} {1}'.format(ptype, pid))
+        # Et.dump(element)
+    except AttributeError:
+        pass
 
     # FIXME: Implement
-    print 'restore', ptype, pid
-    Et.dump(element)
+
     return
 
 
@@ -362,9 +376,12 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
     :param logger:
     :return:
     """
-    print 'modify', ptype, pid
-    Et.dump(element)
-    return
+    try:
+        logger.debug('modify {0} {1}'.format(ptype, pid))
+        # Et.dump(element)
+    except AttributeError:
+        pass
+    # return
 
     def version_check(old_element, new_element_version):
         # Check version and print warning if mis match, return True if they are the same
@@ -572,11 +589,11 @@ def build(osm_change, upload_log, server, logger=None):
 def test():
     # You need to uncomment the first few lines of the 4 major functions to when doing the first test
     tests = [
-        ('create/modify/delete logic test', 'update_test1'),
-        ('create test', 'update_test2'),
+        #('create/modify/delete logic test', 'update_test1'),
+        #('create test', 'update_test2'),
         ('delete test', 'test_roads2'),
     ]
-    for (testname,testfile) in tests:
+    for (testname, testfile) in tests:
         print '*'*40
         print testname
         print '*'*40
