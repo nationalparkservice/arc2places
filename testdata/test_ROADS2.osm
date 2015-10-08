@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<osmChange generator="arc2places" version="0.6">
+  <create>
+    <node changeset="-1" id="-2" lat="61.205435354" lon="-149.921592517" version="1" visible="true"/>
+    <node changeset="-1" id="-4" lat="61.206676579" lon="-149.918133238" version="1" visible="true"/>
+    <node changeset="-1" id="-10" lat="61.205141471" lon="-149.920428208" version="1" visible="true"/>
+    <node changeset="-1" id="-11" lat="61.205825306" lon="-149.918737611" version="1" visible="true"/>
+    <way changeset="-1" id="-9" version="1" visible="true">
+      <nd ref="-2"/>
+      <nd ref="-10"/>
+      <nd ref="-11"/>
+      <nd ref="-4"/>
+      <tag k="nps:road_class" v="Private"/>
+      <tag k="name" v="R&#xE9;sum&#xE9;"/>
+      <tag k="nps:restriction" v="Unrestricted"/>
+      <tag k="nps:distribute" v="Public"/>
+      <tag k="nps:road_maintainer" v="NPS"/>
+      <tag k="nps:map_method" v="COGO"/>
+      <tag k="surface" v="paved"/>
+      <tag k="nps:road_status" v="Existing"/>
+      <tag k="access" v="private"/>
+      <tag k="nps:xy_error" v="&gt; 5 m and &lt;= 10 m"/>
+      <tag k="official_name" v="road3"/>
+      <tag k="oneway" v="-1"/>
+      <tag k="lanes" v="3"/>
+      <tag k="nps:route_number" v="3"/>
+      <tag k="highway" v="road"/>
+      <tag k="nps:source_system_key_value" v="{7FD6BFD5-11A4-430A-9F2A-D34A42AC31CC}"/>
+      <tag k="nps:source_system" v="C:\Users\resarwas\Documents\GitHub\arc2places\testdata\test.gdb\ROADS_ln"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+    </way>
+  </create>
+</osmChange>
