@@ -419,18 +419,25 @@ class OsmApiServer:
         except AttributeError:
             pass
 
-    def get_element(self, etype, eid):
+    def get_element(self, etype, eid, details=None):
         """
         Get the details as XML of the element from the server.
 
         :param etype: String, The element type ('node', 'way', 'relation') to get
         :param eid: String, The element id to get
+        :param details: String, one of 'full' - return all sub-elements as well, or
+                                       'uninteresting' - return only delete-able subelements (not shared, no tags)
+                                                        only supported on Places databases
         :return: an XML string
         """
         if not self._baseurl:
             self.error = "'" + self.name + "' is not a well known server name.  Add it to secrets.py"
             return
-        url = self._baseurl + '/api/' + self.version + '/' + etype + '/' + eid
+        suffix = ''
+        if details in ['full','uninteresting'] and etype in ['way', 'relation']:
+            suffix = '/'+details
+        # TODO: only accept 'uninteresting' on places-api servers
+        url = self._baseurl + '/api/' + self.version + '/' + etype + '/' + eid + suffix
         try:
             self.logger.info("Getting element from " + url)
         except AttributeError:
@@ -456,6 +463,7 @@ class OsmApiServer:
         if not self._baseurl:
             self.error = "'" + self.name + "' is not a well known server name.  Add it to secrets.py"
             return
+        # TODO: only supported on places-api servers
         url = self._baseurl + '/api/data/source/{0}'.format(cid)
         try:
             self.logger.info("Getting changeset from " + url)
