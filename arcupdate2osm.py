@@ -63,40 +63,70 @@ sub elements and add, delete or modify nodes/ways as necessary.
 
 class Thing:
     def __init__(self, osm_change):
-        self.added_nodes = []
-        self.added_ways = []
-        self.added_relations = []
-        self.deleted_nodes = []
-        self.deleted_ways = []
-        self.deleted_relations = []
-        self.nodes = {}
-        self.ways = {}
-        self.relations = {}
-        for element in osm_change:
+        # Keep track of which nodes ids have been added to each block, so we do not have repeats
+        self.added = {
+            'create': {
+                'node': [],
+                'way': [],
+                'relation': [],
+            },
+            'modify': {
+                'node': [],
+                'way': [],
+                'relation': [],
+            },
+            'delete': {
+                'node': [],
+                'way': [],
+                'relation': [],
+            }
+        }
+        # all elements by id in the input file
+        self.elements = {
+            'node': {},
+            'way': {},
+            'relation': {}
+        }
+
+        self.osm_change = osm_change
+        self.new_change = None
+        self.new_change_nodes = {}
+        self.copy_root()
+        self.build_dicts()
+
+    def copy_root(self):
+        # Creates a new empty ElementTree representation of the OsmChange file XML
+        self.new_change = Et.Element('osmChange')
+        for k, v in self.osm_change.items():
+            self.new_change.set(k, v)
+        for block in ['create', 'modify', 'delete']:
+            self.new_change_nodes[block] = Et.SubElement(self.new_change, block)
+
+    def build_dicts(self):
+        for element in self.osm_change[0]:
             eid = element.get('id')
-            if element.tag == 'relation':
-                self.relations[eid] = element
-            if element.tag == 'way':
-                self.ways[eid] = element
-            if element.tag == 'node':
-                self.nodes[eid] = element
+            etype = element.tag
+            self.elements[etype][eid] = element
 
+    def conditional_add(self, element, to):
+        etype = element.tag
+        eid = element.get('id')
+        if eid in self.added[to][etype]:
+            return False
+        index = len(self.added[to]['node'])
+        if etype != 'node':
+            index += len(self.added[to]['way'])
+        if etype == 'relation':
+            index += len(self.added[to]['relation'])
+        element.set('changeset', '-1')
+        self.new_change_nodes[to].insert(index, element)
+        self.added[to][etype].append(eid)
+        return True
 
-def copy_root(osm_change):
-    """
-    Creates a new empty ElementTree representation of the OsmChange file XML
-
-    :param osm_change: Et.Element template for the return value
-    :return:
-    :rtype : xml.etree.ElementTree.Element
-    """
-    new_change = Et.Element('osm')
-    Et.SubElement(new_change, 'create')
-    Et.SubElement(new_change, 'modify')
-    Et.SubElement(new_change, 'delete')
-    for k, v in osm_change.items():
-        new_change.set(k, v)
-    return new_change
+    def remove_unused_lists(self):
+        for block in ['create', 'modify', 'delete']:
+            if not list(self.new_change_nodes[block]):
+                self.new_change.remove(self.new_change_nodes[block])
 
 
 def make_upload_log_hash(data, date_format='%Y-%m-%d %H:%M:%S.%f'):
@@ -132,12 +162,12 @@ def make_upload_log_hash(data, date_format='%Y-%m-%d %H:%M:%S.%f'):
     return upload_data
 
 
-def make_feature_hash(osm_change_create_node, id_key='nps:source_system_key_value',
+def make_feature_hash(osm_change, id_key='nps:source_system_key_value',
                       date_key='nps:edit_date', date_format='%Y-%m-%d %H:%M:%S', logger=None):
     """
     Creates a dictionary from the osmChange XML object
 
-    :param osm_change_create_node: the ElementTree representation of the OsmChange file XML
+    :param osm_change: the ElementTree representation of the OsmChange file XML
     :param id_key:
     :param date_key:
     :param date_format:
@@ -146,6 +176,7 @@ def make_feature_hash(osm_change_create_node, id_key='nps:source_system_key_valu
     :rtype : dict
     """
 
+    osm_change_create_node = osm_change[0]
     feature_data = {}
     for element in osm_change_create_node:
         tags = element.findall('tag')
@@ -154,8 +185,8 @@ def make_feature_hash(osm_change_create_node, id_key='nps:source_system_key_valu
         ptype = element.tag
         gis_id = None
         for tag in tags:
-            if tag.attrib['k'] == id_key:
-                gis_id = tag.attrib['v']
+            if tag.get('k') == id_key:
+                gis_id = tag.get('v')
                 break
         if gis_id is None:
             try:
@@ -165,8 +196,8 @@ def make_feature_hash(osm_change_create_node, id_key='nps:source_system_key_valu
             continue
         date_str = None
         for tag in tags:
-            if tag.attrib['k'] == date_key:
-                date_str = tag.attrib['v']
+            if tag.get('k') == date_key:
+                date_str = tag.get('v')
                 break
         if date_str is None:
             try:
@@ -191,62 +222,55 @@ def make_feature_hash(osm_change_create_node, id_key='nps:source_system_key_valu
     return feature_data
 
 
-def create(new_change, thing, element, logger=None):
-    """
-    Copy element from osm_change into new_change; need to recursively copy the sub elements
+def get_element_from_server_as_xml(pserver, ptype, pid, logger=None, details=None):
+    # TODO: add more error checking
+    # TODO: only some places servers support 'uninteresting' details
+    element_str = pserver.get_element(ptype, pid, details)
+    if element_str is None:
+        try:
+            msg = "{0} {1} not found on Server '{2}'. Skipping..."
+            logger.error(msg.format(ptype, pid, pserver.name))
+        except AttributeError:
+            pass
+        return
+    element_xml = Et.fromstring(element_str)
+    element = element_xml[0]
+    return element
 
-    :param new_change: an ElementTree representation of the new OsmChange file XML
+
+def create(thing, element, logger=None):
+    """
+    Conditionally add element to the create block in thing; then add referenced elements
+
     :param thing: an internal formatting of the proposed OsmChange file
-    :param element: the element in the osmChange to copy to newChange
+    :param element: the element in the osmChange to add to the create block
     :return: None
     """
-    # print 'create'
-    # Et.dump(element)
-    if element.tag == 'relation':
-        rid = element.get('id')
-        if rid not in thing.added_relations:
-            # recursively add all the sub elements of a relation
-            for member in element.findall('member'):
-                mtype = member.get('type')
-                mid = member.get('ref')
-                if mtype == 'relation':
-                    subelement = thing.relations[mid]
-                elif mtype == 'way':
-                    subelement = thing.ways[mid]
-                else:
-                    subelement = thing.nodes[mid]
-                create(new_change, thing, subelement, logger)
-            # Add the relation and all it's references/tags
-            new_change.insert(len(thing.added_nodes) + len(thing.added_ways) + len(thing.added_relations), element)
-            thing.added_relations.append(rid)
-
-    if element.tag == 'way':
-        wid = element.get('id')
-        if wid not in thing.added_ways:
-            # add all the nodes of a way
-            for node in element.findall('nd'):
-                nid = node.get('ref')
-                if nid not in thing.added_nodes:
-                    subelement = thing.nodes[nid]
-                    new_change.insert(len(thing.added_nodes), subelement)
-                    thing.added_nodes.append(nid)
-            # add the way
-            new_change.insert(len(thing.added_nodes) + len(thing.added_ways), element)
-            thing.added_ways.append(wid)
-
-    if element.tag == 'node':
-        nid = element.get('id')
-        if nid not in thing.added_nodes:
-            new_change.insert(len(thing.added_nodes), element)
-            thing.added_nodes.append(nid)
+    print 'create', element.get('id')
+    Et.dump(element)
+    added = thing.conditional_add(element, to='create')
+    if element.tag == 'way' and added:
+        for node_ref in element.findall('nd'):
+            nid = node_ref.get('ref')
+            node = thing.elements['node'][nid]
+            thing.conditional_add(node, to='create')
+    if element.tag == 'relation' and added:
+        # Note, this is non-streamable. parent relation is written before child relations
+        # elements in blocks do not need to be sorted (http://wiki.openstreetmap.org/wiki/OSM_XML)
+        # TODO: test unstreamable relations on places-api (note: places may not even support super relations)
+        # recursively add all the sub elements of a relation
+        for member in element.findall('member'):
+            mtype = member.get('type')
+            mid = member.get('ref')
+            subelement = thing.elements[mtype][mid]
+            create(thing, subelement, logger)
     return
 
 
-def delete(new_change, thing, pserver, ptype, pid, pversion, logger=None):
+def delete(thing, pserver, ptype, pid, pversion, logger=None):
     """
-    Adds a delete elemnt to new_change
+    Get element from the server then Conditionally add it to the delete block in thing; then add referenced elements
 
-    :param new_change:
     :param thing:
     :param pserver:
     :param ptype:
@@ -257,83 +281,58 @@ def delete(new_change, thing, pserver, ptype, pid, pversion, logger=None):
     """
 
     print 'delete', ptype, pid, pversion
-    element_str = pserver.get_element(ptype, pid, 'uninteresting')
-    if element_str is None:
-        try:
-            msg = "{0} {1} not found on Places Server '{2}'. Skipping delete."
-            logger.error(msg.format(ptype, pid, pserver.name))
-        except AttributeError:
-            pass
-        return
-    element_xml = Et.fromstring(element_str)
-    element = element_xml[0]
-    version = element.attrib['version']
-    if version != pversion:
-        try:
-            user = element.attrib['user']
-            msg = "{0} {1}v{2} found expected v{3}. Deleting edits by {4}."
-            logger.warn(msg.format(ptype, pid, version, pversion, user))
-        except AttributeError:
-            pass
-    element.set('changeset', '-1')
-
-    delete_internal(new_change, thing, element, logger=logger)
     return
 
-# TODO: consider supporting in places-api for 'if-unused' attribute in delete block; per 0.6 api
-#       this will simplify the creation of the delete block just merge all GET /api/0.6/#type/#id/full
-def delete_internal(new_change, thing, element, logger=None):
-    if element.tag == 'relation':
-        rid = element.get('id')
-        if rid not in thing.deleted_relations:
+    def delete_element(element):
+        added = thing.conditional_add(element, to='delete')
+        if element.tag == 'way' and added:
+            for node_ref in element.findall('nd'):
+                nid = node_ref.get('ref')
+                node = elements['node'][nid]
+                thing.conditional_add(node, to='delete')
+        if element.tag == 'relation' and added:
             # recursively add all the sub elements of a relation
             for member in element.findall('member'):
                 mtype = member.get('type')
                 mid = member.get('ref')
-                if mtype == 'relation':
-                    subelement = thing.relations[mid]
-                elif mtype == 'way':
-                    subelement = thing.ways[mid]
-                else:
-                    subelement = thing.nodes[mid]
-                delete_internal(new_change, thing, subelement, logger)
-            # Add the relation and all it's references/tags
-            element.set('changeset', '-1')
-            new_change.insert((len(thing.deleted_nodes) + len(thing.deleted_ways) +
-                               len(thing.deleted_relations)), element)
-            thing.deleted_relations.append(rid)
+                subelement = thing.elements[mtype][mid]
+                delete_element(subelement)
 
-    if element.tag == 'way':
-        wid = element.get('id')
-        if wid not in thing.deleted_ways:
-            # add all the nodes of a way
-            for node in element.findall('nd'):
-                nid = node.get('ref')
-                if nid not in thing.deleted_nodes:
-                    # FIXME: node and way lists in 'thing' do not contain sub elements of element to delete
-                    subelement = thing.nodes[nid]
-                    subelement.set('changeset', '-1')
-                    new_change.insert(len(thing.deleted_nodes), subelement)
-                    thing.deleted_nodes.append(nid)
-            # add the way
-            element.set('changeset', '-1')
-            new_change.insert(len(thing.deleted_nodes) + len(thing.deleted_ways), element)
-            thing.deleted_ways.append(wid)
 
-    if element.tag == 'node':
-        nid = element.get('id')
-        if nid not in thing.deleted_nodes:
-            element.set('changeset', '-1')
-            new_change.insert(len(thing.deleted_nodes), element)
-            thing.deleted_nodes.append(nid)
+    # FIXME: This only works on places-api servers
+    # TODO: on real 0.6 API servers get full details and use 'if-unused' attribute in delete block
+    # TODO: investigate adding 'if-unused' support to places-api
+    # places-api does not support 'if-unused' however, it does have a special 'uninteresting' call instead
+    osm = get_element_from_server_as_xml(pserver, ptype, pid, logger=logger, details='uninteresting')
+    main_element = osm[0]
+    version = main_element.get('version')
+    if version != pversion:
+        try:
+            user = main_element.get('user')
+            msg = "{0} {1}v{2} found expected v{3}. Deleting edits by {4}."
+            logger.warn(msg.format(ptype, pid, version, pversion, user))
+        except AttributeError:
+            pass
+
+    # build dicts of elements by id for easy reference
+    elements = {
+        'node': {},
+        'ways': {},
+        'relations': {}
+    }
+    for osm_element in osm:
+        etype = osm_element.tag
+        eid = osm_element.get('id')
+        elements[etype][eid] = osm_element
+
+    delete_element(main_element)
     return
 
 
-def restore(new_change, thing, element, pserver, ptype, pid, pversion, logger=None):
+def restore(thing, element, pserver, ptype, pid, pversion, logger=None):
     """
     Undeletes an element in places (modifies it back to visible)
 
-    :param new_change:
     :param thing:
     :param element:
     :param pserver:
@@ -345,16 +344,15 @@ def restore(new_change, thing, element, pserver, ptype, pid, pversion, logger=No
     """
 
     # FIXME: Implement
-    # print 'restore', ptype, pid
-    # Et.dump(element)
+    print 'restore', ptype, pid
+    Et.dump(element)
     return
 
 
-def modify(new_change, thing, element, pserver, ptype, pid, pversion, logger=None):
+def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=True, decimals=9):
     """
     Merges the new and the old places item into a new 'modify' element in new_change
 
-    :param new_change:
     :param thing:
     :param element:
     :param pserver:
@@ -364,44 +362,169 @@ def modify(new_change, thing, element, pserver, ptype, pid, pversion, logger=Non
     :param logger:
     :return:
     """
+    print 'modify', ptype, pid
+    Et.dump(element)
+    return
 
-    """
-      # for each feature get the existing data from places
-      #   (http://10.147.153.193/api/0.6/{{element_type}}/{{places_id}}/full)
-      # (optional) need to add any attributes in places that are not in eGIS (or they will get removed)
-      # compare ways/nodes in relationships one by one, and move to 'delete' any elements in places but
-      #   not in GIS, need to check if used in other relationships
-      # compare vertices in ways one by one, and move to 'delete' any elements in places but not in GIS,
-      #     need to check if used in other ways/relationships
-      #     and (optionally) remove any from update if there is no change
-      #     maybe do not remove the sub element from the way/relationship,
-      #     but keep in places - it should probably be removed if it is unused and uninteresting
-      #     (maybe happens in a places cleanup)
-      # update the version number place holder from arc2osm with the correct version number from places
-    """
+    def version_check(old_element, new_element_version):
+        # Check version and print warning if mis match, return True if they are the same
+        old_element_version = old_element.get('version')
+        if old_element_version != new_element_version:
+            msg = ("Feature (Places ID = {0}) has been edited in Places since last update: "
+                   "Last update = version {1}, Places = version {2}. "
+                   "Changes to geometry in Places will be overwritten with this update. ")
+            if merge:
+                msg += "Tags will be merged with conflicts resolving in favor of this update."
+            else:
+                msg += "All tags in Places will be replaced with the tags in this update."
+            msg = msg.format(pid, new_element_version, old_element_version)
+            try:
+                logger.warn(msg)
+            except AttributeError:
+                pass
+        return old_element_version == new_element_version
 
-    # FIXME: Implement
-    # print 'modify', ptype, pid
-    # Et.dump(element)
+    def merge_tags(old_element, new_element):
+        # Add tags from old_element to new_element if not found in new_element
+        new_keys = [new_tag.get('k') for new_tag in new_element.findall('tag')]
+        for old_tag in old_element.findall('tag'):
+            old_key = old_tag.get('k')
+            if old_key not in new_keys:
+                new_tag = Et.SubElement(new_element, 'tag')
+                new_tag.set('k', old_key)
+                new_tag.set('v', old_tag.get('v'))
+
+    def update_way_nodes(old_full_way, new_way):
+        """
+        Node are compared by their (x,y) values (location match),
+        and then by their sequence number in the gaps between identity matching nodes (sequence match)
+        1) walk the nd refs in way, by replacing the temp id with places id when there is a location match
+        2) walk the nd refs in way, by replacing the temp id with places id when there is a sequence match
+           modify/update the (x,y) values in the existing node to (x,y) from the new node
+        3) add the unmatched nodes in way to the create block
+        4) delete unmatched nodes in old_way (if they have no tags)
+        """
+        identity_match = {}
+        sequence_match = {}
+        unmatched_old_nodes = []
+        unmatched_new_nodes = []
+        used_temp_ids = set()
+        used_exist_ids = set()
+
+        def get_hashable_location(node):
+            # I'm using the location as a hash key,
+            # values in OSM file are string representations of floats.
+            # floats should not be used for equality testing, so they make a bad hash key.
+            # strings are good, but they they would need to be normalized i.e. "1.23" == "1.230".
+            # ints are better (smaller), when they are normalized
+            lat = node.get('lat')
+            b, m = lat.split('.')
+            y = int(b + (m + '0'*decimals)[:decimals])
+            lon = node.get('lat')
+            b, m = lon.split('.')
+            x = int(b + (m + '0'*decimals)[:decimals])
+            return x, y
+
+        # Find Identity Matches
+        old_nodes = {}
+        for old_node in old_full_way.findall('node'):
+            existing_id = old_node.get('id')
+            xy = get_hashable_location(old_node)
+            old_nodes[xy] = existing_id
+        for new_node_ref in new_way.findall('nd'):
+            temp_id = new_node_ref.get('ref')
+            new_node = thing.nodes[temp_id]
+            xy = get_hashable_location(new_node)
+            if xy in old_nodes:
+                used_temp_ids.add(temp_id)
+                existing_id = old_nodes[xy]
+                used_exist_ids.add(existing_id)
+                identity_match[existing_id] = new_node_ref
+
+        # Find Sequence Matches
+        # update the sequence_match dict which starts as empty; i.e. no sequence matches
+        # TODO: implement Find Sequence Matches
+        #  without this step, we will add and delete nodes that could be modified instead
+        # update unused lists
+        for (existing_id, (temp_id, nd_element, old_node, new_node)) in sequence_match.items():
+                used_temp_ids.add(temp_id)
+                used_exist_ids.add(existing_id)
+
+        # Find unmatched Nodes:
+        for old_node in old_full_way.findall('node'):
+            eid = old_node.get('id')
+            if eid not in used_exist_ids:
+                unmatched_old_nodes.append(old_node)
+        for new_node_ref in new_way.findall('nd'):
+            temp_id = new_node_ref.get('ref')
+            if temp_id not in used_temp_ids:
+                unmatched_new_nodes.append(thing.nodes[temp_id])
+
+        # Step 1
+        for (existing_id, nd_element) in identity_match.items():
+            nd_element.set('ref', existing_id)
+            # node exists in places already, so do not add to OSM file
+
+        # Step 2
+        for (existing_id, (temp_id, nd_element, old_node, new_node)) in sequence_match.items():
+            nd_element.set('ref', existing_id)
+            old_node.set('lat', new_node.get('lat'))
+            old_node.set('lon', new_node.get('lon'))
+            old_node.set('changeset', '-1')
+            # node exists in places but is being modified
+            thing.conditional_add(old_node, to='modify')
+
+        # Step 3
+        for new_node in unmatched_new_nodes:
+            # nd ref exists, and contains same temp id as node
+            thing.conditional_add(new_node, to='create')
+
+        # Step 4
+        for old_node in unmatched_old_nodes:
+            # nothing to update on the way, since there is no nd ref for this deleted node
+            used = False  # FIXME: Need to check with the server; deleting a used node will fail
+            if not old_node.find('tag') and not used:
+                old_node.set('changeset', '-1')
+                thing.conditional_add(old_node, to='delete')
+
+    def update_relation_ways(old_relation, new_relation):
+        # FIXME: Implement
+        pass
+
+    # main logic of update procedure
+    server_element = get_element_from_server_as_xml(pserver, ptype, pid, logger=logger, details='full')
+    # for node looks like <osm><node ... /></osm>
+    # for way looks like <osm><way ... /><node 1 />...<node n/></osm>
+    # for relation looks like <osm><relation ... />...<rel n><way 1/>...<way n /><node 1 />...<node n/></osm>
+    #     does NOT return the ways and nodes in referenced relations
+    main_element = server_element[0]
+    element.set('version', main_element.get('version'))
+    element.set('id', main_element.get('id'))
+    match = version_check(main_element, pversion)
+    if not match and merge:
+        merge_tags(main_element, element)
+    if ptype == 'way':
+        update_way_nodes(server_element, element)
+    if ptype == 'relation':
+        update_relation_ways(server_element, element)
+    thing.conditional_add(element, to='modify')
     return
 
 
 def build(osm_change, upload_log, server, logger=None):
-    new_change = copy_root(osm_change)
     # Et.dump(new_change)
-    osm_change_create_node = osm_change[0]
-    new_change_create_node = new_change[0]
-    new_change_modify_node = new_change[1]
-    new_change_delete_node = new_change[2]
-    thing = Thing(osm_change_create_node)
-    # Et.dump(osm_change_create_node)
-    features = make_feature_hash(osm_change_create_node, logger=logger)
+    thing = Thing(osm_change)
+    features = make_feature_hash(osm_change, logger=logger)
     # print features
     updates = make_upload_log_hash(upload_log)
     # print updates
+
+    # find new features (create block)
     for gis_id in features:
         if gis_id not in updates:
-            create(new_change_create_node, thing, features[gis_id][2], logger)
+            create(thing, features[gis_id][2], logger)
+
+    # find modified features (modify block)
     for gis_id in features:
         if gis_id in updates:
             if updates[gis_id][0] == 'delete':
@@ -419,7 +542,7 @@ def build(osm_change, upload_log, server, logger=None):
                         logger.warn(msg)
                     except AttributeError:
                         pass
-                restore(new_change_modify_node, thing, features[gis_id][2],
+                restore(thing, features[gis_id][2],
                         server, updates[gis_id][2], updates[gis_id][3], updates[gis_id][4], logger)
             if updates[gis_id][0] in ['create', 'modify']:
                 if (updates[gis_id][1] is None or features[gis_id][1] is None
@@ -432,38 +555,47 @@ def build(osm_change, upload_log, server, logger=None):
                         except AttributeError:
                             pass
                         continue
-                    modify(new_change_modify_node, thing, features[gis_id][2],
+                    modify(thing, features[gis_id][2],
                            server, updates[gis_id][2], updates[gis_id][3], updates[gis_id][4], logger)
+
+    # find deleted features (delete block)
     for gis_id in updates:
         if gis_id not in features:
             if updates[gis_id][0] in ['create', 'modify']:
-                delete(new_change_delete_node, thing,
-                       server, updates[gis_id][2], updates[gis_id][3], updates[gis_id][4], logger)
-    if not list(new_change_create_node):
-        new_change.remove(new_change_create_node)
-    if not list(new_change_modify_node):
-        new_change.remove(new_change_modify_node)
-    if not list(new_change_delete_node):
-        new_change.remove(new_change_delete_node)
-    return new_change
+                delete(thing, server, updates[gis_id][2], updates[gis_id][3], updates[gis_id][4], logger)
+
+    # remove unused blocks
+    thing.remove_unused_lists()
+    return thing.new_change
 
 
 def test():
-    osm_change_file = './testdata/test_roads2.osm'
-    update_log_csv = './testdata/test_roads_sync.csv'
-    new_change_file = './testdata/test_roads2_out.osm'
+    # You need to uncomment the first few lines of the 4 major functions to when doing the first test
+    tests = [
+        ('create/modify/delete logic test', 'update_test1'),
+        ('create test', 'update_test2'),
+        ('delete test', 'test_roads2'),
+    ]
+    for (testname,testfile) in tests:
+        print '*'*40
+        print testname
+        print '*'*40
 
-    osm_change = Et.parse(osm_change_file).getroot()
-    update_log = DataTable.from_csv(update_log_csv)
-    api_server = OsmApiServer('mac')
-    api_server.logger = Logger()
-    api_server.logger.start_debug()
+        osm_change_file = './testdata/' + testfile + '.osm'
+        update_log_csv = './testdata/' + testfile + '.csv'
+        new_change_file = './testdata/' + testfile + '_out.osm'
 
-    new_change = build(osm_change, update_log, api_server, api_server.logger)
+        osm_change = Et.parse(osm_change_file).getroot()
+        update_log = DataTable.from_csv(update_log_csv)
+        api_server = OsmApiServer('mac')
+        api_server.logger = Logger()
+        api_server.logger.start_debug()
 
-    data = Et.tostring(new_change, encoding='utf-8')
-    with open(new_change_file, 'w') as fw:
-        fw.write(data)
+        new_change = build(osm_change, update_log, api_server, api_server.logger)
+
+        data = Et.tostring(new_change, encoding='utf-8')
+        with open(new_change_file, 'w') as fw:
+            fw.write(data)
     print "Done."
 
 

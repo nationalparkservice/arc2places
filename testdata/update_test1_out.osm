@@ -1,4 +1,4 @@
-<osm generator="arc2places" version="0.6"><create><node changeset="-1" id="-13" lat="62" lon="-145" version="1" visible="true">
+<osmChange generator="arc2places" version="0.6"><create><node changeset="-1" id="-13" lat="62" lon="-145" version="1" visible="true">
       <tag k="name" v="date without minutes" />
       <tag k="nps:edit_date" v="2015-09-01 12:00" />
       <tag k="nps:source_system_key_value" v="13" />
@@ -8,4 +8,4 @@
       <tag k="nps:edit_date" v="2015-09-01 12:00:00" />
       <tag k="nps:source_system_key_value" v="4" />
     </node>
-    </create></osm>
+    </create></osmChange>

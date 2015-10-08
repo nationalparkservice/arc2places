@@ -1,4 +1,4 @@
-<osm generator="arc2places" version="0.6"><create><node changeset="-1" comment="node in 2 relations - ADD ONCE" id="-26" lat="62" lon="-145" version="1" visible="true" />
+<osmChange generator="arc2places" version="0.6"><create><node changeset="-1" comment="node in 2 relations - ADD ONCE" id="-26" lat="62" lon="-145" version="1" visible="true" />
     <node changeset="-1" comment="node in way in 2 relations - ADD ONCE" id="-28" lat="62" lon="-145" version="1" visible="true" />
     <node changeset="-1" comment="node in way in 2 relations - ADD ONCE" id="-29" lat="62" lon="-145" version="1" visible="true" />
     <node changeset="-1" comment="node in way in old refed relation - ADD" id="-22" lat="62" lon="-145" version="1" visible="true" />
@@ -39,13 +39,6 @@
       <tag k="nps:edit_date" v="2015-09-01 13:00:00" />
       <tag k="nps:source_system_key_value" v="5" />
     </way>
-    <relation changeset="-1" comment="old reffed relation - ADD" id="-15" version="1" visible="true">
-      <member ref="-22" role="outer" type="node" />
-      <member ref="-23" role="inner" type="way" />
-      <tag k="name" v="add relation" />
-      <tag k="nps:edit_date" v="2015-09-01 11:00:00" />
-      <tag k="nps:source_system_key_value" v="15" />
-    </relation>
     <relation changeset="-1" comment="new super relation - ADD" id="-17" version="1" visible="true">
       <member ref="-26" role="outer" type="node" />
       <member ref="-27" role="inner" type="way" />
@@ -54,7 +47,14 @@
       <tag k="nps:edit_date" v="2015-09-01 13:00:00" />
       <tag k="nps:source_system_key_value" v="17" />
     </relation>
-  <relation changeset="-1" comment="new relation - ADD" id="-16" version="1" visible="true">
+  <relation changeset="-1" comment="old reffed relation - ADD" id="-15" version="1" visible="true">
+      <member ref="-22" role="outer" type="node" />
+      <member ref="-23" role="inner" type="way" />
+      <tag k="name" v="add relation" />
+      <tag k="nps:edit_date" v="2015-09-01 11:00:00" />
+      <tag k="nps:source_system_key_value" v="15" />
+    </relation>
+    <relation changeset="-1" comment="new relation - ADD" id="-16" version="1" visible="true">
       <member ref="-26" role="outer" type="node" />
       <member ref="-6" role="inner" type="way" />
       <member ref="-27" role="inner" type="way" />
@@ -62,4 +62,4 @@
       <tag k="nps:edit_date" v="2015-09-01 13:00:00" />
       <tag k="nps:source_system_key_value" v="16" />
     </relation>
-    </create></osm>
+    </create></osmChange>
