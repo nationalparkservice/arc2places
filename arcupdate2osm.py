@@ -287,7 +287,7 @@ def delete(thing, pserver, ptype, pid, pversion, logger=None):
         logger.debug('delete {0} {1} {2}'.format(ptype, pid, pversion))
     except AttributeError:
         pass
-    #return
+    # return
 
     def delete_element(element):
         added = thing.conditional_add(element, to='delete')
@@ -306,7 +306,6 @@ def delete(thing, pserver, ptype, pid, pversion, logger=None):
                 subelement = thing.elements[mtype].get(mid)
                 if subelement is not None:
                     delete_element(subelement)
-
 
     # FIXME: This only works on places-api servers
     # TODO: on real 0.6 API servers get full details and use 'if-unused' attribute in delete block
@@ -359,6 +358,11 @@ def restore(thing, element, pserver, ptype, pid, pversion, logger=None):
         pass
 
     # FIXME: Implement
+    # edit date was changes when item was item was unhidden, but we do not know what else may
+    # have been changed, we need to assume a full modify.
+    # but we also need to set the visibility flag to tue for the item, and all sub elements
+    # This is complicated since some sub elements (like nodes in a way) might not be in the
+    # modify section; if there xy is the same, we jsut reference the existing node.
 
     return
 
@@ -443,25 +447,47 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
             return x, y
 
         # Find Identity Matches
+        matching_indexes = []  # needed for next step (find sequence matches)
         old_nodes = {}
-        for old_node in old_full_way.findall('node'):
+        old_node_list = list(old_full_way.findall('node'))
+        new_node_list = list(new_way.findall('nd'))
+        for old_index in range(len(old_node_list)):
+            old_node = old_node_list[old_index]
             existing_id = old_node.get('id')
             xy = get_hashable_location(old_node)
-            old_nodes[xy] = existing_id
-        for new_node_ref in new_way.findall('nd'):
+            old_nodes[xy] = (existing_id, old_index)
+        for new_index in range(len(new_node_list)):
+            new_node_ref = new_node_list[new_index]
             temp_id = new_node_ref.get('ref')
             new_node = thing.nodes[temp_id]
             xy = get_hashable_location(new_node)
             if xy in old_nodes:
                 used_temp_ids.add(temp_id)
-                existing_id = old_nodes[xy]
+                existing_id, old_index = old_nodes[xy]
                 used_exist_ids.add(existing_id)
                 identity_match[existing_id] = new_node_ref
+                matching_indexes.append((new_index, old_index))
 
         # Find Sequence Matches
-        # update the sequence_match dict which starts as empty; i.e. no sequence matches
-        # TODO: implement Find Sequence Matches
-        #  without this step, we will add and delete nodes that could be modified instead
+        def add_match(n_index, o_index):
+            nd_ele = new_node_list[n_index]
+            t_id = nd_ele.get('ref')
+            o_node = old_node_list[o_index]
+            e_id = old_node.get('id')
+            n_node = thing.nodes[t_id]
+            sequence_match[e_id] = (t_id, nd_ele, o_node, n_node)
+
+        new_index = 0
+        old_index = 0
+        matching_indexes.append((len(new_node_list), len(old_node_list)))
+        for next_match_new, next_match_old in matching_indexes:
+            while new_index < next_match_new and old_index < next_match_old:
+                add_match(new_index, old_index)
+                old_index += 1
+                new_index += 1
+            new_index = next_match_new + 1
+            old_index = next_match_old + 1
+
         # update unused lists
         for (existing_id, (temp_id, nd_element, old_node, new_node)) in sequence_match.items():
                 used_temp_ids.add(temp_id)
