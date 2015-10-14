@@ -1,0 +1,63 @@
+<osmChange generator="arc2places" version="0.6">
+  <create>
+    <node changeset="-1" id="-2" lat="61.205435354" lon="-149.921592517" version="1" visible="true"/>
+    <node changeset="-1" id="-3" lat="61.206420031" lon="-149.919769002" version="1" visible="true"/>
+    <node changeset="-1" id="-4" lat="61.206676579" lon="-149.918133238" version="1" visible="true"/>
+    <node changeset="-1" id="-6" lat="61.207346207" lon="-149.919791443" version="1" visible="true"/>
+    <node changeset="-1" id="-20" lat="61.209346207" lon="-149.919991443" version="1" visible="true"/>
+    <node changeset="-1" id="-7" lat="62.5" lon="-145.5" version="1" visible="true">
+      <tag k="name" v="node changed" />
+      <tag k="nps:source_system_key_value" v="1" />
+      <tag k="nps:edit_date" v="2015-10-15 13:00:00" />
+    </node>
+    <node changeset="-1" id="-11" lat="61.515084079" lon="-144.439321684" version="1" visible="true"/>
+    <node changeset="-1" id="-12" lat="61.5150817" lon="-144.438981421" version="1" visible="true"/>
+    <node changeset="-1" id="-13" lat="61.515107874" lon="-144.438974283" version="1" visible="true"/>
+    <node changeset="-1" id="-14" lat="61.515115012" lon="-144.438167645" version="1" visible="true"/>
+    <node changeset="-1" id="-15" lat="61.516" lon="-144.438" version="1" visible="true"/>
+    <node changeset="-1" id="-16" lat="61.5150817" lon="-144.438158128" version="1" visible="true"/>
+    <way changeset="-1" id="-1" version="1" visible="true">
+      <nd ref="-3"/>
+      <nd ref="-20"/>
+      <nd ref="-4"/>
+      <tag k="name" v="way changed; new nodes, moved nodes, removed nodes"/>
+      <tag k="highway" v="secondary"/>
+      <tag k="nps:source_system_key_value" v="{04599ADE-9BE2-46F2-84A2-F5FEBE490AD0}"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+      <tag k="nps:edit_date" v="2015-10-15 13:00:00" />
+    </way>
+    <way changeset="-1" id="-5" version="1" visible="true">
+      <nd ref="-4"/>
+      <nd ref="-6"/>
+      <nd ref="-2"/>
+      <tag k="name" v="R&#xE9;sum&#xE9; only name changed"/>
+      <tag k="highway" v="unclassified"/>
+      <tag k="nps:source_system_key_value" v="{93CB94D6-FFD1-49DD-9231-E035B067B045}"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+      <tag k="nps:edit_date" v="2015-10-15 13:00:00" />
+    </way>
+    <way changeset="-1" id="-9" version="1" visible="true">
+      <nd ref="-11"/>
+      <nd ref="-12"/>
+      <nd ref="-13"/>
+      <nd ref="-11"/>
+    </way>
+    <way changeset="-1" id="-10" version="1" visible="true">
+      <nd ref="-14"/>
+      <nd ref="-15"/>
+      <nd ref="-16"/>
+      <nd ref="-14"/>
+    </way>
+    <relation changeset="-1" id="-8" version="1" visible="true">
+      <member ref="-9" role="outer" type="way"/>
+      <member ref="-10" role="inner" type="way"/>
+      <tag k="type" v="multipolygon"/>
+      <tag k="amenity" v="parking"/>
+      <tag k="area" v="yes"/>
+      <tag k="name" v="Chitina Wayside"/>
+      <tag k="nps:source_system_key_value" v="{86B65FDF-99A7-4D28-8746-FA59191B9D2B}"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
+      <tag k="nps:edit_date" v="2015-10-15 13:00:00" />
+    </relation>
+  </create>
+</osmChange>

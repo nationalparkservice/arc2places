@@ -1,4 +1,4 @@
-<osm generator="arc2places" version="0.6">
+<osmChange generator="arc2places" version="0.6">
   <create>
     <node changeset="-1" id="-1" lat="62" lon="-145" version="1" visible="true">
       <tag k="name" v="edit date less than create date" />
@@ -55,4 +55,4 @@
     </node>
     <node changeset="-1" id="-100" lat="62" lon="-145" version="1" visible="true" />
   </create>
-</osm>
+</osmChange>
