@@ -234,7 +234,6 @@ def get_element_from_server_as_xml(pserver, ptype, pid, logger=None, details=Non
         except AttributeError:
             pass
         return
-    # FIXME: check all request responses; they are always unicode
     element_xml = Et.fromstring(element_str.encode('utf-8'))
     element = element_xml
     return element
@@ -359,7 +358,6 @@ def restore(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tr
 
     modify(thing, element, pserver, ptype, pid, pversion, logger=logger,
            merge=merge, decimals=decimals, undelete=True)
-
 
 
 def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=True, decimals=7, undelete=False):
@@ -537,7 +535,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
                 old_node.set('changeset', '-1')
                 thing.conditional_add(old_node, to='delete')
 
-    def update_relation_ways(old_relation, new_relation):
+    def update_relation_ways(old_relation_full, new_relation):
         # FIXME: Implement
         pass
 
@@ -670,11 +668,6 @@ def cmdline():
                       help="Write processing step details to stdout.")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
                       help="Write debugging details to stdout.")
-    parser.add_option("--changeset-id", dest="changesetId", type=int,
-                      help="Sentinal ID number for the changeset.  Only used " +
-                           "when an osmChange file is being created. " +
-                           "Defaults to -1.", default=-1)
-
     parser.set_defaults(verbose=False, debug=False)
 
     # Parse and process arguments
@@ -714,9 +707,6 @@ def cmdline():
         if options.debug:
             logger.start_debug()
         api_server.logger = logger
-
-    # Changeset ID option
-    # TODO: implement or delete
 
     # Build Change XML
     # TODO: Add error checking
