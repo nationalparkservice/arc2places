@@ -100,7 +100,11 @@ class OsmApiServer:
             self.logger.info("Getting capabilities from " + capabilities_url)
         except AttributeError:
             pass
-        resp = requests.get(capabilities_url)
+        try:
+            resp = requests.get(capabilities_url)
+        except requests.ConnectionError:
+            self.error = "Connection refused by server."
+            return
         try:
             self.logger.debug('status ' + str(resp.status_code) + '\ntext ' + resp.text)
         except AttributeError:
