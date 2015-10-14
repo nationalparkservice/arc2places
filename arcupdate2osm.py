@@ -120,6 +120,8 @@ class Thing:
         if etype == 'relation':
             index += len(self.added[to]['relation'])
         element.set('changeset', '-1')
+        if to == 'modify':
+            element.set('visibility', 'true')
         self.new_change_nodes[to].insert(index, element)
         self.added[to][etype].append(eid)
         return True
@@ -248,7 +250,7 @@ def create(thing, element, logger=None):
     """
     try:
         logger.debug('create {0}'.format(element.get('id')))
-        # Et.dump(element)
+        logger.debug(Et.tostring(element))
     except AttributeError:
         pass
 
@@ -338,36 +340,29 @@ def delete(thing, pserver, ptype, pid, pversion, logger=None):
     return
 
 
-def restore(thing, element, pserver, ptype, pid, pversion, logger=None):
+def restore(thing, element, pserver, ptype, pid, pversion, logger=None, merge=True, decimals=7):
     """
-    Undeletes an element in places (modifies it back to visible)
+    Un-deletes an element in places (modifies it back to visible)
 
-    :param thing:
-    :param element:
-    :param pserver:
-    :param ptype:
-    :param pid:
-    :param pversion:
-    :param logger:
-    :return:
+    Since the element may have more changes than just visibility we need to do a full modify
+    The modify routine needs to add existing otherwise unchanged elements to
+    the modify section so that the visibility flag can be set.
+
+    parameters are the same as modify()
+    No return value
     """
     try:
         logger.debug('restore {0} {1}'.format(ptype, pid))
-        # Et.dump(element)
+        logger.debug(Et.tostring(element))
     except AttributeError:
         pass
 
-    # FIXME: Implement
-    # edit date was changes when item was item was unhidden, but we do not know what else may
-    # have been changed, we need to assume a full modify.
-    # but we also need to set the visibility flag to tue for the item, and all sub elements
-    # This is complicated since some sub elements (like nodes in a way) might not be in the
-    # modify section; if there xy is the same, we jsut reference the existing node.
-
-    return
+    modify(thing, element, pserver, ptype, pid, pversion, logger=logger,
+           merge=merge, decimals=decimals, undelete=True)
 
 
-def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=True, decimals=7):
+
+def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=True, decimals=7, undelete=False):
     """
     Merges the new and the old places item into a new 'modify' element in new_change
 
@@ -382,7 +377,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
     """
     try:
         logger.debug('modify {0} {1}'.format(ptype, pid))
-        # Et.dump(element)
+        logger.debug(Et.tostring(element))
     except AttributeError:
         pass
     # return
@@ -449,7 +444,6 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
             x = int(b + (m + '0'*decimals)[:decimals])
             if len(m) > decimals and m[decimals] > "4":
                 x += 1
-            print lat,y,lon,x
             return x, y
 
         # Find Identity Matches
@@ -466,7 +460,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
             old_node_id = old_node_ref.get('ref')
             old_node = old_nodes[old_node_id]
             xy = get_hashable_location(old_node)
-            old_node_locations[xy] = (old_node_id, old_index)
+            old_node_locations[xy] = (old_node_id, old_index, old_node)
         for new_index in range(len(new_node_list)):
             new_node_ref = new_node_list[new_index]
             temp_id = new_node_ref.get('ref')
@@ -474,14 +468,13 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
             xy = get_hashable_location(new_node)
             if xy in old_node_locations:
                 used_temp_ids.add(temp_id)
-                existing_id, old_index = old_node_locations[xy]
+                existing_id, old_index, old_node = old_node_locations[xy]
                 used_exist_ids.add(existing_id)
-                identity_match[existing_id] = new_node_ref
+                identity_match[existing_id] = (new_node_ref, old_node)
                 matching_indexes.append((new_index, old_index))
 
         # Find Sequence Matches
         def add_match(n_index, o_index):
-            print 'match', n_index, o_index
             nd_ele = new_node_list[n_index]
             t_id = nd_ele.get('ref')
             o_node = old_node_list[o_index]
@@ -492,7 +485,6 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
         new_index = 0
         old_index = 0
         matching_indexes.append((len(new_node_list), len(old_node_list)))
-        print matching_indexes
         for next_match_new, next_match_old in matching_indexes:
             while new_index < next_match_new and old_index < next_match_old:
                 add_match(new_index, old_index)
@@ -517,9 +509,11 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
                 unmatched_new_nodes.append(thing.elements['node'][temp_id])
 
         # Step 1
-        for (existing_id, nd_element) in identity_match.items():
+        for (existing_id, (nd_element, old_node)) in identity_match.items():
             nd_element.set('ref', existing_id)
-            # node exists in places already, so do not add to OSM file
+            # node exists in places already, so do not add to OSM file, unless this is a restore
+            if undelete:
+                thing.conditional_add(old_node, to='modify')
 
         # Step 2
         for (existing_id, (temp_id, nd_element, old_node, new_node)) in sequence_match.items():
