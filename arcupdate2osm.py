@@ -314,6 +314,8 @@ def delete(thing, pserver, ptype, pid, pversion, logger=None):
     # TODO: places-api algorithm may leave orphans.  e.g. if way1 and way2 both use a node, and they are deleted together
     # places-api does not support 'if-unused' however, it does have a special 'uninteresting' call instead
     osm = get_element_from_server_as_xml(pserver, ptype, pid, logger=logger, details='uninteresting')
+    if osm is None:
+        return
     main_element = osm[0]
     version = main_element.get('version')
     if version != pversion:
@@ -449,8 +451,8 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
         old_node_locations = {}
         old_nodes = {}
         # the node elements are not in way order; but I need way order to compare with the new way
-        for node in old_full_way.findall('node'):
-            old_nodes[node.get('id')] = node
+        for item in old_full_way.findall('node'):
+            old_nodes[item.get('id')] = item
         new_node_list = list(new_way.findall('nd'))
         old_node_list = list(old_full_way.find('way').findall('nd'))
         for old_index in range(len(old_node_list)):
@@ -541,6 +543,8 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
 
     # main logic of update procedure
     server_element = get_element_from_server_as_xml(pserver, ptype, pid, logger=logger, details='full')
+    if server_element is None:
+        return
     # for node looks like <osm><node ... /></osm>
     # for way looks like <osm><way ... /><node 1 />...<node n/></osm>
     # for relation looks like <osm><relation ... />...<rel n><way 1/>...<way n /><node 1 />...<node n/></osm>
@@ -559,13 +563,14 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
     return
 
 
-def build(osm_change, upload_log, server, logger=None):
-    # Et.dump(new_change)
+def build(osm_change, updates, server, logger=None):
     thing = Thing(osm_change)
     features = make_feature_hash(osm_change, logger=logger)
-    # print features
-    updates = make_upload_log_hash(upload_log)
-    # print updates
+    try:
+        logger.debug('features')
+        logger.debug(str(features))
+    except AttributeError:
+        pass
 
     # find new features (create block)
     for gis_id in features:
@@ -617,6 +622,67 @@ def build(osm_change, upload_log, server, logger=None):
     return thing.new_change
 
 
+def read_build_write(osm_change_file, update_log_csv, new_change_file, api_server, logger=None):
+
+    error_logger = Logger()
+    # Build Change XML; will throw an error if input is no good
+    try:
+        logger.info(u'Read OsmChange file')
+    except (AttributeError, TypeError):
+        pass
+    try:
+        osm_change = Et.parse(osm_change_file).getroot()
+    except:
+        try:
+            error_logger.error("File {0} is not be valid OsmChange file.".format(osm_change_file))
+        except AttributeError:
+            pass
+        raise
+
+    # Read the upload log CSV; will throw an error if input is no good
+    try:
+        logger.info(u'Read CSV file')
+    except (AttributeError, TypeError):
+        pass
+    try:
+        update_log = DataTable.from_csv(update_log_csv)
+    except:
+        error_logger.error("File {0} is not a valid CSV file.".format(update_log_csv))
+        raise
+
+    # Build the upload log from CSV; will throw an error if input is no good
+    try:
+        logger.info(u'Process Update Log')
+    except (AttributeError, TypeError):
+        pass
+    try:
+        updates = make_upload_log_hash(update_log)
+    except:
+        error_logger.error("File {0} does not have the expected upload log format.".format(update_log_csv))
+        raise
+    try:
+        logger.debug('updates')
+        logger.debug(str(updates))
+    except (AttributeError, TypeError):
+        pass
+
+    # Build the new change file; If it throw it is an unexpected programming error, so just crash
+    try:
+        logger.info(u'Build OsmChange data')
+    except (AttributeError, TypeError):
+        pass
+    new_change = build(osm_change, updates, api_server, logger)
+
+    # write output
+    try:
+        logger.info(u'Write OsmChange to file')
+    except (AttributeError, TypeError):
+        pass
+    data = Et.tostring(new_change, encoding='utf-8')
+    with open(new_change_file, 'w') as fw:
+        fw.write(data)
+
+
 def test():
     # You need to uncomment the first few lines of the 4 major functions to when doing the first test
     tests = [
@@ -634,18 +700,12 @@ def test():
         update_log_csv = './testdata/' + testfile + '.csv'
         new_change_file = './testdata/' + testfile + '_out.osm'
 
-        osm_change = Et.parse(osm_change_file).getroot()
-        update_log = DataTable.from_csv(update_log_csv)
+        logger = Logger()
+        logger.start_debug()
         api_server = OsmApiServer('mac')
-        api_server.logger = Logger()
-        api_server.logger.start_debug()
-
-        new_change = build(osm_change, update_log, api_server, api_server.logger)
-
-        data = Et.tostring(new_change, encoding='utf-8')
-        with open(new_change_file, 'w') as fw:
-            fw.write(data)
-    print "Done."
+        api_server.logger = logger
+        read_build_write(osm_change_file, update_log_csv, new_change_file, api_server, logger)
+    print 'Done.'
 
 
 def cmdline():
@@ -653,17 +713,17 @@ def cmdline():
     usage = """%prog [Options] SRC LOG DST
     or:    %prog --help
 
-    Creates a file called DST from changes in SRC compared to LOG.
-    SRC is an ArcGIS feature class
-    LOG is an ArcGIS table that describes the features sent to places
-    DST is a OSM change file
+    Create an OsmChange file for updates to a prior upload.
+    SRC is an OsmChange file for a GIS data set, created with {ogr|arc}2osm
+    LOG is a CSV file of features sent to places, created with arc2places
+    DST is the new OsmChange file to create, must not exist.
     """
 
     parser = optparse.OptionParser(usage=usage)
 
     parser.add_option("-s", "--server", dest="server", type=str, help=(
-        "Name of server to connect to. I.e. 'places', 'osm', 'osm-dev', 'local'." +
-        "Defaults to 'places'.  Name must be defined in the secrets file."), default='places')
+        "Name of server to connect to. I.e. 'places', 'test', 'osm', 'osm-dev'." +
+        "Defaults to 'test'.  Name must be defined in the secrets file."), default='test')
     parser.add_option("-v", "--verbose", dest="verbose", action="store_true",
                       help="Write processing step details to stdout.")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
@@ -672,6 +732,13 @@ def cmdline():
 
     # Parse and process arguments
     (options, args) = parser.parse_args()
+
+    logger = Logger()
+    if options.debug:
+        options.verbose = True
+        logger.start_debug()
+    logger.debug("args: " + str(args))
+    logger.debug("options: " + str(options))
 
     if len(args) < 3:
         parser.error(u"You must specify a source, log and destination")
@@ -689,38 +756,26 @@ def cmdline():
     if options.server:
         api_server = OsmApiServer(options.server)
     else:
-        api_server = OsmApiServer('places')
+        api_server = OsmApiServer('test')
+    if api_server.error:
+        logger.error(api_server.error)
+        sys.exit(1)
+    if options.verbose or options.debug:
+        api_server.logger = logger
     online = api_server.is_online()
     if api_server.error:
-        print api_server.error
+        logger.error(api_server.error)
         sys.exit(1)
     if not online:
-        print "Server is not online right now, try again later."
+        logger.error("Server is not online right now, try again later.")
         sys.exit(1)
     if not api_server.is_version_supported():
-        print "Server does not support version " + api_server.version + " of the OSM"
+        logger.error("Server does not support version {0} of the OSM API".format(api_server.version))
         sys.exit(1)
 
-    # verbose/debug
-    if options.verbose or options.debug:
-        logger = Logger()
-        if options.debug:
-            logger.start_debug()
-        api_server.logger = logger
-
-    # Build Change XML
-    # TODO: Add error checking
-    osm_change = Et.parse(osm_change_file).getroot()
-    update_log = DataTable.from_csv(update_log_csv)
-    new_change = build(osm_change, update_log, api_server, api_server.logger)
-
-    # write output
-    data = Et.tostring(new_change, encoding='utf-8')
-    with open(new_change_file, 'w') as fw:
-        fw.write(data)
-    print "Done."
+    read_build_write(osm_change_file, update_log_csv, new_change_file, api_server, api_server.logger)
 
 
 if __name__ == '__main__':
-    test()
-    # cmdline()
+    # test()
+    cmdline()
