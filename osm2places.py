@@ -286,7 +286,7 @@ def upload_osm_data(data, server, comment=None, csv_path=None, logger=None,
             server.close_changeset(cid)
         finally:
             raise UploadError("Server did not accept the upload request.\n\tDetails: " + upload_error)
-    # save the repsonse
+    # save the respsonse
     if resp and response_path:
         with open(response_path, 'w', encoding='utf-8') as fw:
             fw.write(resp)
@@ -404,8 +404,7 @@ def cmdline():
 
     Uploads SRC to an OSM API compatible server
     SRC is an OsmChange file
-    DST is the XML response from the server - it must not exist.
-    The default server is the production NPS Places database."""
+    DST is a path to store the upload log (as CSV formatted text)."""
 
     parser = optparse.OptionParser(usage=usage)
 
@@ -419,11 +418,14 @@ def cmdline():
         "Name must be defined in the secrets file."), default='test')
     parser.add_option("-c", "--comment", dest="comment", type=str, help=(
                       "A description of the contents of the changeset."), default=None)
-    parser.add_option("-l", "--upload_log", dest="log_file", type=str, help=(
-                      "A file to store the CSV table of the upload information. "
-                      "The log combines information from the source file and the server response. "
+    parser.add_option("-r", "--diff_result", dest="diff", type=str, help=(
+                      "A file to store the server response (XML text in diffResult. "
                       "Any existing file at this path will be overwritten."),
                       default=None)
+    parser.add_option("-a", "--async", dest="async", action="store_true",
+                      help="Uploads the osmChange file without waiting for the server response. "
+                           "Default is True for files greater than 5MB and False otherwise. "
+                           "The server response is not available with this option.")
     parser.add_option("-v", "--verbose", dest="verbose", action="store_true",
                       help="Prints helpful (or annoying) information on progress.")
     parser.add_option("-d", "--debug", dest="debug", action="store_true",
@@ -432,6 +434,13 @@ def cmdline():
 
     # Parse and process arguments
     (options, args) = parser.parse_args()
+
+    logger = Logger()
+    if options.debug:
+        options.verbose = True
+        logger.start_debug()
+    logger.debug("args: " + str(args))
+    logger.debug("options: " + str(options))
 
     if len(args) < 2:
         parser.error(u"You must specify a source and destination")
@@ -450,31 +459,47 @@ def cmdline():
     else:
         api_server = OsmApiServer('test')
     if api_server.error:
-        print api_server.error
+        logger.error(api_server.error)
         sys.exit(1)
+    if options.verbose or options.debug:
+        api_server.logger = logger
     online = api_server.is_online()
     if api_server.error:
-        print api_server.error
+        logger.error(api_server.error)
         sys.exit(1)
     if not online:
-        print "Server is not online right now, try again later."
+        logger.error("Server is not online right now, try again later.")
         sys.exit(1)
     if not api_server.is_version_supported():
-        print "Server does not support version " + api_server.version + " of the OSM API"
+        logger.error("Server does not support version {0} of the OSM API".format(api_server.version))
         sys.exit(1)
-    if options.debug:
-        options.verbose = True
-    if options.verbose:
-        api_server.logger = Logger()
-    if options.debug:
-        api_server.logger.start_debug()
     if options.username:
         api_server.username = options.username
-    upload_osm_file(srcfile, api_server, options.comment, csv_path=options.log_file, logger=api_server.logger,
-                    response_path=dstfile, return_log=False)
+    filesize = os.stat(srcfile).st_size
+    if filesize > 5242880:
+        options.async = True
+    if options.verbose:
+        if options.async:
+            method = ' asynchronously.'
+        else:
+            method = '.'
+        logger.info("Sending '{0}' to '{1}'{2}".format(srcfile, api_server.name, method))
+    if options.async:
+        cid = upload_osm_file(srcfile, api_server, options.comment, logger=logger, async=True)
+        if options.verbose:
+            logger.info('Changeset {0} has been queued on the server for processing.'.format(cid))
+        upload_log = make_upload_log_from_changeset_id(cid, api_server, api_server.logger)
+        if options.verbose:
+            logger.info("Saving upload log as '{0}'".format(dstfile))
+        upload_log.export_csv(dstfile)
+    else:
+        upload_osm_file(srcfile, api_server, options.comment, csv_path=dstfile, logger=logger,
+                        response_path=options.diff, return_log=False, async=False)
+        pass
+
 
 # TODO: create cmdline program to create upload log from osm and and server response; or changeset id
 
 if __name__ == '__main__':
-    test()
-    # cmdline()
+    # test()
+    cmdline()
