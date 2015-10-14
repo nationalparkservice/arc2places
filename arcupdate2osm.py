@@ -438,12 +438,18 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
             # floats should not be used for equality testing, so they make a bad hash key.
             # strings are good, but they they would need to be normalized i.e. "1.23" == "1.230".
             # ints are better (smaller), when they are normalized
+            # need to make sure I'm rounding, not truncating
             lat = node.get('lat')
             b, m = lat.split('.')
             y = int(b + (m + '0'*decimals)[:decimals])
+            if len(m) > decimals and m[decimals] > "4":
+                y += 1
             lon = node.get('lon')
             b, m = lon.split('.')
             x = int(b + (m + '0'*decimals)[:decimals])
+            if len(m) > decimals and m[decimals] > "4":
+                x += 1
+            print lat,y,lon,x
             return x, y
 
         # Find Identity Matches
