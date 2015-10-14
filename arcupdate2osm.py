@@ -459,7 +459,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
         for new_index in range(len(new_node_list)):
             new_node_ref = new_node_list[new_index]
             temp_id = new_node_ref.get('ref')
-            new_node = thing.nodes[temp_id]
+            new_node = thing.elements['node'][temp_id]
             xy = get_hashable_location(new_node)
             if xy in old_nodes:
                 used_temp_ids.add(temp_id)
@@ -474,7 +474,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
             t_id = nd_ele.get('ref')
             o_node = old_node_list[o_index]
             e_id = old_node.get('id')
-            n_node = thing.nodes[t_id]
+            n_node = thing.elements['node'][t_id]
             sequence_match[e_id] = (t_id, nd_ele, o_node, n_node)
 
         new_index = 0
@@ -501,7 +501,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
         for new_node_ref in new_way.findall('nd'):
             temp_id = new_node_ref.get('ref')
             if temp_id not in used_temp_ids:
-                unmatched_new_nodes.append(thing.nodes[temp_id])
+                unmatched_new_nodes.append(thing.elements['node'][temp_id])
 
         # Step 1
         for (existing_id, nd_element) in identity_match.items():
@@ -617,7 +617,8 @@ def test():
     tests = [
         #('create/modify/delete logic test', 'update_test1'),
         #('create test', 'update_test2'),
-        ('delete test', 'test_roads2'),
+        #('delete test', 'test_roads2'),
+        ('modify test', 'update_test3'),
     ]
     for (testname, testfile) in tests:
         print '*'*40
