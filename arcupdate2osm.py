@@ -454,28 +454,34 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
 
         # Find Identity Matches
         matching_indexes = []  # needed for next step (find sequence matches)
+        old_node_locations = {}
         old_nodes = {}
-        old_node_list = list(old_full_way.findall('node'))
+        # the node elements are not in way order; but I need way order to compare with the new way
+        for node in old_full_way.findall('node'):
+            old_nodes[node.get('id')] = node
         new_node_list = list(new_way.findall('nd'))
+        old_node_list = list(old_full_way.find('way').findall('nd'))
         for old_index in range(len(old_node_list)):
-            old_node = old_node_list[old_index]
-            existing_id = old_node.get('id')
+            old_node_ref = old_node_list[old_index]
+            old_node_id = old_node_ref.get('ref')
+            old_node = old_nodes[old_node_id]
             xy = get_hashable_location(old_node)
-            old_nodes[xy] = (existing_id, old_index)
+            old_node_locations[xy] = (old_node_id, old_index)
         for new_index in range(len(new_node_list)):
             new_node_ref = new_node_list[new_index]
             temp_id = new_node_ref.get('ref')
             new_node = thing.elements['node'][temp_id]
             xy = get_hashable_location(new_node)
-            if xy in old_nodes:
+            if xy in old_node_locations:
                 used_temp_ids.add(temp_id)
-                existing_id, old_index = old_nodes[xy]
+                existing_id, old_index = old_node_locations[xy]
                 used_exist_ids.add(existing_id)
                 identity_match[existing_id] = new_node_ref
                 matching_indexes.append((new_index, old_index))
 
         # Find Sequence Matches
         def add_match(n_index, o_index):
+            print 'match', n_index, o_index
             nd_ele = new_node_list[n_index]
             t_id = nd_ele.get('ref')
             o_node = old_node_list[o_index]
@@ -486,6 +492,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
         new_index = 0
         old_index = 0
         matching_indexes.append((len(new_node_list), len(old_node_list)))
+        print matching_indexes
         for next_match_new, next_match_old in matching_indexes:
             while new_index < next_match_new and old_index < next_match_old:
                 add_match(new_index, old_index)
