@@ -545,7 +545,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
                 old_node.set('changeset', '-1')
                 thing.conditional_add(old_node, to='delete')
 
-    def update_relation_ways(old_relation_full, new_relation):
+    def update_relation_members(old_relation_full, new_relation):
         # FIXME: Implement
         pass
 
@@ -566,7 +566,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
     if ptype == 'way':
         update_way_nodes(server_element, element)
     if ptype == 'relation':
-        update_relation_ways(server_element, element)
+        update_relation_members(server_element, element)
     thing.conditional_add(element, to='modify')
     return
 
@@ -580,17 +580,20 @@ def build(osm_change, updates, server, logger=None):
     except AttributeError:
         pass
 
+    def feature_type_mismatch(gid):
+        return features[gid][0] != updates[gid][2]
+
     # find new features (create block)
     for gis_id in features:
-        if gis_id not in updates:
+        if gis_id not in updates or feature_type_mismatch(gis_id):
             create(thing, features[gis_id][2], logger)
 
     # find modified features (modify block)
     for gis_id in features:
         if gis_id in updates:
             if updates[gis_id][0] == 'delete':
-                if features[gis_id][0] != updates[gis_id][2]:
-                    msg = "Cannot update id '{0} from a {1} to a {2}"
+                if feature_type_mismatch(gis_id):
+                    msg = "Cannot update id '{0} from a {1} to a {2}. Using Delete/Create."
                     msg = msg.format(gis_id, features[gis_id][0], updates[gis_id][2])
                     try:
                         logger.error(msg)
@@ -621,7 +624,7 @@ def build(osm_change, updates, server, logger=None):
 
     # find deleted features (delete block)
     for gis_id in updates:
-        if gis_id not in features:
+        if gis_id not in features or feature_type_mismatch(gis_id):
             if updates[gis_id][0] in ['create', 'modify']:
                 delete(thing, server, updates[gis_id][2], updates[gis_id][3], updates[gis_id][4], logger)
 
@@ -692,6 +695,7 @@ def read_build_write(osm_change_file, update_log_csv, new_change_file, api_serve
 
 
 def test():
+    # TODO: test poly update from simple to multi and visa-versa
     # You need to uncomment the first few lines of the 4 major functions to when doing the first test
     tests = [
         #('create/modify/delete logic test', 'update_test1'),
