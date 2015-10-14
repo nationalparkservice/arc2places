@@ -530,6 +530,14 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
             thing.conditional_add(new_node, to='create')
 
         # Step 4
+        ids_unused_nodes = set()  # 'id's of nodes in this way that are unused by other ways/relations
+        if len(unmatched_old_nodes) > 0:
+            # FIXME: This only works on places-api servers; alternative is to used 'if-unused' in delete block;
+            osm = get_element_from_server_as_xml(pserver, ptype, pid, logger=logger, details='uninteresting')
+            if osm is not None:
+                ids_unused_nodes = set([node.get('id') for node in osm.findall('node')])
+
+
         for old_node in unmatched_old_nodes:
             # nothing to update on the way, since there is no nd ref for this deleted node
             used = False  # FIXME: Need to check with the server; deleting a used node will fail
