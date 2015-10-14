@@ -540,8 +540,8 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
 
         for old_node in unmatched_old_nodes:
             # nothing to update on the way, since there is no nd ref for this deleted node
-            used = False  # FIXME: Need to check with the server; deleting a used node will fail
-            if not old_node.find('tag') and not used:
+            unused = old_node.get('id') in ids_unused_nodes
+            if not old_node.find('tag') and unused:
                 old_node.set('changeset', '-1')
                 thing.conditional_add(old_node, to='delete')
 
