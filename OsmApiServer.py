@@ -115,7 +115,7 @@ class OsmApiServer:
             self.error = baseerror.format(resp.status_code, resp.text)
             return
         try:
-            root = eTree.fromstring(resp.text)
+            root = eTree.fromstring(resp.text.encode('utf-8'))
         except eTree.ParseError:
             self.error = 'Get cababilities response is not valid XML.'
             return

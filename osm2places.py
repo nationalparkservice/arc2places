@@ -79,7 +79,7 @@ def make_upload_log_from_changeset_id(cid, server, logger):
         raise UploadError("Changeset not found.  It may not be ready yet, try again in a little while.")
 
     try:
-        element_root = Et.fromstring(elements)
+        element_root = Et.fromstring(elements.encode('utf-8'))
     except Et.ParseError as e:
         raise UploadError("Info returned from server is invalid ({0}).".format(e.message))
     if element_root.tag != "osm":
@@ -114,7 +114,7 @@ def make_upload_log_from_changeset_id(cid, server, logger):
 
 def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     """
-    :param diff_result: byte array (string) with utf encoded xml
+    :param diff_result: unicode server response
     :param uploaddata:  unicode data
     :param date:
     :param cid:
@@ -123,7 +123,7 @@ def make_upload_log(diff_result, uploaddata, date, cid, user, logger=None):
     :return:
     """
     try:
-        resp_root = Et.fromstring(diff_result)
+        resp_root = Et.fromstring(diff_result.encode('utf-8'))
     except Et.ParseError:
         raise UploadError("Response from server is not valid XML.\nResponse:\n" + diff_result)
     if resp_root.tag != "diffResult":
@@ -180,7 +180,7 @@ def make_upload_log_from_files(upload_path, response_path, server, logger):
     if not element:
         raise UploadError("Server failure requesting first element. " + server.error)
     try:
-        element_root = Et.fromstring(element)
+        element_root = Et.fromstring(element.encode('utf-8'))
     except Et.ParseError as e:
         raise UploadError("Element info returned from server is invalid ({0}).".format(e.message))
     if element_root.tag != "osm":
