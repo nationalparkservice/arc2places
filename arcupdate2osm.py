@@ -367,7 +367,7 @@ def restore(thing, element, pserver, ptype, pid, pversion, logger=None):
     return
 
 
-def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=True, decimals=9):
+def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=True, decimals=7):
     """
     Merges the new and the old places item into a new 'modify' element in new_change
 
@@ -441,7 +441,7 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
             lat = node.get('lat')
             b, m = lat.split('.')
             y = int(b + (m + '0'*decimals)[:decimals])
-            lon = node.get('lat')
+            lon = node.get('lon')
             b, m = lon.split('.')
             x = int(b + (m + '0'*decimals)[:decimals])
             return x, y
