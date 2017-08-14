@@ -546,8 +546,51 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
                 thing.conditional_add(old_node, to='delete')
 
     def update_relation_members(old_relation_full, new_relation):
-        # FIXME: Implement
-        pass
+        """
+        Members in a relation are compared as follows:
+         'type' == 'node' compare by location (x,y) same as way-nodes
+         'type' == 'way' compare by role; and then by sequence in the relation
+
+         if the member is a node:
+
+        All Nodes in relation are compared by their (x,y) values (location match),
+        and then by their sequence number in the gaps between identity matching nodes in a way (sequence match)
+        1) walk the nd refs in way, by replacing the temp id with places id when there is a location match
+        2) walk the nd refs in way, by replacing the temp id with places id when there is a sequence match
+           modify/update the (x,y) values in the existing node to (x,y) from the new node
+        3) add the unmatched nodes in way to the create block
+        4) delete unmatched nodes in old_way (if they have no tags)
+        """
+
+        ids_unused_ways = set()  # 'id's of ways in this relation that are unused by other ways/relations
+        ids_unused_nodes = set()  # 'id's of nodes in this relation that are unused by other ways/relations
+        # FIXME: This only works on places-api servers; alternative is to used 'if-unused' in delete block;
+        osm = get_element_from_server_as_xml(pserver, ptype, pid, logger=logger, details='uninteresting')
+        if osm is not None:
+            ids_unused_ways = set([node.get('id') for node in osm.findall('way')])
+            ids_unused_nodes = set([node.get('id') for node in osm.findall('node')])
+
+        old_ways = {}
+        for way in old_relation_full.findall('way'):
+            old_ways[way.get('id')] = way
+        old_nodes = {}
+        for node in old_relation_full.findall('node'):
+            old_nodes[node.get('id')] = node
+        old_node_refs = ()
+        way_refs = {}
+        for member in old_relation_full.findall('member'):
+            mtype = member.get('type')
+            role = member.get('role')
+            ref = member.get('ref')
+            if mtype == 'node':
+                node_ref
+            if mtype == 'way':
+            if mtype == 'relation':
+
+
+
+        ways = {}
+
 
     # main logic of update procedure
     server_element = get_element_from_server_as_xml(pserver, ptype, pid, logger=logger, details='full')
