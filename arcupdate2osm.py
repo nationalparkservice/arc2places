@@ -477,8 +477,9 @@ def modify(thing, element, pserver, ptype, pid, pversion, logger=None, merge=Tru
         def add_match(n_index, o_index):
             nd_ele = new_node_list[n_index]
             t_id = nd_ele.get('ref')
-            o_node = old_node_list[o_index]
-            e_id = old_node.get('id')
+            o_nd_ele = old_node_list[o_index]
+            e_id = o_nd_ele.get('ref')
+            o_node = old_nodes[e_id]
             n_node = thing.elements['node'][t_id]
             sequence_match[e_id] = (t_id, nd_ele, o_node, n_node)
 
