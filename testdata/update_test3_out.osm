@@ -1,37 +1,43 @@
-<osmChange generator="arc2places" version="0.6">
-  <create>
-    <node changeset="-1" id="-2" lat="61.205435354" lon="-149.921592517" version="1" visible="true" />
-    <node changeset="-1" id="-4" lat="61.206676579" lon="-149.918133238" version="1" visible="true" />
-  </create>
-  <modify>
-    <node changeset="-1" id="3758554007" lat="62.5" lon="-145.5" version="1" visible="true">
+<osmChange generator="arc2places" version="0.6"><create><node changeset="-1" id="-21" lat="61.22" lon="-149.91" version="1" visible="true" />
+    <node changeset="-1" id="-24" lat="61.21" lon="-149.94" version="1" visible="true" />
+    <node changeset="-1" id="-20" lat="61.209346207" lon="-149.919991443" version="1" visible="true" />
+    </create><modify><node changeset="-1" id="3758554020" lat="62.5" lon="-145.5" version="1" visibility="true" visible="true">
       <tag k="name" v="node changed" />
       <tag k="nps:source_system_key_value" v="1" />
       <tag k="nps:edit_date" v="2015-10-15 13:00:00" />
     </node>
-    <node changeset="-1" id="3758554004" lat="61.206676579" lon="-149.918133238" timestamp="2015-10-13T16:17:13.565Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
-    <node changeset="-1" id="3758554006" lat="61.209346207" lon="-149.919991443" timestamp="2015-10-13T16:17:13.577Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
-    <way changeset="-1" id="372297328" version="1" visible="true">
-      <nd ref="3758554008" />
-      <nd ref="3758554008" />
-      <nd ref="-2" />
+    <way changeset="-1" id="372297334" version="1" visibility="true" visible="true">
+      <nd ref="-21" />
+      <nd ref="3758554023" />
+      <nd ref="3758554026" />
+      <nd ref="-24" />
+      <nd ref="3758554027" />
+      <tag k="name" v="Regan Road" />
+      <tag k="highway" v="primary" />
+      <tag k="nps:source_system_key_value" v="{add-delete-modify-node-test}" />
+      <tag k="nps:source_system_key" v="GEOMETRYID" />
+    </way>
+    <way changeset="-1" id="372297333" version="1" visibility="true" visible="true">
+      <nd ref="3758554016" />
+      <nd ref="3758554017" />
+      <nd ref="3758554015" />
       <tag k="name" v="Résumé only name changed" />
       <tag k="highway" v="unclassified" />
       <tag k="nps:source_system_key_value" v="{93CB94D6-FFD1-49DD-9231-E035B067B045}" />
       <tag k="nps:source_system_key" v="GEOMETRYID" />
       <tag k="nps:edit_date" v="2015-10-15 13:00:00" />
     </way>
-    <way changeset="-1" id="372297330" version="1" visible="true">
-      <nd ref="3758554005" />
-      <nd ref="3758554006" />
-      <nd ref="-4" />
+    <way changeset="-1" id="372297332" version="1" visibility="true" visible="true">
+      <nd ref="3758554018" />
+      <nd ref="-20" />
+      <nd ref="3758554016" />
       <tag k="name" v="way changed; new nodes, moved nodes, removed nodes" />
       <tag k="highway" v="secondary" />
       <tag k="nps:source_system_key_value" v="{04599ADE-9BE2-46F2-84A2-F5FEBE490AD0}" />
       <tag k="nps:source_system_key" v="GEOMETRYID" />
       <tag k="nps:edit_date" v="2015-10-15 13:00:00" />
     </way>
-    <relation changeset="-1" id="3559073" version="1" visible="true">
+    <relation changeset="-1" id="3559074" version="1" visibility="true" visible="true">
       <member ref="-9" role="outer" type="way" />
       <member ref="-10" role="inner" type="way" />
       <tag k="type" v="multipolygon" />
@@ -42,9 +48,7 @@
       <tag k="nps:source_system_key" v="GEOMETRYID" />
       <tag k="nps:edit_date" v="2015-10-15 13:00:00" />
     </relation>
-  </modify>
-  <delete>
-    <node changeset="-1" id="3758554004" lat="61.206676579" lon="-149.918133238" timestamp="2015-10-13T16:17:13.565Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
-    <node changeset="-1" id="3758554006" lat="61.2066766" lon="-149.9181332" timestamp="2015-10-13T16:17:13.577Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
-  </delete>
-</osmChange>
+  </modify><delete><node changeset="-1" id="3758554024" lat="61.22" lon="-149.92" timestamp="2015-10-14T08:11:10.746Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
+  <node changeset="-1" id="3758554030" lat="61.21" lon="-149.95" timestamp="2015-10-14T08:11:10.749Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
+  <node changeset="-1" id="3758554015" lat="61.2054354" lon="-149.9215925" timestamp="2015-10-14T08:11:10.696Z" uid="-2" user="Regan Sarwas" version="1" visible="true" />
+</delete></osmChange>

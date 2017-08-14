@@ -16,6 +16,11 @@
     <node changeset="-1" id="-14" lat="61.515115012" lon="-144.438167645" version="1" visible="true"/>
     <node changeset="-1" id="-15" lat="61.516" lon="-144.438" version="1" visible="true"/>
     <node changeset="-1" id="-16" lat="61.5150817" lon="-144.438158128" version="1" visible="true"/>
+    <node changeset="-1" id="-21" lat="61.22" lon="-149.91" version="1" visible="true"/>
+    <node changeset="-1" id="-22" lat="61.21" lon="-149.91" version="1" visible="true"/>
+    <node changeset="-1" id="-23" lat="61.21" lon="-149.93" version="1" visible="true"/>
+    <node changeset="-1" id="-24" lat="61.21" lon="-149.94" version="1" visible="true"/>
+    <node changeset="-1" id="-25" lat="61.22" lon="-149.94" version="1" visible="true"/>
     <way changeset="-1" id="-1" version="1" visible="true">
       <nd ref="-3"/>
       <nd ref="-20"/>
@@ -35,6 +40,17 @@
       <tag k="nps:source_system_key_value" v="{93CB94D6-FFD1-49DD-9231-E035B067B045}"/>
       <tag k="nps:source_system_key" v="GEOMETRYID"/>
       <tag k="nps:edit_date" v="2015-10-15 13:00:00" />
+    </way>
+    <way changeset="-1" id="-26" version="1" visible="true">
+      <nd ref="-21"/>
+      <nd ref="-22"/>
+      <nd ref="-23"/>
+      <nd ref="-24"/>
+      <nd ref="-25"/>
+      <tag k="name" v="Regan Road"/>
+      <tag k="highway" v="primary"/>
+      <tag k="nps:source_system_key_value" v="{add-delete-modify-node-test}"/>
+      <tag k="nps:source_system_key" v="GEOMETRYID"/>
     </way>
     <way changeset="-1" id="-9" version="1" visible="true">
       <nd ref="-11"/>
