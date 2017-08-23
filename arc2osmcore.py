@@ -38,7 +38,6 @@ Based very heavily on code released under the following terms:
 """
 
 import sys
-from io import open  # slow but python 3 compatible
 import arcpy
 
 from geom import *
@@ -54,7 +53,7 @@ def parsedata(options):
     if not arcpy.Exists(src):
         raise ValueError(u"Data source '{0:s}' is not recognized by ArcGIS".format(src))
     shapefield = arcpy.Describe(src).shapeFieldName
-    fieldnames = ['Shape@'] + \
+    fieldnames = ['SHAPE@WKT'] + \
                  [f.name for f in arcpy.ListFields(src) if
                   f.name != shapefield]
     sr = arcpy.SpatialReference(4326)  # WGS84
@@ -67,22 +66,15 @@ def parsedata(options):
 def parsefeature(arcfeature, fieldnames, options):
     if not arcfeature:
         return
-    # rely on parsedata() to put the shape at the beginning of the list
-    arcgeometry = arcfeature[0]
-    if not arcgeometry:
+    # rely on caller to put the shape at the beginning of the list
+    geometry = arcfeature[0]
+    if geometry is None:
         return
-    geometries = parsegeometry([arcgeometry], options)
 
-    for geometry in geometries:
-        if geometry is None:
-            return
-
-        feature = Feature()
-        feature.tags = getfeaturetags(arcfeature, fieldnames, options)
-        feature.geometry = geometry
-        geometry.addparent(feature)
-
-        options.translator.filter_feature_post(feature, arcfeature, arcgeometry)
+    feature = Feature()
+    feature.tags = getfeaturetags(arcfeature, fieldnames, options)
+    feature.geometry = geometry.replace('NAN','0')
+    # options.translator.filter_feature_post(feature, arcfeature, geometry)
 
 
 def getfeaturetags(arcfeature, fieldnames, options):
@@ -111,213 +103,6 @@ def getfeaturetags(arcfeature, fieldnames, options):
     return newtags
 
 
-def parsegeometry(arcgeometries, options):
-    returngeometries = []
-    for arcgeometry in arcgeometries:
-        geometrytype = arcgeometry.type
-        # geometrytype in polygon, polyline, point, multipoint, multipatch,
-        # dimension, or annotation
-        if geometrytype == 'point':
-            returngeometries.append(parsepoint(arcgeometry.getPart(0),
-                                    options))
-        elif geometrytype == 'polyline' and not arcgeometry.isMultipart:
-            returngeometries.append(parselinestring(arcgeometry.getPart(0),
-                                    options))
-        elif geometrytype == 'polygon' and not arcgeometry.isMultipart:
-            returngeometries.append(parsepolygonpart(arcgeometry.getPart(0),
-                                                     options))
-        elif geometrytype == 'multipoint' or geometrytype == 'polyline' \
-                or geometrytype == 'polygon':
-            returngeometries.extend(parsecollection(arcgeometry, options))
-        else:
-            try:
-                options.logger.warn("Unhandled geometry, type: " + geometrytype)
-            except AttributeError:
-                pass
-            returngeometries.append(None)
-
-    return returngeometries
-
-
-def parsepoint(arcpoint, options):
-    x = int(round(arcpoint.X * 10 ** options.significantDigits))
-    y = int(round(arcpoint.Y * 10 ** options.significantDigits))
-    geometry = Point(x, y)
-    return geometry
-
-# parselinestring is inefficient O(n^2) where n = # of vertices.
-# For every vertex we need to search the
-# set of existing vertices (in a hash table, but still) to get the
-# "real identity" of this vertex if it exists.
-# This seems necessary to ensure that "OSM topology" is obtained - there
-# is only one node created when lines close of intersect
-
-# keep track of all vertices, by (rx,ry), in the dataset.
-# where (rx,ry) is the rounded coordinate as an int
-vertices = {}
-
-
-def parselinestring(arcpointarray, options):
-    geometry = Way()
-    global vertices
-    for arcPoint in arcpointarray:
-        (x, y) = (arcPoint.X, arcPoint.Y)
-        (rx, ry) = (int(round(x * 10 ** options.roundingDigits)),
-                    int(round(y * 10 ** options.roundingDigits)))
-        if (rx, ry) in vertices:
-            mypoint = vertices[(rx, ry)]
-        else:
-            (x, y) = (int(round(x * 10 ** options.significantDigits)),
-                      int(round(y * 10 ** options.significantDigits)))
-            mypoint = Point(x, y)
-            vertices[(rx, ry)] = mypoint
-        geometry.points.append(mypoint)
-        mypoint.addparent(geometry)
-    return geometry
-
-
-def parsepolygonpart(arcpointarray, options):
-    # Outer and inner rings are separated by null points in array
-    # the first ring is the outer, and the rest are inner.
-    outer = []  # a list of points
-    inners = []  # a list of lists of points
-    current = outer
-    for pnt in arcpointarray:
-        if pnt:
-            current.append(pnt)
-        else:
-            # start a new list and add it to the end of the inners
-            current = []
-            inners.append(current)
-    geometry = parselinestring(outer, options)
-    if inners:
-        exterior = geometry
-        geometry = Relation()
-        exterior.addparent(geometry)
-        geometry.members.append((exterior, "outer"))
-        for inner_ring in inners:
-            interior = parselinestring(inner_ring, options)
-            interior.addparent(geometry)
-            geometry.members.append((interior, "inner"))
-    return geometry
-
-
-def parsecollection(arcgeometry, options):
-    """
-    :param arcgeometry: is an arcpy.Geometry object (of various compound types)
-    :return: a list of geom.Relations
-    """
-
-    geometrytype = arcgeometry.type
-    if geometrytype == 'polygon':
-        # multipolygon (I already got the single part polygon in parsegeometry)
-        geometries = []
-        for polygon in range(arcgeometry.partCount):
-            geometries.append(parsepolygonpart(arcgeometry.getPart(polygon),
-                                               options))
-        return geometries  # list of Relations
-    elif geometrytype == 'polyline':
-        # multipolyline (single part polyline handled in parsegeometry)
-        geometries = []
-        for linestring in range(arcgeometry.partCount):
-            geometries.append(parselinestring(arcgeometry.getPart(linestring),
-                                              options))
-        return geometries  # list of Ways
-    else:
-        # multipoint
-        # OSM does not have a multipoint relation
-        # http://wiki.openstreetmap.org/wiki/Types_of_relation
-        # treat as individual nodes with the same tags
-        geometries = []
-        for pnt in arcgeometry:
-            geometries.append(parsepoint(pnt, options))
-        return geometries  # list of Points
-
-
-# mergepoints seems unecessary.
-# points have features (which carry the tags for geomety) as parents
-# so two nodes at the same location with different tags will be merged
-# the remaining node does not get a second parent (bug?), but the two
-# parents point to the same node after merging.
-# When output, the nodes are used to create a dictionary (node:feature},
-# and by the rules of python, the last feature found for a node will be the
-# one that is output.
-# put another way, tags for points with similar geometry are not merged,
-# rather one is arbitrarily ignored
-# either the tags should be merged (values for duplicate keys should be
-# concatenated?) or all points should be output, even if the geometry
-# is the same.
-def mergepoints(options):
-    """
-    From all the nodes we have created, remove those that are duplicate (by
-    comparing location up to the rounding digits). Parents of the removed
-    nodes (ways and relations) are updated to reference the retained
-    version of the node)
-    :return: Nothing, the list of nodes is in the global state
-    """
-    try:
-        options.logger.info("Merging points")
-    except AttributeError:
-        pass
-    points = [geom for geom in Geometry.geometries if type(geom) == Point]
-
-    # Make list of Points at each location
-    try:
-        options.logger.info("Merging points - Making lists")
-    except AttributeError:
-        pass
-    pointcoords = {}  # lists of points for each rounded location
-    # TODO make faster by keeping separate dict of dup points (key by (rx,ry))
-    for i in points:
-        rx = int(round(i.x * 10 ** options.roundingDigits))
-        ry = int(round(i.y * 10 ** options.roundingDigits))
-        if (rx, ry) in pointcoords:
-            pointcoords[(rx, ry)].append(i)
-        else:
-            pointcoords[(rx, ry)] = [i]
-
-    # Use list to get rid of extras
-    try:
-        options.logger.info("Merging points - Reducing lists")
-    except AttributeError:
-        pass
-    for (location, pointsatloc) in pointcoords.items():
-        if len(pointsatloc) > 1:
-            for point in pointsatloc[1:]:
-                for parent in set(point.parents):
-                    parent.replacejwithi(pointsatloc[0], point)
-
-
-# mergewaypoints seems unecessary
-# This method is a simple generalizer by removing vertices that are close
-# (within rounding distance) of each other. Nodes in a way are already
-# de-dupped during parselinestring, so a line string may have have the same
-# node in non-adjacent locations (i.e. self intersecting or closed linestrings)
-# or at adjacent locations (i.e. high vertex density) this method finds and
-# collapses close adjacent locations into one vertex.
-# This method can be skipped if we are not interested in generalizing lines
-def mergewaypoints(options):
-    try:
-        options.logger.info("Merging duplicate points in ways")
-    except AttributeError:
-        pass
-    ways = [geom for geom in Geometry.geometries if type(geom) == Way]
-
-    # Remove duplicate points from ways,
-    # a duplicate has the same id as its predecessor
-    for way in ways:
-        previous = options.id
-        merged_points = []
-
-        for node in way.points:
-            if previous == options.id or previous != node.id:
-                merged_points.append(node)
-                previous = node.id
-
-        if len(merged_points) > 0:
-            way.points = merged_points
-
-
 def get_pk_name(options, places_key):
     try:
         primary_keys = options.translator.fields_for_tag(places_key)
@@ -335,149 +120,151 @@ def get_pk_name(options, places_key):
     return primary_key
 
 
-def add_source_tags(etree, xmlobject, options):
+def export_to_sqlserver(options):
     try:
-        name = options.sourceFile
-    except AttributeError:
-        name = None
-    try:
-        key = options.datasetKey
-    except AttributeError:
-        key = None
-    if name:
-        tag = etree.Element('tag', {'k': 'nps:source_system', 'v': name})
-        xmlobject.append(tag)
-    if key:
-        tag = etree.Element('tag', {'k': 'nps:source_system_key', 'v': key})
-        xmlobject.append(tag)
-    return xmlobject
-
-
-def output_xml(options):
-    """
-    Returns a unicode containing XML in the
-    JOSM format (http://wiki.openstreetmap.org/wiki/JOSM_file_format)
-    suitable for use uploading with JOSM or an osmChange file
-    (see http://wiki.openstreetmap.org/wiki/OsmChange)
-    suitable for use with the /api/0.6/changeset/#id/upload API
-    :param options:
-    :return: str
-    """
-    '''
-    Since we will be running under ArcGIS 10.x+ we will always have python 2.5+
-    and xml.etree.ElementTree. However, lxml (See http://lxml.de/tutorial.html)
-    should be the fastest method
-    '''
-    try:
-        from lxml import eTree
-        try:
-            options.logger.info("Outputting XML with lxml.etree")
-        except AttributeError:
-            pass
+        import pyodbc
     except ImportError:
-        import xml.etree.ElementTree as eTree
+        pyodbc = None
+        print 'pyodbc module not found, make sure it is installed with'
+        print 'C:\Python27\ArcGIS10.3\Scripts\pip.exe install pyodbc'
+        sys.exit()
+
+    def get_connection_or_die():
+        conn_string = ("DRIVER={{SQL Server Native Client 10.0}};"
+                       "SERVER={0};DATABASE={1};Trusted_Connection=Yes;")
+        conn_string = conn_string.format('inpakrovmais', 'animal_movement')
         try:
-            options.logger.info("Outputting XML with ElementTree")
-        except AttributeError:
-            pass
+            connection = pyodbc.connect(conn_string)
+        except pyodbc.Error as e:
+            print("Rats!!  Unable to connect to the database.")
+            print("Make sure your AD account has the proper DB permissions.")
+            print("Contact Regan (regan_sarwas@nps.gov) for assistance.")
+            print("  Connection: " + conn_string)
+            print("  Error: " + e[1])
+            sys.exit()
+        return connection
 
-    # First, set up a few data structures for optimization purposes
-    options.datasetKey = get_pk_name(options, 'nps:source_system_key_value')
-    nodes = [geom for geom in Geometry.geometries if type(geom) == Point]
-    ways = [geom for geom in Geometry.geometries if type(geom) == Way]
-    relations = [geom for geom in Geometry.geometries if
-                 type(geom) == Relation]
-    featuresmap = {feature.geometry: feature for feature in Feature.features}
+    def chunks(l, n):
+        """Yield successive n-sized chunks from list l."""
+        for i in xrange(0, len(l), n):
+            yield l[i:i + n]
 
-    # Open up the output file with the system default buffering
-    # with open(path, 'w') as f:
+    def stringify(value):
+        if isinstance(value, basestring):
+            return u"'{0}'".format(value.replace("'", "''"))
+        if value:
+            return u"'{0}'".format(value)
+        return u"NULL"
 
-    if options.outputChange:
-        rootnode = eTree.Element('osmChange',
-                                 {"version": "0.6", "generator": "arc2places"})
-        elementroot = eTree.Element('create')
-        rootnode.append(elementroot)
-    else:
-        rootnode = eTree.Element('osm',
-                                 {"version": "0.6", "generator": "arc2places"})
-        elementroot = rootnode
+    def order(feature, fields):
+        tags = feature.tags
+        shape = feature.geometry
+        items = [stringify(tags.get(field)) for field in fields]
+        return u"(" + u",".join(items) + u",geography::STGeomFromText('{0}',4326))".format(shape)
 
-    # Build up a dict for optional settings
-    attributes = {}
-    # changeset and version are required for API 0.6
-    if options.outputChange:
-        attributes.update({'changeset': str(options.changesetId),
-                           'version': '1'})
-    if options.addTimestamp:
-        from datetime import datetime
-        attributes.update({
-            'timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')})
+    def add_rows_to_sqlserver(connection, rows):
+        # SQL Server is limited to 1000 rows in an insert
+        wcursor = connection.cursor()
+        dbdata = parktiles_tables_sql.get(options.translator.name)
+        if dbdata is None:
+            return
+        table_name = dbdata[0]
+        fields = dbdata[1]
+        sql = u"insert into {0} ({1}, the_geom) values ".format(table_name, ','.join(fields))
+        i = 0
+        chunksize = 10
+        for chunk in chunks(rows, chunksize):
+            values = u','.join([order(row, fields) for row in chunk])
+            sql2 = (sql + values).encode('utf8')
+            if i == 0:
+                print sql2
+            i += 1
+            print 'sending rows {0} to {1}...'.format((i-1)*chunksize, i*chunksize)
+            try:
+                wcursor.execute(sql2)
+            except pyodbc.ProgrammingError as de:
+                print ("Database error ocurred", de)
+                print ("Unable to add these rows to the '{0}' table.".format(table_name))
+                print (sql2)
+                continue
+            try:
+                wcursor.commit()
+            except Exception as de:
+                print ("Database error ocurred", de)
+                print ("Unable to add these rows to the '{0}' table.".format(table_name))
+                print (sql2)
 
-    for node in nodes:
-        xmlattrs = {'visible': 'true', 'id': str(node.id),
-                    'lat': str(node.y * 10 ** -options.significantDigits),
-                    'lon': str(node.x * 10 ** -options.significantDigits)}
-        xmlattrs.update(attributes)
+    conn = get_connection_or_die()
+    data = Feature.features
+    add_rows_to_sqlserver(conn, data)
 
-        xmlobject = eTree.Element('node', xmlattrs)
 
-        if node in featuresmap:
-            for (key, value) in featuresmap[node].tags.items():
-                tag = eTree.Element('tag', {'k': key, 'v': value})
-                xmlobject.append(tag)
-            xmlobject = add_source_tags(eTree, xmlobject, options)
+def export_to_cartodb(options):
+    try:
+        from cartodb import CartoDBAPIKey, CartoDBException
+    except ImportError:
+        CartoDBAPIKey, CartoDBException = None, None
+        print 'cartodb module not found, make sure it is installed with'
+        print 'C:\Python27\ArcGIS10.3\Scripts\pip.exe install cartodb'
+        sys.exit()
+    import secrets_cartodb as secrets
 
-        elementroot.append(xmlobject)
+    def execute_sql_in_cartodb(carto, sql):
+        try:
+            carto.sql(sql)
+        except CartoDBException as ce:
+            print ("CartoDB error ocurred", ce)
+            print (sql)
 
-    for way in ways:
-        xmlattrs = {'visible': 'true', 'id': str(way.id)}
-        xmlattrs.update(attributes)
+    def chunks(l, n):
+        """Yield successive n-sized chunks from list l."""
+        for i in xrange(0, len(l), n):
+            yield l[i:i + n]
 
-        xmlobject = eTree.Element('way', xmlattrs)
+    def stringify(value):
+        if isinstance(value, basestring):
+            return u"'{0}'".format(value.replace("'", "''"))
+        if value:
+            return u"'{0}'".format(value)
+        return u"NULL"
 
-        for node in way.points:
-            nd = eTree.Element('nd', {'ref': str(node.id)})
-            xmlobject.append(nd)
-        if way in featuresmap:
-            for (key, value) in featuresmap[way].tags.items():
-                tag = eTree.Element('tag', {'k': key, 'v': value})
-                xmlobject.append(tag)
-            xmlobject = add_source_tags(eTree, xmlobject, options)
+    def order(feature, fields):
+        tags = feature.tags
+        shape = feature.geometry
+        items = [stringify(tags.get(field)) for field in fields]
+        return u"(" + u",".join(items) + u",ST_GeometryFromText('{0}',4326))".format(shape)
 
-        elementroot.append(xmlobject)
+    def add_rows_to_cartodb(connection, rows):
+        # SQL Server is limited to 1000 rows in an insert
+        dbdata = parktiles_tables_sql.get(options.translator.name)
+        if dbdata is None:
+            return
+        table_name = dbdata[0]
+        fields = dbdata[1]
+        sql = u"insert into {0} ({1}, the_geom) values ".format(table_name, ','.join(fields))
+        i = 0
+        chunksize = 10
+        for chunk in chunks(rows, chunksize):
+            values = u','.join([order(row, fields) for row in chunk])
+            sql2 = (sql + values).encode('utf8')
+            if i == 0:
+                print sql2
+            i += 1
+            print 'sending rows {0} to {1}...'.format((i-1)*chunksize, i*chunksize)
+            try:
+                execute_sql_in_cartodb(connection, sql2)
+            except Exception as e:
+                print "Unexpected exception occurred loading to CartoDB", e
+                print sql2
 
-    for relation in relations:
-        xmlattrs = {'visible': 'true', 'id': str(relation.id)}
-        xmlattrs.update(attributes)
-
-        xmlobject = eTree.Element('relation', xmlattrs)
-
-        for (member, role) in relation.members:
-            member = eTree.Element('member',
-                                   {'type': 'way', 'ref': str(member.id),
-                                    'role': role})
-            xmlobject.append(member)
-
-        tag = eTree.Element('tag', {'k': 'type', 'v': 'multipolygon'})
-        xmlobject.append(tag)
-        if relation in featuresmap:
-            for (key, value) in featuresmap[relation].tags.items():
-                tag = eTree.Element('tag', {'k': key, 'v': value})
-                xmlobject.append(tag)
-            xmlobject = add_source_tags(eTree, xmlobject, options)
-
-        elementroot.append(xmlobject)
-    data = eTree.tostring(rootnode, encoding='utf-8')
-    # data is a now a sequence of bytes; I need to return a unicode object
-    if data:
-        data = data.decode('utf-8')
-        return None, data
-    return "Unable to generate XML", None
+    conn = CartoDBAPIKey(secrets.apikey, secrets.domain)
+    data = Feature.features
+    add_rows_to_cartodb(conn, data)
 
 
 # TODO: This is a horrible public interface.  Make more specific
 # Public - called by CreatePlacesUpload, SeedPlaces in arc2places.pyt; main() in arc2osm.py; test() in self
-def makeosmfile(options):
+def makeosmfile(options, test=False):
     """
     Save or return (as an xml string) an OsmChange File.
 
@@ -522,27 +309,11 @@ def makeosmfile(options):
                 pass
         options.translator = translator
     parsedata(options)
-    if options.mergeNodes:
-        mergepoints(options)
-    if options.mergeWayNodes:
-        mergewaypoints(options)
-    options.translator.transform_pre_output(
-        Geometry.geometries, Feature.features)
-    error, data = output_xml(options)
-    if options.outputFile:
-        with open(options.outputFile, 'w', encoding='utf-8') as fw:
-            fw.write(data)
-        try:
-            options.logger.info(u"Wrote {0:d} elements to file '{1:s}'"
-                                .format(-1 * Geometry.elementIdCounter, options.outputFile))
-        except AttributeError:
-            pass
+
+    if test:
+        export_to_sqlserver(options)
     else:
-        try:
-            options.logger.info(u"Returning {0:d} converted elements".format(-1 * Geometry.elementIdCounter))
-        except AttributeError:
-            pass
-        return error, data
+        export_to_cartodb(options)
 
 
 # Public - called by CreatePlacesUpload, SeedPlaces in arc2places.pyt; test() in self;
@@ -568,16 +339,80 @@ class DefaultOptions:
     datasetKey = None
 
 
+parktiles_tables_sql = {
+    'parktiles_poi': ('parktiles_points_of_interest', ["name", "unit_code", "type", "class", "superclass", "gis_id", "gis_updated_at", "gis_created_at", "tags", "gis_poitype"]),
+    'parktiles_trails': ('parktiles_trails', ["name", "unit_code", "surface", "type", "class", "superclass", "gis_id", "gis_updated_at", "gis_created_at", "tags", "gis_trluse"]),
+     # ["foot", "horse", "bicycle", "snowmobile", "motor_vehicle"
+    'parktiles_roads': ('parktiles_roads', ["name", "unit_code", "description", "type", "class", "superclass", "gis_id", "gis_updated_at", "gis_created_at", "tags", "gis_rdclass"]),
+    'parktiles_buildings': ('parktiles_buildings', ["name", "unit_code", "type", "class", "superclass", "gis_id", "gis_updated_at", "gis_created_at", "tags"]),
+    'parktiles_parkinglots': ('parktiles_parking_lots', ["name", "unit_code", "type", "class", "superclass", "gis_id", "gis_updated_at", "gis_created_at", "tags"])
+}
+
+
 def test():
     import os
     opts = DefaultOptions()
     opts.logger = Logger()
-    opts.logger.start_debug()
-    opts.sourceFile = os.path.abspath("./testdata/test.gdb/TRAILS_ln")
-    opts.outputFile = "./testdata/test_trails.osm"
-    opts.translator = Translator.get_translator("trails")
-    opts.datasetKey = get_pk_name(opts, 'nps:source_system_key_value')
-    makeosmfile(opts)
+    # opts.logger.start_debug()
+    testdata = [
+        ("parktiles_poi", os.path.join("Database Connections", "AKR_SOCIO_on_inpakrovmais_as_GIS.sde", "akr_socio.GIS.POI_pt")),
+        ("parktiles_trails", os.path.abspath("./testdata/test.gdb/TRAILS_ln")),
+        ("parktiles_roads", os.path.abspath("./testdata/test.gdb/ROADS_ln")),
+        ("parktiles_buildings", os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde", "GIS.building_polygon")),
+        ("parktiles_parkinglots", os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde", "GIS.parklots_py"))
+    ]
+    akrodata = [
+        ("parktiles_poi", os.path.join("Database Connections", "AKR_SOCIO_on_inpakrovmais_as_GIS.sde", "akr_socio.GIS.POI_pt")),
+        ("parktiles_trails", os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde", "GIS.trails_ln")),
+        ("parktiles_roads", os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde", "GIS.roads_ln")),
+        ("parktiles_buildings", os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde", "GIS.building_polygon")),
+        ("parktiles_parkinglots", os.path.join("Database Connections", "akr_facility_on_inpakrovmais_as_gis.sde", "GIS.parklots_py"))
+    ]
+    akro_nozm = [
+        ("parktiles_trails", r"c:\tmp\test.gdb\trails"),
+        ("parktiles_roads", r"c:\tmp\test.gdb\roads"),
+    ]
+    ncrdata = [
+        ("parktiles_poi", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_POI/FeatureServer/1"),
+        ("parktiles_poi", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/POHE_Places_POI/FeatureServer/1"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/0"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/1"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/2"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/3"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/4"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/5"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/6"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/7"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/8"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/9"),
+        ("parktiles_trails", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Trails_Type/FeatureServer/10"),
+        ("parktiles_roads", "https://inpncrofslr.nps.doi.net:6443/arcgis/rest/services/Places/NCR_Places_Roads/FeatureServer/0"),
+    ]
+    pwrdata = [
+        ("parktiles_poi", "http://inppwcagis01:6080/arcgis/rest/services/PWR/PWR_NPS_PointsOfInterest/FeatureServer/0"),
+        ("parktiles_trails", "http://inppwcagis01:6080/arcgis/rest/services/PWR/PWR_NPSTrails/FeatureServer/0"),
+        ("parktiles_roads", "http://inppwcagis01:6080/arcgis/rest/services/PWR/PWR_Roads_Service/FeatureServer/0"),
+    ]
+    pwrdata_sde = [
+        ("parktiles_poi", os.path.join("Database Connections", "PWR_as_domainuser.sde", "akr_socio.GIS.POI_pt")),
+        ("parktiles_trails", os.path.join("Database Connections", "PWR_as_domainuser.sde", "akr_socio.GIS.POI_pt")),
+        ("parktiles_roads", os.path.join("Database Connections", "PWR_as_domainuser.sde", "akr_socio.GIS.POI_pt"))
+    ]
+    for name, source in akro_nozm[0:2]:
+        if source.startswith("http"):
+            print "loading", source, "..."
+            url = source + '/query?where=1=1&outFields=*&returnGeometry&f=json'
+            source = arcpy.FeatureSet()
+            try:
+                source.load(url)
+            except Exception as e:
+                print "Unexpected exception", e
+                continue
+            print "done loading..."
+        opts.sourceFile = source
+        opts.translator = Translator.get_translator(name)
+        opts.datasetKey = get_pk_name(opts, 'gis_id')
+        makeosmfile(opts, test=False)
 
 
 if __name__ == '__main__':
