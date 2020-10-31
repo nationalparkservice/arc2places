@@ -30,9 +30,9 @@ some of the tools that do not require ArcGIS
   * **placesids2arc** - Adds the Places Ids returned with osm2places to an
      ESRI feature class (currently requires an ArcGIS license)
 
-##arc2osm and ogr2osm
+## arc2osm and ogr2osm
 
-###Create OSM upload file
+### Create OSM upload file
 
 To upload GIS features to Places you need to create an OSM upload file.
 This can be done with ogr2osm or arc2osm on windows or Mac computers.
@@ -50,7 +50,7 @@ These tool can be slow for large dataset (based on the total number or vertices,
 not features).  Consider breaking your data into smaller chunks if you have
 problems.
 
-####Supported ArcGIS geometries
+#### Supported ArcGIS geometries
 
 * Points
 * Polylines
@@ -80,7 +80,7 @@ closed ways or relations.  Each polygon has the same tags. This causes a problem
 with syncing Places to GIS because there is not longer a one-to-one map between
 the places id and nps:source_id, so **do not use multipart poygons**.
 
-####Issues
+#### Issues
 There are a few key fetures that are yet to be implemented
 - [ ] merge multiple outer or outer/inner parts into one relationship for multi-polygons
 - [ ] merge multi-part polylines into a single route type relation
@@ -100,7 +100,7 @@ referential integrity with th GIS.
 route.  Need to 'merge' the ways when syncing with GIS.
 
 
-###Using arc2osm on Windows
+### Using arc2osm on Windows
 
 This requires ArcGIS to be installed on the windows computer.  It was tested
 with ArcGIS 10.3 and python 2.7.5, however it should work with ArcGIS 10.1 sp1
@@ -110,7 +110,7 @@ with ArcGIS Pro, but this has not been tested.
 ...[More to come]
 
 
-###Using ogr2osm on Windows
+### Using ogr2osm on Windows
 
 
 For Windows users with ArcGIS installed, I recommend using arc2osm.
@@ -131,13 +131,13 @@ There are many options - see http://gis.stackexchange.com/questions/2276/how-to-
 for details.
 
 
-###Using arc2osm on the Mac
+### Using arc2osm on the Mac
 
 
 Esri does not support ArcGIS on the Mac, so this option is not available.
 
 
-###Using ogr2osm on the Mac
+### Using ogr2osm on the Mac
 
 
 1) Install FGDB API (optional)
@@ -176,14 +176,14 @@ python ogr2osm.py --help
 python ogr2osm.py /path/to/data.gdb/my_trails -o output.osm -t trails
 ```
 
-####TODO
+#### TODO
 
 - [ ] fork osm2ogr and add option to create OsmChange file
 - [ ] fork osm2ogr and make the attribute names all upper case
 - [ ] fork osm2ogr and fix multipoint creation
 
 
-##Uploading to Places
+## Uploading to Places
 
 
 The JOSM format can be uploaded to Places with the [JOSM editor](http://wiki.openstreetmap.org/wiki/JOSM),
@@ -203,7 +203,7 @@ the OSM (Places) IDs of created features.  This allows the creation of a link
 file which can be used for syncing GIS data with Places data.
 
 
-###osm2places
+### osm2places
 
 This is a python script which takes an OsmChange file (and users credentials)
 and uploads the changes to Places.  It uses the response from Places to create
@@ -224,8 +224,8 @@ python ogr2places.py /path/to/input.osm /path/to/output.csv
 ```
 
 
-##Update ArcGIS data with Places Ids
+## Update ArcGIS data with Places Ids
 
 ...
 
-###placesids2arc
+### placesids2arc
