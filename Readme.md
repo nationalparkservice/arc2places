@@ -34,7 +34,7 @@ Others can try the following:
 
 4. Create the secrets.py file. Currently, the tool only writes to the NPS internal Places database
 and relies on tokens that are in the secrets.py file not included in the repo.
-Contact [Regan](mailto:regan_sarwas@nps.gov) for assistance (NPS-only)
+Contact [Regan](mailto:akro_gis_helpdesk@nps.gov) for assistance (NPS-only)
 
 
 ## Places Toolbox
@@ -71,10 +71,12 @@ database schemas if necessary.
 
 ## Building
 To build the installation bundle for the website:
-1 get latest version of 'getpip.py' from https://bootstrap.pypa.io/get-pip.py
-2 get latest version of arc2places from https://github.com/nationalparkservice/arc2places/tree/master
-3 get latest version of secrets.py from regan_sarwas@nps.gov
-4 Package into a zip file called arc2places.zip:
+
+1. get latest version of 'getpip.py' from https://bootstrap.pypa.io/get-pip.py
+2. get latest version of arc2places from https://github.com/nationalparkservice/arc2places/tree/master
+3. get latest version of secrets.py from regan_sarwas@nps.gov
+4. Package into a zip file called arc2places.zip:
+
   * get-pip.py
   * secrets.py
   * arc2places.pyt
