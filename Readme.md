@@ -32,9 +32,9 @@ Others can try the following:
 
     * ```pip install requests_oauthlib```
 
-4. Create the secrets.py file. Currently, the tool only writes to the NPS internal Places database
-and relies on tokens that are in the secrets.py file not included in the repo.
-Contact [Regan](mailto:akro_gis_helpdesk@nps.gov) for assistance (NPS-only)
+4. Create the `secrets.py` file. Currently, the tool only writes to the NPS internal Places database
+and relies on tokens that are in the `secrets.py` file not included in the repo.
+Contact RISD for a token to write to the Places database (NPS-only).
 
 
 ## Places Toolbox
@@ -70,12 +70,12 @@ They are fairly simple configuration files allowing them to be adapted to differ
 database schemas if necessary.
 
 ## Building
-To build the installation bundle for the website:
+To build the installation bundle for the [website](http://akrgis.nps.gov/apps/arc2places):
 
-1. get latest version of 'getpip.py' from https://bootstrap.pypa.io/get-pip.py
-2. get latest version of arc2places from https://github.com/nationalparkservice/arc2places/tree/master
-3. get latest version of secrets.py from regan_sarwas@nps.gov
-4. Package into a zip file called arc2places.zip:
+1. get latest version of `getpip.py` from https://bootstrap.pypa.io/get-pip.py
+2. get latest version of [arc2places](https://github.com/nationalparkservice/arc2places/tree/master)
+3. get latest version of `secrets.py` from RISD.
+4. Package the following files into a zip file called `arc2places.zip`:
 
   * get-pip.py
   * secrets.py
